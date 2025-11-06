@@ -29,17 +29,7 @@ document.querySelectorAll('.product-card').forEach(card => {
   observer.observe(card);
 });
 
-// Observe sections for scroll animations
-const sectionsToAnimate = ['.about-section', '.carousel-section', '.categories', '.process-section'];
-sectionsToAnimate.forEach(selector => {
-  const section = document.querySelector(selector);
-  if (section) {
-    observer.observe(section);
-  }
-});
-
-// Carousel functionality with natural scrolling support
-const carouselContainer = document.querySelector('.carousel-container');
+// Carousel functionality
 const carouselTrack = document.querySelector('#carousel-track');
 const carouselPrev = document.querySelector('.carousel-prev');
 const carouselNext = document.querySelector('.carousel-next');
@@ -58,27 +48,27 @@ const itemsToShow = 4;
 async function loadCarouselProducts() {
   try {
     const response = await fetch('/data/carousel-products.json');
-  const products = await response.json();
-renderCarouselProducts(products);
-} catch (error) {
-  console.error('Error loading carousel products:', error);
-}
+    const products = await response.json();
+    renderCarouselProducts(products);
+  } catch (error) {
+    console.error('Error loading carousel products:', error);
+  }
 }
 
 function renderCarouselProducts(products) {
   if (!carouselTrack) return;
-
-carouselTrack.innerHTML = products.map(product => `
-<div class="carousel-item" data-category="${product.category}">
-  <img src="${product.imageUrl}" alt="${product.name}">
-    <h4>${product.name}</h4>
+  
+  carouselTrack.innerHTML = products.map(product => `
+    <div class="carousel-item" data-category="${product.category}">
+      <img src="${product.imageUrl}" alt="${product.name}">
+      <h4>${product.name}</h4>
       <p>${product.description}</p>
     </div>
   `).join('');
-
+  
   // Update references after rendering
   allCarouselItems = document.querySelectorAll('.carousel-item');
-
+  
   // Initialize carousel
   filterItemsByCategory(currentCategory);
   updateCarousel();
@@ -97,17 +87,17 @@ function filterItemsByCategory(category) {
 
 function updateCarousel() {
   const itemWidth = activeItems[0]?.offsetWidth || 280;
-  const gap = 24; // 1.5rem
-  const scrollAmount = itemWidth + gap;
-  const maxScroll = Math.max(0, activeItems.length - itemsToShow) * scrollAmount;
-
-  if (carouselContainer) {
-    carouselContainer.scrollTo({ left: currentIndex * scrollAmount, behavior: 'smooth' });
+  const gap = 32; // 2rem
+  const offset = currentIndex * (itemWidth + gap);
+  const maxIndex = Math.max(0, activeItems.length - itemsToShow);
+  
+  if (carouselTrack) {
+    carouselTrack.style.transform = `translateX(-${offset}px)`;
   }
-
+  
   // Update scrollbar thumb
-  if (carouselThumb && maxScroll > 0) {
-    const thumbPosition = (currentIndex / Math.max(0, activeItems.length - itemsToShow)) * 60;
+  if (carouselThumb && maxIndex > 0) {
+    const thumbPosition = (currentIndex / maxIndex) * 60; // 60% is remaining space
     carouselThumb.style.left = `${thumbPosition}%`;
   } else if (carouselThumb) {
     carouselThumb.style.left = '0%';
@@ -115,7 +105,7 @@ function updateCarousel() {
 
   // Update button states
   if (carouselPrev) carouselPrev.style.opacity = currentIndex === 0 ? '0.3' : '0.7';
-  if (carouselNext) carouselNext.style.opacity = currentIndex >= Math.max(0, activeItems.length - itemsToShow) ? '0.3' : '0.7';
+  if (carouselNext) carouselNext.style.opacity = currentIndex >= maxIndex ? '0.3' : '0.7';
 }
 
 if (carouselNext) {
