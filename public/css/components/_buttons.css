@@ -17,3 +17,18 @@
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(93, 112, 101, 0.3);
 }
+
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--color-accent-secondary);
+  outline-offset: 2px;
+}
+
+/* Mobile button adjustments */
+@media (max-width: 767px) {
+  .btn-primary,
+  .btn-secondary {
+    font-size: 1rem;
+    padding: 0.875rem 1.5rem;
+  }
+}

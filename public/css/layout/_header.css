@@ -28,6 +28,31 @@
   font-weight: 400;
 }
 
+/* Mobile Header */
+@media (max-width: 767px) {
+  .site-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+  }
+
+  .nav-links {
+    display: none; /* Hide navigation on mobile - could be replaced with hamburger menu */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .site-header {
+    padding: 1.25rem 2.5rem;
+  }
+
+  .logo {
+    font-size: 1.6rem;
+  }
+}
+
 .nav-links {
   display: flex;
   flex-direction: row;
