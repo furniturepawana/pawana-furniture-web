@@ -16,6 +16,7 @@
 @import 'components/_buttons.css';
 @import 'components/_product-card.css';
 @import 'components/_carousel.css';
+@import 'components/_animations.css';
 
 /* 4. Pages */
 @import 'pages/_home.css';

@@ -76,6 +76,7 @@ router.get("/", async (req, res) => {
 
     res.render("pages/home", {
       title: "Home",
+      pageClass: "page-home", // Identifier for home page
       featuredItems,
       featuredSets,
       carouselItems,

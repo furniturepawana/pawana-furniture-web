@@ -1,53 +1,95 @@
 /* ==============================
-   Product Card - Premium & Refined
+   Product Card - Premium & Clean
    ============================== */
 
 .product-card {
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
-  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--transition-base);
 }
 
 .product-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-accent);
 }
 
+/* Image Wrapper - Light Gray Background */
 .product-card img {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  object-position: center;
   display: block;
+  background: var(--color-bg-card);
   transition: transform var(--transition-slower);
-  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
 }
 
 .product-card:hover img {
-  transform: scale(1.02);
+  transform: scale(1.05);
 }
 
+/* Product Info */
 .product-card h3 {
-  margin: var(--space-4) 0 var(--space-2) 0;
   font-family: var(--font-heading);
-  font-size: var(--text-xl);
+  font-size: 1.1rem;
+  font-weight: var(--font-normal);
   color: var(--color-text-primary);
+  margin: 0 0 0.3rem 0;
   line-height: var(--leading-tight);
-  font-weight: var(--font-semibold);
 }
 
-.product-card p {
-  margin: 0;
-  font-size: var(--text-xs);
-  line-height: var(--leading-normal);
-  color: var(--color-text-muted);
+/* Product Card Meta */
+.product-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.product-card-meta p {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: var(--font-medium);
+  letter-spacing: 1px;
+  margin: 0;
+  font-weight: var(--font-normal);
 }
 
+/* Style Badges - Solid Colors, No Hover */
+.item-style-badge,
+.set-style-badge {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 500;
+  border: none;
+  border-radius: 2px;
+}
+
+/* Royal - Deep Charcoal */
+.item-style-badge.royal,
+.set-style-badge.royal {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+/* Traditional - Warm Brown */
+.item-style-badge.traditional,
+.set-style-badge.traditional {
+  background: #8B7355;
+  color: #ffffff;
+}
+
+/* Modern - Cool Gray */
+.item-style-badge.modern,
+.set-style-badge.modern {
+  background: #5a5a5a;
+  color: #ffffff;
+}
+
+/* Active State */
 .product-card:active {
-  transform: translateY(-1px);
+  transform: translateY(0);
 }

@@ -209,7 +209,7 @@
 
 /* Individual Items in Set Section */
 .set-items-section {
-  padding: var(--section-padding-desktop);
+  padding: var(--space-6);
   background-color: var(--color-bg-section-alt);
 }
 
@@ -257,7 +257,7 @@
 
 .set-item-image {
   width: 100%;
-  aspect-ratio: 4/5;
+  aspect-ratio: 1/1;
   overflow: hidden;
   background: var(--color-bg-section-alt);
 }
@@ -296,7 +296,7 @@
 
 /* Related Sets Section */
 .related-sets-section {
-  padding: var(--section-padding-desktop);
+  padding: var(--space-8);
   background-color: var(--color-bg-body);
 }
 

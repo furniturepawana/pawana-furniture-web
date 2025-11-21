@@ -5,19 +5,19 @@
 .services-hero {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: var(--color-text-inverse);
-  padding: 6rem 2rem 4rem;
+  padding: 1.5rem 2rem 1.25rem;
   text-align: center;
 }
 
 .services-hero-content h1 {
   font-family: var(--font-heading);
-  font-size: var(--text-5xl);
-  margin-bottom: 1rem;
+  font-size: var(--text-3xl);
+  margin-bottom: 0.5rem;
   font-weight: 600;
 }
 
 .services-hero-content p {
-  font-size: var(--text-xl);
+  font-size: var(--text-base);
   opacity: 0.95;
 }
 
