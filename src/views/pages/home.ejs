@@ -132,59 +132,17 @@
 
 
 
-<section class="process-section" id="process">
-  <div class="process-container">
-    <h2>How Your Custom Furniture Comes to Life</h2>
-    <p class="process-subtitle">A simple, transparent process from concept to delivery</p>
-
-    <div class="process-steps">
-      <div class="process-step">
-        <div class="step-image">
-          <img src="/images/process/step1.png" alt="You Order">
-          <span class="step-badge">Step 1</span>
-        </div>
-        <div class="step-info">
-          <h3>You Order</h3>
-          <p>Share your vision with us. Whether it's a sketch, a Pinterest board, or just an idea, we'll help refine it into a detailed design plan with materials, dimensions, and timeline.</p>
-        </div>
-      </div>
-
-      <div class="process-step">
-        <div class="step-image">
-          <img src="/images/process/step2.avif" alt="We Work">
-          <span class="step-badge">Step 2</span>
-        </div>
-        <div class="step-info">
-          <h3>We Work</h3>
-          <p>Our master craftsmen bring your design to life in our workshop. We keep you updated with progress photos and welcome you to visit and see your piece taking shape.</p>
-        </div>
-      </div>
-
-      <div class="process-step">
-        <div class="step-image">
-          <img src="/images/process/sofa-process.jpg" alt="We Deliver">
-          <span class="step-badge">Step 3</span>
-        </div>
-        <div class="step-info">
-          <h3>We Deliver</h3>
-          <p>Your custom furniture is carefully delivered and installed in your space. We ensure perfect placement and provide care instructions for a lifetime of enjoyment.</p>
-        </div>
-      </div>
-    </div>
-
-    <section class="about-section">
+<section class="about-section">
   <div class="about-content">
-    <div class="about-text">
-      <h2>The Pawana Story</h2>
-      <p class="about-intro">For over 15 years, we've been transforming wood into legacy pieces that families treasure for generations.</p>
-      <p>At Pawana Furniture, we believe furniture should tell a story—your story. We don't mass-produce. We don't follow trends. We listen to your vision and bring it to life through traditional craftsmanship and modern design sensibility.</p>
-      <p>Our workshop in [Location] is where magic happens. Every morning, our team of skilled artisans begins work on custom pieces—dining tables for growing families, wardrobes for dream homes, beds that become heirlooms.</p>
-      <p>When you choose Pawana, you're not just getting furniture. You're investing in craftsmanship, sustainability, and a partnership with makers who care as much about your space as you do.</p>
-      <a href="/about" class="link-arrow">Learn More About Our Craft →</a>
-    </div>
     <div class="about-image">
       <img src="/images/about/about.png" alt="Pawana Furniture Workshop">
       <div class="about-image-accent"></div>
+    </div>
+    <div class="about-text">
+      <h2>The Pawana Story</h2>
+      <p class="about-intro">For over 15 years, we've been transforming wood into legacy pieces that families treasure for generations.</p>
+      <p>We believe furniture should tell your story. From hand-selected materials to meticulous craftsmanship, every piece is built to last and designed to become an heirloom in your home.</p>
+      <a href="/about" class="link-arrow">Learn More About Our Craft</a>
     </div>
   </div>
 </section>
@@ -225,22 +183,24 @@
    </div>
  </section>
 
-    <div class="process-cta">
-      <h3>Ready to Start Your Custom Order?</h3>
-      <p>Get in touch with us for a personalized consultation.</p>
-      <form class="enquiry-form" action="/contact" method="POST">
-        <div class="form-group">
-          <input type="text" name="name" placeholder="Your Name" required>
-        </div>
-        <div class="form-group">
-          <input type="tel" name="mobile" placeholder="Your Mobile Number" required>
-        </div>
-        <div class="form-group">
-          <textarea name="enquiry" placeholder="Write Your Enquiry" rows="4" required></textarea>
-        </div>
-        <button type="submit" class="btn-primary">Send Enquiry</button>
-      </form>
-    </div>
-  </div>
-</section>
+ <section class="custom-order-section">
+   <div class="custom-order-container">
+     <div class="custom-order-content">
+       <h2>Ready to Start Your Custom Order?</h2>
+       <p>Tell us what you have in mind, and we'll help bring your vision to life.</p>
 
+       <form class="custom-order-form" action="/contact/submit" method="POST">
+         <div class="form-group">
+           <input type="text" name="name" placeholder="Your Name" required>
+         </div>
+         <div class="form-group">
+           <input type="tel" name="phone" placeholder="Contact Number" required>
+         </div>
+         <div class="form-group">
+           <textarea name="message" placeholder="Briefly describe your enquiry..." rows="1" required></textarea>
+         </div>
+         <button type="submit" class="btn-submit">Request Callback</button>
+       </form>
+     </div>
+   </div>
+ </section>

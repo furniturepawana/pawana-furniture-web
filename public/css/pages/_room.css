@@ -135,100 +135,7 @@
   letter-spacing: 0.05em;
 }
 
-/* Room Items Section */
-.room-items-section {
-  padding: var(--space-10) var(--space-6);
-  background-color: var(--color-bg-section-alt);
-}
 
-.room-items-container {
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.room-items-container h2 {
-  font-family: var(--font-heading);
-  font-size: var(--text-2xl);
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-8);
-  font-weight: var(--font-semibold);
-  line-height: var(--leading-tight);
-}
-
-/* Filter Tabs - Compact */
-.room-filter-tabs {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-8);
-  flex-wrap: wrap;
-}
-
-.filter-tab {
-  padding: var(--space-2) var(--space-5);
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-secondary);
-  font-size: var(--text-xs);
-  font-weight: var(--font-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.filter-tab:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  transform: translateY(-1px);
-}
-
-.filter-tab.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: white;
-}
-
-/* Product Grid - Matching Home Page */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--space-8);
-}
-
-/* Product Card Meta */
-.product-card-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: var(--space-2);
-}
-
-.product-card-meta p {
-  margin: 0;
-}
-
-.item-style-badge {
-  font-size: var(--text-xs);
-  padding: var(--space-1) var(--space-3);
-  font-weight: var(--font-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: white;
-}
-
-.item-style-badge.royal {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-}
-
-.item-style-badge.traditional {
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-warm));
-}
-
-.item-style-badge.modern {
-  background: linear-gradient(135deg, var(--color-text-primary), var(--color-text-secondary));
-}
 
 /* Mobile Responsive */
 @media (max-width: 1023px) {
@@ -251,28 +158,18 @@
     font-size: var(--text-xs);
   }
 
-  .room-sets-section,
-  .room-items-section {
+  .room-sets-section {
     padding: var(--space-12) var(--space-4);
   }
 
-  .room-sets-container h2,
-  .room-items-container h2 {
+  .room-sets-container h2 {
     font-size: var(--text-xl);
   }
 
-  .sets-grid,
-  .product-grid {
+  .sets-grid {
     grid-template-columns: 1fr;
     gap: var(--space-6);
   }
 
-  .room-filter-tabs {
-    flex-direction: column;
-  }
 
-  .filter-tab {
-    width: 100%;
-    text-align: center;
-  }
 }

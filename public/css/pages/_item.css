@@ -228,6 +228,15 @@
   line-height: var(--leading-tight);
 }
 
+/* Similar Items Grid - 3 per row */
+.related-items-section .product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-8);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
 /* Mobile Responsive */
 @media (max-width: 1023px) {
   .item-content {
@@ -241,6 +250,12 @@
 
   .item-title {
     font-size: var(--text-xl);
+  }
+
+  /* Similar Items - 2 per row on tablet */
+  .related-items-section .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
   }
 }
 
@@ -265,5 +280,11 @@
   .thumbnail {
     width: 50px;
     height: 50px;
+  }
+
+  /* Similar Items - 1 per row on mobile */
+  .related-items-section .product-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
   }
 }

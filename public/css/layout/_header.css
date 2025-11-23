@@ -1,19 +1,19 @@
 /* ==============================
-   Header - Solid by Default
+   Header - Warm Furniture Theme
    ============================== */
 .site-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2.5rem;
-  background: rgba(253, 251, 247, 0.95);
+  background: var(--color-bg-card); /* Warm beige background */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: none;
-  box-shadow: var(--shadow-hover);
+  border-bottom: 2px solid var(--color-border); /* Warm tan border */
+  box-shadow: 0 4px 12px rgba(107, 68, 35, 0.1); /* Warm brown shadow */
   transition: all var(--transition-base);
 }
 
@@ -27,27 +27,45 @@
   left: 0;
   right: 0;
   box-shadow: none;
+  border-bottom: none;
 }
 
 /* HOME PAGE ONLY - Scrolled State */
 .page-home .site-header.scrolled {
-  background: rgba(253, 251, 247, 0.95);
+  background: rgba(232, 220, 200, 0.95); /* Warm beige with transparency */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 4px 12px rgba(107, 68, 35, 0.1);
+  border-bottom: 2px solid var(--color-border);
   padding: 1rem 2.5rem;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   font-family: var(--font-heading);
   font-size: 1.8rem;
   color: var(--color-text-primary); /* Dark by default */
   letter-spacing: 1px;
   font-weight: 600;
   transition: color var(--transition-base);
+  text-decoration: none;
 }
 
-.logo span {
+.logo-image {
+  height: 60px;
+  width: auto;
+  transition: transform var(--transition-base);
+}
+
+.logo-text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.logo-text-light {
   color: var(--color-text-secondary); /* Gray by default */
   font-weight: 400;
 }
@@ -56,12 +74,16 @@
   color: var(--color-primary);
 }
 
+.logo:hover .logo-image {
+  transform: scale(1.05);
+}
+
 /* HOME PAGE ONLY - White Logo on Transparent Header */
 .page-home .site-header .logo {
   color: var(--color-text-inverse); /* White on transparent */
 }
 
-.page-home .site-header .logo span {
+.page-home .site-header .logo-text-light {
   color: rgba(255, 255, 255, 0.8); /* Light white on transparent */
 }
 
@@ -75,8 +97,8 @@
   color: var(--color-text-primary);
 }
 
-.page-home .site-header.scrolled .logo span {
-  color: var(--color-text-secondary);
+.page-home .site-header.scrolled .logo-text-light {
+  color: #6b2c2c;
 }
 
 .page-home .site-header.scrolled .logo:hover {
@@ -91,7 +113,12 @@
   }
 
   .logo {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    gap: 0.5rem;
+  }
+
+  .logo-image {
+    height: 40px;
   }
 
   .nav-links {
@@ -174,11 +201,12 @@
   width: 100%;
 }
 
-/* Dropdown Menus */
+/* Dropdown Menus - JS Controlled */
 .dropdown {
   position: relative;
   display: flex;
   align-items: center;
+  height: 100%; /* Ensure full height for hover area */
 }
 
 .dropdown-content {
@@ -186,180 +214,164 @@
   position: absolute;
   top: 100%;
   left: 0;
-  background: rgba(255, 255, 255, 0.98); /* White background */
+  margin-top: 15px; /* Gap between nav item and dropdown */
+  background: var(--color-bg-card); /* Warm beige background */
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Darker shadow */
-  border-radius: var(--radius-md);
+  box-shadow: 0 10px 30px rgba(107, 68, 35, 0.15); /* Warm brown shadow */
+  border-radius: var(--radius-sm);
   z-index: 1000;
-  min-width: 180px;
-  padding: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Dark border */
-  transform: translateY(-10px);
+  min-width: 200px;
+  padding: 0.8rem 0;
+  border: 2px solid var(--color-border); /* Warm tan border */
   opacity: 0;
-  transition: transform var(--transition-slow) ease, opacity var(--transition-slow) ease;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Slower, smoother transition */
   text-align: left;
 }
 
-/* Special styling for collections dropdown with three columns */
+/* Invisible bridge to prevent menu closing when crossing the gap */
+.dropdown-content::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: transparent;
+}
+
+/* Active State Class (toggled by JS) */
+.dropdown-content.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Special styling for collections dropdown - Single Column with Flyouts */
 .collections-dropdown {
-  min-width: 480px;
-  max-width: 520px;
+  min-width: 240px;
   display: none;
-  flex-direction: row;
-  gap: 1.25rem;
-  padding: 1rem 1.25rem;
-  top: 100%;
-  left: -240px;
-}
-
-.collections-dropdown .dropdown-section {
-  flex: 1;
-  margin-bottom: 0;
-  border-bottom: none;
-  border-right: 1px solid rgba(0, 0, 0, 0.1); /* Black border */
-  padding-right: 1.25rem;
-}
-
-.collections-dropdown .dropdown-section:last-child {
-  border-right: none;
-  padding-right: 0;
-}
-
-.dropdown:hover .dropdown-content,
-.dropdown-content:hover {
-  display: block;
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.dropdown:hover .collections-dropdown,
-.collections-dropdown:hover {
-  display: flex;
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* For non-collections dropdowns, keep single column */
-.dropdown-content:not(.collections-dropdown) .dropdown-section {
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Black border */
-}
-
-.dropdown-content:not(.collections-dropdown) .dropdown-section:last-child {
-  margin-bottom: 0;
-  border-bottom: none;
-}
-
-.dropdown-section h4 {
-  margin: 0 0 0.3rem 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  letter-spacing: 0.5px;
-}
-
-.collections-dropdown .dropdown-section h4 {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #000; /* Pure black */
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  padding-bottom: 0.35rem;
-  border-bottom: 2px solid #000; /* Black underline */
-}
-
-.dropdown-section .dropdown-list {
-  display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  padding: 0.8rem 0;
+  top: 100%;
+  left: 0;
+  background: var(--color-bg-card); /* Warm beige background */
+  border: 2px solid var(--color-border); /* Warm tan border */
+}
+
+.collections-dropdown.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Remove old column styles */
+.collections-dropdown .dropdown-section {
+  border: none;
   padding: 0;
   margin: 0;
-  text-align: left;
 }
 
 .collections-dropdown .dropdown-list {
-  gap: 0.05rem;
-}
-
-.dropdown-section .dropdown-list p {
-  margin: 0;
-}
-
-.collections-dropdown .dropdown-list p a {
-  display: block;
-  padding: 0.3rem 0.5rem;
-  margin: 0;
-  color: #666; /* Medium gray */
-  text-decoration: none;
-  transition: color var(--transition-fast), background var(--transition-fast);
-  font-size: 0.875rem;
-}
-
-.collections-dropdown .dropdown-list p a:hover {
-  color: #000; /* Pure black on hover */
-  background: rgba(0, 0, 0, 0.05); /* Light gray background */
-  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .dropdown-item {
+  width: 100%;
   position: relative;
 }
 
-.dropdown-item:hover .sub-dropdown,
-.sub-dropdown:hover {
-  display: block;
-  transform: translateX(0);
-}
-
-.dropdown-section .dropdown-list .dropdown-item a {
-  display: block;
-  padding: var(--dropdown-link-padding);
-  margin: 0;
-  color: var(--color-text-secondary);
+.dropdown-item > a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.5rem;
+  color: var(--color-text-primary);
   text-decoration: none;
-  transition: color var(--transition-fast);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  width: 100%;
+  font-weight: 500;
 }
 
-.dropdown-section .dropdown-list .dropdown-item a:hover {
-  color: var(--color-accent);
+.dropdown-item > a:hover {
+  background-color: var(--color-bg-section-alt); /* Deeper tan on hover */
+  color: var(--color-primary);
+  padding-left: 1.8rem; /* Subtle shift on hover */
 }
 
+.dropdown-item .arrow {
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--color-text-secondary);
+  opacity: 0.5;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-item:hover .arrow,
+.dropdown-item.active .arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+.dropdown-item.active .arrow {
+  transform: rotate(90deg); /* Rotate arrow when active */
+}
+
+/* Sub-dropdown (Flyout) - Opens to the LEFT */
 .sub-dropdown {
   display: none;
   position: absolute;
-  top: 0%;
-  left: -100%;
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: var(--shadow-md);
-  border-radius: var(--radius-md);
+  top: -10px; /* Align slightly higher */
+  right: 100%; /* Position to the left */
+  left: auto;
+  margin-right: 10px; /* Gap */
+  background: var(--color-bg-card); /* Warm beige background */
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(107, 68, 35, 0.15); /* Warm brown shadow */
+  border-radius: var(--radius-sm);
   z-index: 1000;
-  min-width: 160px;
-  padding: 0.7rem;
-  border: 1px solid var(--color-border-light);
-  transform: translateX(-10px);
-  transition: transform var(--transition-slow) ease;
-  text-align: left;
+  min-width: 220px;
+  padding: 0.8rem 0;
+  border: 2px solid var(--color-border); /* Warm tan border */
+  opacity: 0;
+  transform: translateX(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.sub-dropdown p {
-  margin: var(--sub-dropdown-margin);
+/* Invisible bridge for sub-dropdown */
+.sub-dropdown::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -15px;
+  width: 20px;
+  height: 100%;
+  background: transparent;
+}
+
+.sub-dropdown.visible {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .sub-dropdown a {
+  display: block;
+  padding: 0.7rem 1.5rem;
   color: var(--color-text-secondary);
   text-decoration: none;
-  padding: var(--dropdown-link-padding);
-  display: block;
-  transition: color var(--transition-fast);
-  font-size: var(--sub-dropdown-font-size);
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
 .sub-dropdown a:hover {
-  color: var(--color-accent);
+  color: var(--color-primary);
+  background-color: var(--color-bg-section-alt); /* Deeper tan on hover */
+  padding-left: 1.8rem;
 }
 
-.dropdown-section a,
+/* Services Dropdown (if used elsewhere) */
 .services-dropdown a {
   color: var(--color-text-secondary);
   text-decoration: none;
@@ -369,17 +381,6 @@
   font-size: var(--dropdown-font-size);
 }
 
-.dropdown-section a:hover,
 .services-dropdown a:hover {
   color: var(--color-accent);
-}
-
-.services-dropdown .dropdown-list {
-  padding: 0;
-  margin: 0;
-  text-align: left;
-}
-
-.services-dropdown .dropdown-list p {
-  margin: 0.1rem 0.1rem;
 }

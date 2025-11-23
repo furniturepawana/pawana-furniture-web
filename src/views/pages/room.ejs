@@ -35,61 +35,6 @@
 </section>
 <% } %>
 
-<!-- Individual Items in This Room -->
-<% if (items && items.length > 0) { %>
-<section class="room-items-section">
-  <div class="room-items-container">
-    <h2>Individual <%= room.name %> Furniture</h2>
+<img src="https://res.cloudinary.com/dwa2d4onb/image/upload/v1763917023/pf_logo_1_xw8ass.png" height="200px">
 
-    <!-- Style Filter -->
-    <div class="room-filter-tabs">
-      <button class="filter-tab active" data-style="all">All Styles</button>
-      <button class="filter-tab" data-style="Royal">Royal</button>
-      <button class="filter-tab" data-style="Traditional">Traditional</button>
-      <button class="filter-tab" data-style="Modern">Modern</button>
-    </div>
 
-    <div class="product-grid">
-      <% items.forEach(item => { %>
-        <a
-          href="/item/<%= item.slug %>"
-          class="product-card room-item-card"
-          data-style="<%= item.style %>"
-        >
-          <img
-            src="<%= item.images && item.images.length > 0 ? item.images[0].url : '/images/placeholder.jpg' %>"
-            alt="<%= item.name %>"
-          />
-          <h3><%= item.name %></h3>
-          <div class="product-card-meta">
-            <span class="item-style-badge <%= item.style.toLowerCase() %>"><%= item.style %></span>
-            <p><%= item.type %> · <%= item.room %></p>
-          </div>
-        </a>
-      <% }); %>
-    </div>
-  </div>
-</section>
-<% } %>
-
-<script>
-// Style filter functionality
-document.querySelectorAll('.filter-tab').forEach(tab => {
-  tab.addEventListener('click', function() {
-    const selectedStyle = this.dataset.style;
-
-    // Update active tab
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-    this.classList.add('active');
-
-    // Filter items
-    document.querySelectorAll('.room-item-card').forEach(card => {
-      if (selectedStyle === 'all' || card.dataset.style === selectedStyle) {
-        card.style.display = 'block';
-      } else {
-        card.style.display = 'none';
-      }
-    });
-  });
-});
-</script>
