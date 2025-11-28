@@ -100,6 +100,7 @@
               <span class="set-style-badge <%= set.style.toLowerCase() %>"><%= set.style %></span>
               <p><%= set.room %> · <%= set.items ? set.items.length : 0 %> pieces</p>
             </div>
+            <p class="model-number"><strong>Model:</strong> <%= set.code %></p>
           </a>
         <% }); %>
       </div>
@@ -120,6 +121,7 @@
               <span class="item-style-badge <%= item.style.toLowerCase() %>"><%= item.style %></span>
               <p><%= item.type %> · <%= item.room %></p>
             </div>
+            <p class="model-number"><strong>Model:</strong> <%= item.code %></p>
           </a>
         <% }); %>
       </div>

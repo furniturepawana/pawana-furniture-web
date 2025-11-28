@@ -316,6 +316,7 @@
 .related-sets-container {
   max-width: 1400px;
   margin: 0 auto;
+  margin-top: 4rem;
 }
 
 .related-sets-container h2 {
