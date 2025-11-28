@@ -159,8 +159,8 @@
 }
 
 .btn-primary {
-  background: white;
-  color: var(--color-primary);
+    background: #6b4d35;
+    color: #fff;
 }
 
 .btn-primary:hover {

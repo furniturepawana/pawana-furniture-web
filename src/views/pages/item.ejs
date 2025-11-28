@@ -40,55 +40,16 @@
       <!-- Right: Info -->
       <div class="item-info">
         <div class="item-header">
-          <div>
-            <h1 class="item-title" id="itemTitle"><%= item.name %></h1>
-            <div class="item-meta">
-              <span class="item-room"><%= item.room %></span>
-              <span class="item-type" id="itemType"><%= item.type %></span>
-            </div>
+          <h1 class="item-title" id="itemTitle"><%= item.name %></h1>
+          <div class="item-meta">
+            <span class="item-room"><%= item.room %></span>
+            <span class="item-type" id="itemType"><%= item.type %></span>
           </div>
           <span class="item-style-badge <%= item.style.toLowerCase() %>" id="itemStyleBadge"><%= item.style %></span>
         </div>
 
         <% if (item.description) { %>
         <p class="item-description" id="itemDescription"><%= item.description %></p>
-        <% } %>
-
-        <!-- Style Toggle - Switches Dynamically -->
-        <% if (styleVariants && styleVariants.length > 0) { %>
-        <div class="style-toggle-section">
-          <h4>Available Styles</h4>
-          <div class="style-toggle-buttons">
-            <button
-              class="style-toggle-btn active"
-              data-item='<%= JSON.stringify({
-                name: item.name,
-                slug: item.slug,
-                style: item.style,
-                type: item.type,
-                description: item.description || "",
-                images: item.images
-              }) %>'
-            >
-              <%= item.style %>
-            </button>
-            <% styleVariants.forEach(variant => { %>
-              <button
-                class="style-toggle-btn"
-                data-item='<%= JSON.stringify({
-                  name: variant.name,
-                  slug: variant.slug,
-                  style: variant.style,
-                  type: variant.type,
-                  description: variant.description || "",
-                  images: variant.images
-                }) %>'
-              >
-                <%= variant.style %>
-              </button>
-            <% }); %>
-          </div>
-        </div>
         <% } %>
 
         <!-- Enquiry Button -->

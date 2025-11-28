@@ -40,12 +40,9 @@
       <!-- Right: Info -->
       <div class="set-info">
         <div class="set-header">
-          <div>
-            <h1 class="set-title" id="setTitle"><%= set.name %></h1>
-            <div class="set-meta">
-              <span class="set-room"><%= set.room %></span>
-              <span class="set-items-count" id="setItemsCount"><%= set.items ? set.items.length : 0 %> Pieces</span>
-            </div>
+          <h1 class="set-title" id="setTitle"><%= set.name %></h1>
+          <div class="set-meta">
+            <span class="set-room"><%= set.room %></span>
           </div>
           <span class="set-style-badge <%= set.style.toLowerCase() %>" id="setStyleBadge"><%= set.style %></span>
         </div>
@@ -54,78 +51,13 @@
         <p class="set-description" id="setDescription"><%= set.description %></p>
         <% } %>
 
-        <!-- Style Toggle - Switches Dynamically -->
-        <% if (styleVariants && styleVariants.length > 0) { %>
-        <div class="style-toggle-section">
-          <h4>Available Styles</h4>
-          <div class="style-toggle-buttons">
-            <button
-              class="style-toggle-btn active"
-              data-set='<%= JSON.stringify({
-                name: set.name,
-                slug: set.slug,
-                style: set.style,
-                description: set.description || "",
-                images: set.images,
-                items: set.items
-              }) %>'
-            >
-              <%= set.style %>
-            </button>
-            <% styleVariants.forEach(variant => { %>
-              <button
-                class="style-toggle-btn"
-                data-set='<%= JSON.stringify({
-                  name: variant.name,
-                  slug: variant.slug,
-                  style: variant.style,
-                  description: variant.description || "",
-                  images: variant.images,
-                  items: variant.items
-                }) %>'
-              >
-                <%= variant.style %>
-              </button>
-            <% }); %>
-          </div>
-        </div>
-        <% } %>
-
         <!-- Enquiry Button -->
         <button class="btn-primary enquiry-btn" onclick="openEnquiryForm()">
           Get an Enquiry
         </button>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- Individual Items in Set -->
-<section class="set-items-section" id="setItemsSection">
-  <div class="set-items-container">
-    <h2>Individual Furniture in This Set</h2>
-    <p class="section-subtitle">Each piece can also be purchased separately</p>
-
-    <div class="set-items-grid" id="setItemsGrid">
-      <% if (set.items && set.items.length > 0) { %>
-        <% set.items.forEach(item => { %>
-          <a href="/item/<%= item.slug %>" class="set-item-card">
-            <div class="set-item-image">
-              <img
-                src="<%= item.images && item.images.length > 0 ? item.images[0].url : '/images/placeholder.jpg' %>"
-                alt="<%= item.name %>"
-              />
-            </div>
-            <div class="set-item-info">
-              <h3><%= item.name %></h3>
-              <p class="set-item-type"><%= item.type %></p>
-            </div>
-          </a>
-        <% }); %>
-      <% } %>
-    </div>
-  </div>
-</section>
 
 <!-- Related Sets Section -->
 <% if (relatedSets && relatedSets.length > 0) { %>

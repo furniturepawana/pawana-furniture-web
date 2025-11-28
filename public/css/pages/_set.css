@@ -89,10 +89,9 @@
 
 .set-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-4);
-  margin-bottom: var(--space-5);
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
 }
 
 .set-title {
@@ -123,12 +122,14 @@
 
 .set-style-badge {
   font-size: var(--text-xs);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-4);
   font-weight: var(--font-semibold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: white;
   white-space: nowrap;
+  align-self: flex-start;
+  margin-top: var(--space-2);
 }
 
 .set-style-badge.royal {
@@ -202,9 +203,21 @@
 
 /* Enquiry Button - Compact */
 .enquiry-btn {
-  width: 100%;
-  padding: var(--space-3) var(--space-5);
+  width: auto;
+  max-width: 250px;
+  padding: var(--space-3) var(--space-6);
   font-size: var(--text-sm);
+  background: linear-gradient(135deg, #5a3e2b, #7a5a42);
+  border: none;
+  color: white;
+  font-weight: var(--font-semibold);
+  transition: all var(--transition-base);
+}
+
+.enquiry-btn:hover {
+  background: linear-gradient(135deg, #6b4d35, #8b6a52);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 /* Individual Items in Set Section */

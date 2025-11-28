@@ -1,5 +1,188 @@
-Hero Section (The "Wow" moment)
-Signature Collection (The "Best of the Best")
-Explore by Category (The "Styled Room" portals)
-The Curated Catalogue Carousel (Your new section)
-The Art of the Craft (The "Why")
+# Pawana Furniture - Project Documentation
+
+## Overview
+This is a Node.js web application built with Express.js that serves as an online furniture catalog. The application displays furniture items organized by rooms, types, and styles, allowing users to browse and explore the collection.
+
+## Project Structure
+
+```
+pawana-furniture/
+├── src/
+│   ├── models/
+│   │   ├── FurnitureItem.js    # Schema for individual furniture items
+│   │   ├── FurnitureSet.js     # Schema for furniture collections/sets
+│   │   └── Room.js            # Schema for room categories
+│   ├── routes/
+│   │   ├── about.js           # Handles /about route
+│   │   ├── catalogue.js       # Handles /catalogue route with filtering
+│   │   ├── contact.js         # Handles /contact route
+│   │   ├── home.js            # Handles main / route
+│   │   ├── item.js            # Handles /item/:slug route
+│   │   ├── room.js            # Handles /room/:slug route
+│   │   ├── services.js        # Handles /services route
+│   │   └── set.js             # Handles /set/:slug route
+│   └── views/
+│       ├── partials/          # Reusable UI components
+│       │   ├── footer.ejs     # Site footer
+│       │   ├── head.ejs       # Document head section
+│       │   ├── header.ejs     # Site header with navigation
+│       │   └── nav.ejs        # Navigation menu
+│       └── pages/             # Page templates
+│           ├── about.ejs      # About page content
+│           ├── catalogue.ejs  # Catalogue page with filtering
+│           ├── contact.ejs    # Contact page with form
+│           ├── home.ejs       # Homepage with featured items
+│           ├── item.ejs       # Individual furniture item page
+│           ├── room.ejs       # Room category page
+│           ├── services.ejs   # Services page content
+│           └── set.ejs        # Furniture set detail page
+├── public/                    # Static assets
+│   ├── css/                   # Stylesheets
+│   ├── js/                    # Client-side JavaScript
+│   └── media/                 # Images and other media
+├── .env                       # Environment variables
+├── app.js                     # Main application entry point
+└── package.json               # Project dependencies and scripts
+```
+
+## File Descriptions
+
+### Main Application Files
+
+#### app.js
+- Entry point of the application
+- Sets up Express.js server with middleware
+- Configures EJS templating engine
+- Connects to MongoDB database
+- Initializes routes and starts server on configured port
+
+#### .env
+- Stores environment-specific configuration
+- Contains database connection string and port number
+- Keeps sensitive information secure
+
+### Data Models (src/models/)
+
+#### FurnitureItem.js
+- Defines schema for individual furniture pieces
+- Includes properties: room, type, style, name, images, price, description, dimensions
+- Uses slugs for URL-friendly identifiers
+- Automatically generates slugs from names
+
+#### FurnitureSet.js
+- Defines schema for furniture collections
+- References multiple FurnitureItem documents
+- Includes properties: room, style, name, images, description, price
+- Also uses slugs for identification
+
+#### Room.js
+- Defines schema for room categories
+- Includes properties: name, description, image
+- Used to categorize furniture items and sets
+
+### Routes (src/routes/)
+
+#### home.js
+- Handles GET requests to /
+- Renders homepage with featured items and sets
+- Displays carousels and categorized furniture
+
+#### item.js
+- Handles GET requests to /item/:slug
+- Displays detailed information for a specific furniture item
+- Shows style variants and related items
+
+#### set.js
+- Handles GET requests to /set/:slug
+- Displays detailed information for a specific furniture set
+- Shows included items and related sets
+
+#### room.js
+- Handles GET requests to /room/:slug
+- Displays all furniture for a specific room category
+
+#### catalogue.js
+- Handles GET requests to /catalogue
+- Provides filtering capabilities by room, type, and style
+- Displays all items and sets in a grid layout
+
+#### about.js, services.js, contact.js
+- Handle respective static pages
+- Render simple content pages
+
+### Views (src/views/)
+
+#### layout.ejs
+- Base template for all pages
+- Includes common HTML structure, header, footer, and navigation
+- Links to CSS and JavaScript assets
+
+#### Page Templates (src/views/pages/)
+- Individual EJS templates for each page
+- Use data passed from routes to render dynamic content
+- Include client-side JavaScript for interactivity
+
+### Static Assets (public/)
+
+#### CSS Files
+- Contain styling for the entire website
+- Responsive design for different screen sizes
+
+#### JavaScript Files
+- Provide client-side interactivity
+- Handle filtering, image galleries, and dynamic content updates
+
+#### Media Files
+- Images for furniture items, sets, and site graphics
+
+## How Everything Connects
+
+1. **Server Startup**: [app.js](file://c:\Users\tripa\Documents\pawana-furniture\app.js) initializes the Express server, connects to MongoDB, and sets up routes
+2. **Route Handling**: When a user visits a URL, the corresponding route file processes the request
+3. **Database Queries**: Routes query MongoDB using Mongoose models to retrieve data
+4. **Template Rendering**: Retrieved data is passed to EJS templates for rendering
+5. **Response Delivery**: Rendered HTML is sent to the user's browser
+6. **Client Interaction**: Browser executes JavaScript for enhanced user experience
+
+## Workflow for Common Changes
+
+### Adding a New Furniture Item
+1. Add new document to FurnitureItem collection in MongoDB
+2. Ensure required fields (room, type, style, name, images) are populated
+3. Slug will be automatically generated
+4. Item will immediately appear in relevant sections (catalogue, room pages)
+
+### Adding a New Room Category
+1. Add new document to Room collection in MongoDB
+2. Create new route handler if needed (though existing room route should handle it)
+3. Room will appear in navigation menus automatically (handled by navData middleware)
+
+### Modifying Page Content
+1. Edit corresponding EJS file in src/views/pages/
+2. Changes take effect immediately after saving (with nodemon)
+3. For layout changes, modify src/views/layout.ejs
+
+### Adding New Page
+1. Create new EJS template in src/views/pages/
+2. Create new route file in src/routes/
+3. Register route in app.js
+4. Add link to navigation if needed
+
+### Updating Styling
+1. Modify CSS files in public/css/
+2. Changes take effect immediately in browser (may need refresh)
+
+### Adding Client-Side Functionality
+1. Add new JavaScript file in public/js/
+2. Reference script in layout.ejs or specific page template
+3. Implement functionality in the new JS file
+
+## Development Notes
+
+- Uses EJS templating for server-side rendering
+- Implements RESTful routing patterns
+- Follows MVC-like architecture with models, routes, and views
+- Responsive design works on desktop and mobile devices
+- Database-driven content allows easy updates without code changes
+- Client-side JavaScript enhances user experience without compromising functionality
+```
