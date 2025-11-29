@@ -1,0 +1,145 @@
+<!-- Room-Type Page (e.g., Living Room Chairs) -->
+
+
+<!-- Room Hero Section -->
+<section class="room-hero">
+  <div class="room-hero-content">
+    <h1><%= room.name %></h1>
+    <% if (room.description) { %>
+    <p><%= room.description %></p>
+    <% } else { %>
+    <p>Explore our curated collections for your <%= room.name.toLowerCase() %></p>
+    <% } %>
+  </div>
+</section>
+
+
+
+
+
+<!-- Items Grid -->
+<% if (items && items.length > 0) { %>
+<%
+  // Extract unique styles for the filter dropdown
+  const styles = [...new Set(items.map(item => item.style))].sort();
+%>
+<section class="room-type-items-section">
+  <div class="room-type-container">
+    <div class="room-type-header">
+      <div class="room-type-header-left">
+        <h2><%= type %> Collection</h2>
+        <p class="results-count"><%= items.length %> <%= items.length === 1 ? 'item' : 'items' %> found</p>
+      </div>
+
+      <div class="room-type-filters">
+        <div class="filter-dropdown">
+          <select id="style-filter" onchange="filterItems(this.value)">
+            <option value="">All Styles</option>
+            <% styles.forEach(style => { %>
+              <option value="<%= style %>"><%= style %></option>
+            <% }); %>
+          </select>
+          <label for="style-filter">Style:</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalogue-items-grid">
+      <% items.forEach(item => { %>
+        <a href="/item/<%= item.slug %>" class="item-card" data-style="<%= item.style %>">
+          <img
+            src="<%= item.images && item.images.length > 0 ? item.images[0].url : '/images/placeholder.jpg' %>"
+            alt="<%= item.name %>"
+          />
+          <h3><%= item.name %></h3>
+          <div class="item-card-meta">
+            <span class="item-style-badge <%= item.style.toLowerCase() %>"><%= item.style %></span>
+            <p><%= item.room %> · <%= item.type %></p>
+          </div>
+          <% if (item.code) { %>
+          <p class="model-number"><strong>Model:</strong> <%= item.code %></p>
+          <% } %>
+        </a>
+      <% }); %>
+    </div>
+
+    <!-- No Results Message (Hidden by default) -->
+    <div class="no-results-filter" style="display: none; text-align: center; padding: 3rem 0;">
+      <h3>No items found</h3>
+      <p>Try selecting a different style.</p>
+      <button class="btn-primary" onclick="resetFilter()" style="margin-top: 1rem;">Show All Styles</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  function filterItems(selectedStyle) {
+    const items = document.querySelectorAll('.item-card');
+    const resultsCount = document.querySelector('.results-count');
+    const noResultsMsg = document.querySelector('.no-results-filter');
+    const itemsGrid = document.querySelector('.catalogue-items-grid');
+
+    let visibleCount = 0;
+
+    items.forEach(item => {
+      const itemStyle = item.getAttribute('data-style');
+      if (selectedStyle === '' || itemStyle === selectedStyle) {
+        item.style.display = 'block';
+        visibleCount++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    // Update count text
+    resultsCount.textContent = `${visibleCount} ${visibleCount === 1 ? 'item' : 'items'} found`;
+
+    // Show/hide no results message
+    if (visibleCount === 0) {
+      itemsGrid.style.display = 'none';
+      noResultsMsg.style.display = 'block';
+    } else {
+      itemsGrid.style.display = 'grid';
+      noResultsMsg.style.display = 'none';
+    }
+  }
+
+  function resetFilter() {
+    const dropdown = document.getElementById('style-filter');
+    dropdown.value = '';
+    filterItems('');
+  }
+</script>
+<% } else { %>
+<!-- No Items Found -->
+<section class="room-type-items-section">
+  <div class="room-type-container">
+    <div class="no-results">
+      <h3>No <%= type %> Found</h3>
+      <p>We don't have any <%= type.toLowerCase() %> in our <%= room.name %> collection yet.</p>
+      <a href="/room/<%= room.slug %>" class="btn-primary">Browse All <%= room.name %> Furniture</a>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- Explore Other Types in This Room -->
+<% if (room.types && room.types.length > 0) { %>
+<section class="explore-types-section">
+  <div class="room-type-container">
+    <h2>Explore More <%= room.name %> Furniture</h2>
+    <div class="types-grid">
+      <% room.types.filter(t => t.toLowerCase() !== typeSlug.toLowerCase()).forEach(roomType => { %>
+        <a href="/room/<%= room.slug %>/<%= roomType.toLowerCase() %>" class="type-card">
+          <h3><%= roomType %></h3>
+          <span class="arrow">→</span>
+        </a>
+      <% }); %>
+      <a href="/room/<%= room.slug %>" class="type-card featured">
+        <h3>View All <%= room.name %></h3>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+<% } %>

@@ -98,7 +98,7 @@
             <h3><%= set.name %></h3>
             <div class="set-card-meta">
               <span class="set-style-badge <%= set.style.toLowerCase() %>"><%= set.style %></span>
-              <p><%= set.room %> · <%= set.items ? set.items.length : 0 %> pieces</p>
+              <p><%= set.room %></p>
             </div>
             <p class="model-number"><strong>Model:</strong> <%= set.code %></p>
           </a>
@@ -204,21 +204,22 @@ function applyFilters() {
   }
 
   // Update results count
-  const resultsCount = document.querySelector('.results-count');
-  resultsCount.textContent = `Showing ${visibleCount} results`;
+  document.querySelector('.results-count').textContent = `Showing ${visibleCount} results`;
 
   // Show/hide no results message
   noResults.style.display = visibleCount === 0 ? 'block' : 'none';
 }
 
 function clearFilters() {
-  document.getElementById('view-filter').value = 'all';
   document.getElementById('room-filter').value = '';
   document.getElementById('type-filter').value = '';
   document.getElementById('style-filter').value = '';
+  document.getElementById('view-filter').value = 'all';
   applyFilters();
 }
 
-// Initialize on page load
-applyFilters();
+// Apply filters on page load to respect query parameters
+document.addEventListener('DOMContentLoaded', function() {
+  applyFilters();
+});
 </script>

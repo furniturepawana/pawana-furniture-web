@@ -60,19 +60,53 @@
 
 
 <!-- Related Sets Section -->
-<% if (relatedSets && relatedSets.length > 0) { %>
-<section class="related-sets-section">
-  <div class="related-sets-container">
-    <h2>Similar Collections</h2>
-    <div class="sets-grid">
-      <% relatedSets.forEach(relatedSet => { %>
-        <a href="/set/<%= relatedSet.slug %>" class="set-card">
+<!-- Similar Sets Carousel -->
+<% if (similarSets && similarSets.length > 0) { %>
+<section class="carousel-section">
+  <div class="carousel-header set-carousel-header">
+    <h2>Similar <%= set.style %> Sets for <%= set.room %></h2>
+    <div class="carousel-arrows-top">
+      <button class="carousel-arrow carousel-prev" aria-label="Previous set">‹</button>
+      <button class="carousel-arrow carousel-next" aria-label="Next set">›</button>
+    </div>
+  </div>
+
+  <div class="carousel-wrapper set-carousel-wrapper">
+    <div class="carousel-container">
+      <div class="carousel-track" id="carousel-track">
+        <% similarSets.forEach(similarSet => { %>
+          <div class="carousel-item active-category" data-category="items">
+            <a href="/set/<%= similarSet.slug %>">
+              <img src="<%= similarSet.images && similarSet.images.length > 0 ? similarSet.images[0].url : '/images/placeholder.jpg' %>" alt="<%= similarSet.name %>">
+              <h4><%= similarSet.name %></h4>
+              <p><%= similarSet.style %> · <%= similarSet.room %></p>
+            </a>
+          </div>
+        <% }); %>
+      </div>
+      <div class="carousel-scrollbar"><div class="carousel-thumb"></div></div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- You May Also Like Section (Mixed Styles) -->
+<% if (youMayAlsoLikeSets && youMayAlsoLikeSets.length > 0) { %>
+<section class="related-items-section">
+  <div class="related-items-container">
+    <h2>You May Also Like</h2>
+    <div class="product-grid">
+      <% youMayAlsoLikeSets.forEach(otherSet => { %>
+        <a href="/set/<%= otherSet.slug %>" class="product-card">
           <img
-            src="<%= relatedSet.images && relatedSet.images.length > 0 ? relatedSet.images[0].url : '/images/placeholder.jpg' %>"
-            alt="<%= relatedSet.name %>"
+            src="<%= otherSet.images && otherSet.images.length > 0 ? otherSet.images[0].url : '/images/placeholder.jpg' %>"
+            alt="<%= otherSet.name %>"
           />
-          <h3><%= relatedSet.name %></h3>
-          <p><%= relatedSet.style %> Style</p>
+          <h3><%= otherSet.name %></h3>
+          <div class="product-card-meta">
+            <span class="item-style-badge <%= otherSet.style.toLowerCase() %>"><%= otherSet.style %></span>
+            <p><%= otherSet.room %></p>
+          </div>
         </a>
       <% }); %>
     </div>

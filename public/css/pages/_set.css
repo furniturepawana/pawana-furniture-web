@@ -307,19 +307,19 @@
   letter-spacing: 0.05em;
 }
 
-/* Related Sets Section */
-.related-sets-section {
-  padding: var(--space-8);
+/* Related Items Section (You May Also Like) */
+.related-items-section {
+  padding: var(--section-padding-desktop);
   background-color: var(--color-bg-body);
 }
 
-.related-sets-container {
-  max-width: 1400px;
+.related-items-container {
+  max-width: 1800px; /* Wider container */
+  width: 95%;
   margin: 0 auto;
-  margin-top: 4rem;
 }
 
-.related-sets-container h2 {
+.related-items-container h2 {
   font-family: var(--font-heading);
   font-size: var(--text-3xl);
   color: var(--color-text-primary);
@@ -327,6 +327,56 @@
   margin-bottom: var(--space-10);
   font-weight: var(--font-semibold);
   line-height: var(--leading-tight);
+}
+
+/* Product Grid - 3 per row */
+.related-items-section .product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Responsive grid */
+  gap: var(--space-8);
+  width: 100%;
+}
+
+/* Carousel Overrides for Set Page */
+.set-carousel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1800px; /* Wider header */
+  width: 95%;
+  margin: 0 auto 2rem auto;
+}
+
+.set-carousel-header h2 {
+  margin-bottom: 0;
+  text-align: left;
+  font-size: var(--text-3xl);
+}
+
+.carousel-arrows-top {
+  display: flex;
+  gap: 1rem;
+}
+
+.set-carousel-wrapper {
+  max-width: 1800px; /* Wider wrapper */
+  width: 95%;
+  margin: 0 auto;
+}
+
+/* Override carousel item size for Set Page to be 4:3 */
+.set-carousel-wrapper .carousel-item {
+  flex: 0 0 440px; /* Wider items */
+}
+
+.set-carousel-wrapper .carousel-item img {
+  height: 330px; /* 4:3 Aspect Ratio (440x330) */
+}
+
+/* Ensure Carousel Section Background */
+.carousel-section {
+  background-color: var(--color-bg-section-alt) !important; /* Force background */
+  padding: var(--section-padding-y) 0; /* Add vertical padding */
 }
 
 /* Mobile Responsive */
@@ -347,12 +397,18 @@
   .set-items-grid {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
+
+  /* Similar Items - 2 per row on tablet */
+  .related-items-section .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
 }
 
 @media (max-width: 767px) {
   .set-detail-section,
   .set-items-section,
-  .related-sets-section {
+  .related-items-section {
     padding: var(--section-padding-mobile);
   }
 
@@ -375,5 +431,11 @@
 
   .set-items-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Similar Items - 1 per row on mobile */
+  .related-items-section .product-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
   }
 }

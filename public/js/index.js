@@ -75,8 +75,17 @@ function updateCarousel() {
   const itemWidth = firstItem ? firstItem.offsetWidth : 280;
   const gap = 32; // Should match CSS gap
 
+  // Calculate how many items fit in the visible area
+  const containerWidth = document.querySelector('.carousel-container').offsetWidth;
+  const itemsToShow = Math.max(1, Math.floor(containerWidth / (itemWidth + gap)));
+
   const offset = currentIndex * (itemWidth + gap);
   const maxIndex = Math.max(0, activeItems.length - itemsToShow);
+
+  // Ensure currentIndex doesn't exceed maxIndex (e.g. on resize)
+  if (currentIndex > maxIndex) {
+    currentIndex = maxIndex;
+  }
 
   // Apply transform
   carouselTrack.style.transform = `translateX(-${offset}px)`;
@@ -84,10 +93,17 @@ function updateCarousel() {
   // Update scrollbar
   if (carouselThumb) {
     if (maxIndex > 0) {
-      const thumbPosition = (currentIndex / maxIndex) * 60; // 60% is max width of thumb track? Adjust as needed
-      // Better logic: thumb width is relative to visible area
-      // For now, keep existing logic but ensure it doesn't break
-      carouselThumb.style.left = `${Math.min(thumbPosition, 100)}%`;
+      // Calculate thumb width based on visible ratio
+      const visibleRatio = itemsToShow / activeItems.length;
+      const thumbWidth = Math.max(10, visibleRatio * 100); // Min 10% width
+      carouselThumb.style.width = `${thumbWidth}%`;
+
+      // Calculate position
+      const scrollProgress = currentIndex / maxIndex;
+      const maxLeft = 100 - thumbWidth;
+      const thumbLeft = scrollProgress * maxLeft;
+
+      carouselThumb.style.left = `${thumbLeft}%`;
       carouselThumb.style.display = 'block';
     } else {
       carouselThumb.style.display = 'none';
@@ -107,7 +123,15 @@ function updateCarousel() {
 
 // Button navigation
 carouselNext?.addEventListener('click', () => {
+  // Recalculate maxIndex here as well to be safe
+  const firstItem = activeItems[0];
+  const itemWidth = firstItem ? firstItem.offsetWidth : 280;
+  const gap = 32;
+  const containerWidth = document.querySelector('.carousel-container').offsetWidth;
+  const itemsToShow = Math.max(1, Math.floor(containerWidth / (itemWidth + gap)));
+
   const maxIndex = Math.max(0, activeItems.length - itemsToShow);
+
   if (currentIndex < maxIndex) {
     currentIndex++;
     updateCarousel();

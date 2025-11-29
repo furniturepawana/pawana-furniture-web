@@ -4,14 +4,19 @@
 
 /* Hero Section - Much Smaller and Subtle */
 .room-hero {
-  padding: var(--space-8) var(--space-6) var(--space-6);
+  padding: var(--space-16) var(--space-6) var(--space-12);
   background-color: var(--color-bg-card);
   border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .room-hero-content {
   max-width: 1400px;
   margin: 0 auto;
+  /* Center the hero content */
+  text-align: center;
 }
 
 .room-hero-content h1 {
@@ -26,6 +31,8 @@
 .room-hero-content p {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
+  /* Center the paragraph and set max width */
+  margin: 0 auto;
   max-width: 600px;
   line-height: var(--leading-relaxed);
 }
@@ -64,76 +71,6 @@
   gap: var(--space-8);
 }
 
-.set-card {
-  background: transparent;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-  cursor: pointer;
-}
-
-.set-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.set-card img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  border-radius: var(--radius-sm);
-  transition: transform var(--transition-slower);
-}
-
-.set-card:hover img {
-  transform: scale(1.02);
-}
-
-.set-card h3 {
-  font-family: var(--font-heading);
-  font-size: var(--text-xl);
-  color: var(--color-text-primary);
-  margin: var(--space-4) 0 var(--space-2) 0;
-  font-weight: var(--font-semibold);
-  line-height: var(--leading-tight);
-}
-
-.set-card-meta {
-  display: flex;
-  gap: var(--space-2);
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.set-style-badge {
-  font-size: var(--text-xs);
-  padding: var(--space-1) var(--space-3);
-  font-weight: var(--font-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: white;
-}
-
-.set-style-badge.royal {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-}
-
-.set-style-badge.traditional {
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-warm));
-}
-
-.set-style-badge.modern {
-  background: linear-gradient(135deg, var(--color-text-primary), var(--color-text-secondary));
-}
-
-.set-pieces {
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
 
 
 
@@ -147,7 +84,7 @@
 
 @media (max-width: 767px) {
   .room-hero {
-    padding: var(--space-8) var(--space-4) var(--space-6);
+    padding: var(--space-10) var(--space-4) var(--space-6);
   }
 
   .room-hero-content h1 {

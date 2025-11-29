@@ -1,0 +1,241 @@
+/* ==============================
+   Room-Type Page (e.g., Living Room Chairs)
+   ============================== */
+
+/* Breadcrumb - Plain Text */
+.room-type-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.breadcrumb {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-4) 0;
+  /* Removed background color */
+  background-color: transparent;
+}
+
+.breadcrumb a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.breadcrumb a:hover {
+  color: var(--color-accent);
+}
+.breadcrumb span {
+  color: var(--color-text-primary);
+  font-weight: var(--font-semibold);
+}
+
+/* Hero Section - Full Width Dark Image */
+.room-hero {
+  padding: var(--space-24) var(--space-6);
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/living-room-hero.avif') no-repeat center center/cover;
+  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+}
+
+.room-hero-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.room-hero-content h1 {
+  font-family: var(--font-heading);
+  font-size: var(--text-4xl);
+  color: #ffffff;
+  margin-bottom: var(--space-3);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.room-hero-content p {
+  font-size: var(--text-lg);
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 auto;
+  max-width: 600px;
+  line-height: var(--leading-relaxed);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Items Section */
+.room-type-items-section {
+  padding: var(--space-10) var(--space-6);
+  background-color: var(--color-bg-body);
+}
+
+.room-type-header {
+  margin-bottom: var(--space-8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.room-type-header-left {
+  text-align: left;
+}
+
+.room-type-header h2 {
+  font-family: var(--font-heading);
+  font-size: var(--text-3xl);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+}
+
+.room-type-header .results-count {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.room-type-filters {
+  margin-bottom: 0;
+}
+
+/* Specific override for room type filter to be side-by-side */
+.room-type-filters .filter-dropdown {
+  flex-direction: row-reverse; /* Label on left, Select on right */
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.room-type-filters .filter-dropdown label {
+  margin-bottom: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+}
+
+/* Explore Other Types Section */
+.explore-types-section {
+  padding: var(--space-10) var(--space-6);
+  background-color: var(--color-bg-section-alt);
+}
+
+.explore-types-section h2 {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-bottom: var(--space-8);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+}
+
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.type-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.type-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.type-card h3 {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  margin: 0;
+  font-weight: var(--font-semibold);
+}
+
+.type-card .arrow {
+  font-size: var(--text-xl);
+  color: var(--color-accent);
+  transition: transform var(--transition-base);
+}
+
+.type-card:hover .arrow {
+  transform: translateX(5px);
+}
+
+.type-card.featured {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  border-color: transparent;
+}
+
+.type-card.featured h3 {
+  color: white;
+}
+
+.type-card.featured .arrow {
+  color: white;
+}
+
+/* Mobile Responsive */
+@media (max-width: 767px) {
+  .room-type-container {
+    padding: 0 var(--space-4);
+  }
+
+  .breadcrumb {
+    font-size: 0.65rem;
+  }
+
+  .room-type-items-section,
+  .explore-types-section {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .room-hero {
+    padding: var(--space-8) var(--space-4) var(--space-6);
+  }
+
+  .room-hero-content h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .room-hero-content p {
+    font-size: var(--text-xs);
+  }
+
+  .room-type-header h2 {
+    font-size: var(--text-2xl);
+  }
+
+  .explore-types-section h2 {
+    font-size: var(--text-xl);
+  }
+
+  .types-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .types-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

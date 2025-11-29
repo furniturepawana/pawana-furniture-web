@@ -1,27 +1,24 @@
 /* ==============================
-   Item Card Component
-   Standardized card for individual furniture items
-   Image Aspect Ratio: 1/1 (Square)
+   Set Card Component
+   Standardized card for furniture sets
+   Image Aspect Ratio: 4/3 (Landscape)
    ============================== */
 
-.item-card,
-.product-card {
+.set-card {
   display: block;
   text-decoration: none;
   color: inherit;
   transition: transform var(--transition-base);
 }
 
-.item-card:hover,
-.product-card:hover {
+.set-card:hover {
   transform: translateY(-2px);
 }
 
-/* Image - Square Aspect Ratio */
-.item-card img,
-.product-card img {
+/* Image - 4/3 Aspect Ratio */
+.set-card img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   display: block;
   background: var(--color-bg-card);
@@ -29,14 +26,12 @@
   margin-bottom: 1.5rem;
 }
 
-.item-card:hover img,
-.product-card:hover img {
+.set-card:hover img {
   transform: scale(1.05);
 }
 
-/* Item Title */
-.item-card h3,
-.product-card h3 {
+/* Set Title */
+.set-card h3 {
   font-family: var(--font-heading);
   font-size: 1.1rem;
   font-weight: var(--font-normal);
@@ -45,9 +40,8 @@
   line-height: var(--leading-tight);
 }
 
-/* Item Card Meta */
-.item-card-meta,
-.product-card-meta {
+/* Set Card Meta */
+.set-card-meta {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -55,8 +49,7 @@
   flex-wrap: wrap;
 }
 
-.item-card-meta p,
-.product-card-meta p {
+.set-card-meta p {
   font-size: 0.8rem;
   color: var(--color-text-secondary);
   text-transform: uppercase;
@@ -65,23 +58,18 @@
   font-weight: var(--font-normal);
 }
 
-/* Model Number */
-.model-number {
-  display: block;
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-  color: var(--color-text-primary);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-
-.model-number strong {
-  font-weight: 700;
-  color: var(--color-text-primary);
+/* Set Pieces Count */
+.set-pieces {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  font-weight: var(--font-normal);
 }
 
 /* Style Badges - Solid Colors */
-.item-style-badge {
+.set-style-badge {
   display: inline-block;
   padding: 0.3rem 0.85rem;
   font-size: 0.65rem;
@@ -93,25 +81,24 @@
 }
 
 /* Royal - Deep Charcoal */
-.item-style-badge.royal {
+.set-style-badge.royal {
   background: #1a1a1a;
   color: #ffffff;
 }
 
 /* Traditional - Warm Brown */
-.item-style-badge.traditional {
+.set-style-badge.traditional {
   background: #8B7355;
   color: #ffffff;
 }
 
 /* Modern - Cool Gray */
-.item-style-badge.modern {
+.set-style-badge.modern {
   background: #5a5a5a;
   color: #ffffff;
 }
 
 /* Active State */
-.item-card:active,
-.product-card:active {
+.set-card:active {
   transform: translateY(0);
 }

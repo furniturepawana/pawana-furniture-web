@@ -38,9 +38,9 @@
                   <% if (room.types && room.types.length > 0) { %>
                     <div class="sub-dropdown">
                       <% room.types.forEach(type => { %>
-                        <a href="/catalogue?view=items&type=<%= type.toLowerCase() %>&room=<%= room.name %>"><%= type %></a>
+                        <a href="/room/<%= room.slug %>/<%= type.toLowerCase() %>"><%= type %></a>
                       <% }); %>
-                      <a href="/catalogue?view=items&room=<%= room.name %>" style="font-weight: 600; margin-top: 5px; border-top: 1px solid rgba(0,0,0,0.05);">View All <%= room.name %> Items</a>
+                      <a href="/room/<%= room.slug %>" style="font-weight: 600; margin-top: 5px; border-top: 1px solid rgba(0,0,0,0.05);">View All <%= room.name %></a>
                     </div>
                   <% } %>
                 </div>
@@ -50,23 +50,23 @@
               <div class="dropdown-item">
                 <a href="/room/living-room">Living Room <span class="arrow">›</span></a>
                 <div class="sub-dropdown">
-                  <a href="/catalogue?view=items&type=sofa&room=Living Room">Sofas</a>
-                  <a href="/catalogue?view=items&type=chair&room=Living Room">Chairs</a>
-                  <a href="/catalogue?view=items&type=table&room=Living Room">Tables</a>
+                  <a href="/room/living-room/sofa">Sofas</a>
+                  <a href="/room/living-room/chair">Chairs</a>
+                  <a href="/room/living-room/table">Tables</a>
                 </div>
               </div>
               <div class="dropdown-item">
                 <a href="/room/bedroom">Bedroom <span class="arrow">›</span></a>
                 <div class="sub-dropdown">
-                  <a href="/catalogue?view=items&type=bed&room=Bedroom">Beds</a>
-                  <a href="/catalogue?view=items&type=cabinet&room=Bedroom">Wardrobes</a>
+                  <a href="/room/bedroom/bed">Beds</a>
+                  <a href="/room/bedroom/cabinet">Wardrobes</a>
                 </div>
               </div>
               <div class="dropdown-item">
                 <a href="/room/dining-room">Dining Room <span class="arrow">›</span></a>
                 <div class="sub-dropdown">
-                  <a href="/catalogue?view=items&type=table&room=Dining Room">Dining Tables</a>
-                  <a href="/catalogue?view=items&type=chair&room=Dining Room">Dining Chairs</a>
+                  <a href="/room/dining-room/table">Dining Tables</a>
+                  <a href="/room/dining-room/chair">Dining Chairs</a>
                 </div>
               </div>
             <% } %>

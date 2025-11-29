@@ -13,22 +13,28 @@ router.get("/:slug", async (req, res) => {
       return res.status(404).send("Set not found");
     }
 
-    // Get style variants (same room, different styles)
-    const styleVariants = await FurnitureSet.find({
+    // Get similar sets (same room, same style) for the carousel
+    const similarSets = await FurnitureSet.find({
       room: set.room,
+      style: set.style,
       _id: { $ne: set._id },
     }).populate("items");
 
-    // Get related sets (different room)
-    const relatedSets = await FurnitureSet.find({
-      room: { $ne: set.room },
-    }).limit(3);
+    // Get "You may also like" sets (same room, mixed styles, excluding current set)
+    // We can exclude the similar sets if we want, but "mixed styles" usually implies a broader range.
+    // For now, let's just get everything else in the room to ensure we have enough content.
+    const youMayAlsoLikeSets = await FurnitureSet.find({
+      room: set.room,
+      _id: { $ne: set._id },
+      // Optional: Exclude similar sets if we want strictly different styles here
+      // _id: { $nin: [set._id, ...similarSets.map(s => s._id)] }
+    }).limit(6).populate("items");
 
     res.render("pages/set", {
       title: set.name,
       set,
-      styleVariants,
-      relatedSets,
+      similarSets,
+      youMayAlsoLikeSets,
     });
   } catch (error) {
     console.error("Error loading set page:", error);

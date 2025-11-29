@@ -15,6 +15,7 @@
 /* 3. Components */
 @import 'components/_buttons.css';
 @import 'components/_product-card.css';
+@import 'components/_set-card.css';
 @import 'components/_carousel.css';
 @import 'components/_animations.css';
 
@@ -23,6 +24,7 @@
 @import 'pages/_item.css';
 @import 'pages/_set.css';
 @import 'pages/_room.css';
+@import 'pages/_room-type.css';
 @import 'pages/_catalogue.css';
 @import 'pages/_about.css';
 @import 'pages/_services.css';
