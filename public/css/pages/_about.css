@@ -30,13 +30,26 @@
 /* Story Section */
 .about-story {
   padding: 5rem 0;
-  background: var(--color-bg-body);
+  background: var(--color-bg-section-alt);
 }
 
 .about-content {
   display: flex;
   gap: 3rem;
   align-items: center;
+}
+
+.about-image {
+  flex: 0 0 40%;
+}
+
+.about-image img {
+  width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.about-text {
+  flex: 1;
 }
 
 .about-text h2 {
@@ -74,17 +87,19 @@
 }
 
 .value-card {
-  background: white;
+  background: var(--color-bg-section-alt);
   padding: 2rem;
   border-radius: 8px;
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition-base), box-shadow var(--transition-base);
   text-align: center;
+  border: 1px solid var(--color-border);
 }
 
 .value-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+  border-color: var(--color-accent);
 }
 
 .value-icon {
@@ -108,7 +123,7 @@
 /* Process Section */
 .about-process {
   padding: 5rem 0;
-  background: var(--color-bg-body);
+  background: var(--color-bg-section-alt);
 }
 
 .about-process h2 {

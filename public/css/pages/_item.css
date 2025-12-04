@@ -120,6 +120,14 @@
   font-weight: var(--font-medium);
 }
 
+/* Override component badge to match meta style */
+.item-meta .item-style-badge {
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-3);
+  margin-top: 0;
+  align-self: center;
+}
+
 .item-description {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);

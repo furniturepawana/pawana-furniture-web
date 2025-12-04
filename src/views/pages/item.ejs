@@ -44,8 +44,8 @@
           <div class="item-meta">
             <span class="item-room"><%= item.room %></span>
             <span class="item-type" id="itemType"><%= item.type %></span>
+            <span class="item-style-badge <%= item.style.toLowerCase() %>" id="itemStyleBadge"><%= item.style %></span>
           </div>
-          <span class="item-style-badge <%= item.style.toLowerCase() %>" id="itemStyleBadge"><%= item.style %></span>
         </div>
 
         <% if (item.description) { %>

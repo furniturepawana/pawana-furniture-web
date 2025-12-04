@@ -56,17 +56,19 @@
 }
 
 .service-item {
-  background: white;
+  background: var(--color-bg-section-alt);
   border-radius: 8px;
   padding: 2.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition-base), box-shadow var(--transition-base);
+  border: 1px solid var(--color-border);
 }
 
 .service-item:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+  border-color: var(--color-accent);
 }
 
 .service-content {

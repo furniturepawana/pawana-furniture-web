@@ -43,8 +43,8 @@
           <h1 class="set-title" id="setTitle"><%= set.name %></h1>
           <div class="set-meta">
             <span class="set-room"><%= set.room %></span>
+            <span class="set-style-badge <%= set.style.toLowerCase() %>" id="setStyleBadge"><%= set.style %></span>
           </div>
-          <span class="set-style-badge <%= set.style.toLowerCase() %>" id="setStyleBadge"><%= set.style %></span>
         </div>
 
         <% if (set.description) { %>
@@ -63,28 +63,30 @@
 <!-- Related Sets Section -->
 <!-- Similar Sets Carousel -->
 <% if (similarSets && similarSets.length > 0) { %>
-<section class="carousel-section">
-  <div class="carousel-header set-carousel-header">
-    <h2>Similar <%= set.style %> Sets for <%= set.room %></h2>
-  </div>
-
-  <div class="carousel-wrapper set-carousel-wrapper">
-    <button class="carousel-arrow carousel-prev" aria-label="Previous set">‹</button>
-    <div class="carousel-container">
-      <div class="carousel-track" id="carousel-track">
-        <% similarSets.forEach(similarSet => { %>
-          <div class="carousel-item active-category" data-category="items">
-            <a href="/set/<%= similarSet.slug %>">
-              <img src="<%= similarSet.images && similarSet.images.length > 0 ? similarSet.images[0].url : '/images/placeholder.jpg' %>" alt="<%= similarSet.name %>">
-              <h4><%= similarSet.name %></h4>
-              <p><%= similarSet.style %> · <%= similarSet.room %></p>
-            </a>
-          </div>
-        <% }); %>
+<section class="carousel-section set-carousel-section">
+  <div class="set-carousel-container">
+    <div class="carousel-header set-carousel-header">
+      <h2>Similar <%= set.style %> Sets for <%= set.room %></h2>
+      <div class="carousel-nav">
+        <button class="carousel-arrow carousel-prev" data-carousel="similar-sets" aria-label="Previous set">‹</button>
+        <button class="carousel-arrow carousel-next" data-carousel="similar-sets" aria-label="Next set">›</button>
       </div>
-      <div class="carousel-scrollbar"><div class="carousel-thumb"></div></div>
     </div>
-    <button class="carousel-arrow carousel-next" aria-label="Next set">›</button>
+    <div class="carousel-wrapper">
+      <div class="carousel-container">
+        <div class="carousel-track" id="similar-sets-carousel-track">
+          <% similarSets.forEach(similarSet => { %>
+            <div class="carousel-item active-category" data-category="similar-sets">
+              <a href="/set/<%= similarSet.slug %>">
+                <img src="<%= similarSet.images && similarSet.images.length > 0 ? similarSet.images[0].url : '/images/placeholder.jpg' %>" alt="<%= similarSet.name %>">
+                <h4><%= similarSet.name %></h4>
+                <p><%= similarSet.style %> · <%= similarSet.room %></p>
+              </a>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 <% } %>

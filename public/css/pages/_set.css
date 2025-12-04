@@ -120,6 +120,14 @@
   font-weight: var(--font-medium);
 }
 
+/* Override component badge to match meta style */
+.set-meta .set-style-badge {
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-3);
+  margin-top: 0;
+  align-self: center;
+}
+
 .set-description {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
@@ -283,52 +291,79 @@
   letter-spacing: 0.05em;
 }
 
-/* Carousel Section - Clean, Compact, Transparent */
-.carousel-section {
-  background-color: transparent !important;
+/* Carousel Section - Clean, Compact */
+.set-carousel-section {
+  background-color: var(--color-bg-section-alt);
   padding: var(--space-12) 0;
 }
 
-/* Carousel Overrides for Set Page - Match You May Also Like Width */
-.set-carousel-header {
+.set-carousel-container {
   max-width: 1400px;
-  margin: 0 auto 2rem auto;
-  padding: 0 var(--space-4);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+/* Carousel Header with Nav at Top Right */
+.set-carousel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
 }
 
 .set-carousel-header h2 {
-  margin-bottom: 0;
-  text-align: center;
-  font-size: var(--text-3xl);
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  color: var(--color-text-primary);
+  margin: 0;
+  font-weight: var(--font-semibold);
 }
 
-.set-carousel-wrapper {
-  max-width: 1400px;
-  margin: 0 auto;
+.set-carousel-header .carousel-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.set-carousel-header .carousel-arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  font-size: 1.3rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/* Let carousel items use natural image dimensions - no constraints */
-.set-carousel-wrapper .carousel-item {
-  flex: 0 0 auto; /* Auto width based on content */
+.set-carousel-header .carousel-arrow:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
 }
 
-.set-carousel-wrapper .carousel-item img {
-  width: auto; /* Natural width */
-  height: 400px; /* Fixed height, let width be natural */
+/* Carousel items - 3 per row */
+.set-carousel-section .carousel-item {
+  flex: 0 0 calc((100% - 4rem) / 3);
+}
+
+.set-carousel-section .carousel-item img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/3;
   object-fit: cover;
   display: block;
 }
 
-.set-carousel-wrapper .carousel-item h4 {
+.set-carousel-section .carousel-item h4 {
   font-size: var(--text-lg);
   margin: var(--space-4) 0 var(--space-2) 0;
 }
 
-.set-carousel-wrapper .carousel-item p {
+.set-carousel-section .carousel-item p {
   font-size: var(--text-xs);
 }
 

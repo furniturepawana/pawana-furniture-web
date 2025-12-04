@@ -53,10 +53,11 @@
 }
 
 .contact-form {
-  background: white;
+  background: var(--color-bg-section-alt);
   padding: 2rem;
   border-radius: 8px;
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
 }
 
 .form-group {
@@ -126,13 +127,14 @@
 }
 
 .contact-info-card {
-  background: white;
+  background: var(--color-bg-section-alt);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: var(--shadow-sm);
   margin-bottom: 1.5rem;
   display: flex;
   gap: 1rem;
+  border: 1px solid var(--color-border);
 }
 
 .info-icon {
@@ -160,11 +162,12 @@
 
 /* Social Links */
 .social-links {
-  background: white;
+  background: var(--color-bg-section-alt);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: var(--shadow-sm);
   margin-top: 1.5rem;
+  border: 1px solid var(--color-border);
 }
 
 .social-links h3 {
@@ -213,11 +216,12 @@
 }
 
 .map-placeholder {
-  background: white;
+  background: var(--color-bg-section-alt);
   padding: 4rem 2rem;
   border-radius: 8px;
   box-shadow: var(--shadow-sm);
   text-align: center;
+  border: 1px solid var(--color-border);
 }
 
 .map-placeholder p {
@@ -247,10 +251,11 @@
 }
 
 .faq-item {
-  background: white;
+  background: var(--color-bg-section-alt);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
 }
 
 .faq-item h3 {

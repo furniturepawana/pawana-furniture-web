@@ -9,10 +9,27 @@
   text-decoration: none;
   color: inherit;
   transition: transform var(--transition-base);
+  position: relative;
 }
 
 .set-card:hover {
   transform: translateY(-2px);
+}
+
+/* Set Badge - Top Right Overlay */
+.set-card-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.35rem 0.75rem;
+  border-radius: 2px;
+  z-index: 2;
 }
 
 /* Image - 4/3 Aspect Ratio */
