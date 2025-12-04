@@ -30,7 +30,7 @@
 
 .hero {
   background: url("https://res.cloudinary.com/dwa2d4onb/image/upload/v1763909874/image_2_tw9km5.jpg") center center / cover no-repeat;
-  min-height: 84vh;
+  min-height: 100vh;
   max-height: 100vh;
   display: flex;
   align-items: center;

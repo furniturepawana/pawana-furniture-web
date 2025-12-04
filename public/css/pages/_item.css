@@ -120,30 +120,6 @@
   font-weight: var(--font-medium);
 }
 
-.item-style-badge {
-  font-size: var(--text-xs);
-  padding: var(--space-2) var(--space-4);
-  font-weight: var(--font-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: white;
-  white-space: nowrap;
-  align-self: flex-start;
-  margin-top: var(--space-2);
-}
-
-.item-style-badge.royal {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-}
-
-.item-style-badge.traditional {
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-warm));
-}
-
-.item-style-badge.modern {
-  background: linear-gradient(135deg, var(--color-text-primary), var(--color-text-secondary));
-}
-
 .item-description {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
