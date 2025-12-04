@@ -10,7 +10,7 @@
 .section-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--space-6);
+  padding: 0 var(--space-20);
   width: 100%;
 }
 
@@ -19,7 +19,7 @@
   font-size: var(--text-3xl);
   color: var(--color-text-primary);
   text-align: left;
-  margin-bottom: var(--space-6);
+  margin: 0;
   font-weight: var(--font-semibold);
   line-height: 1.2;
 }
@@ -39,6 +39,7 @@
   position: relative;
   color: var(--color-text-inverse);
   overflow: hidden;
+  margin-bottom: var(--space-8);
 }
 
 .hero::before {
@@ -158,7 +159,7 @@
    ============================== */
 
 .home-carousel {
-  padding: var(--space-16) 0;
+  padding: var(--space-10) 0;
   background-color: var(--color-bg-section-alt);
 }
 
@@ -171,7 +172,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 
 .home-carousel .carousel-header .section-title {
@@ -254,7 +255,7 @@
    ============================== */
 
 .browse-rooms {
-  padding: var(--space-16) 0;
+  padding: var(--space-10) 0;
   background-color: var(--color-bg-section-alt);
 }
 
@@ -268,19 +269,18 @@
 .rooms-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: var(--space-6);
+  gap: var(--space-4);
 }
 
 .room-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-sm);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  transition: transform var(--transition-base);
 }
 
 .room-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
 }
 
 .room-image {
@@ -288,6 +288,7 @@
   width: 100%;
   aspect-ratio: 3/4;
   overflow: hidden;
+  border-radius: var(--radius-sm);
 }
 
 .room-image img {
@@ -301,106 +302,29 @@
   transform: scale(1.05);
 }
 
-.room-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.35) 50%, transparent 100%);
-  padding: 2rem 1.5rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.room-card:hover .room-overlay {
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.45) 50%, transparent 100%);
-}
-
 .room-name {
   font-family: var(--font-heading);
-  font-size: var(--text-2xl);
-  color: #fff;
-  font-weight: var(--font-semibold);
-}
-
-.room-arrow {
-  font-size: 2rem;
-  color: #fff;
-  opacity: 0.8;
-  transition: transform var(--transition-slow), opacity var(--transition-slow);
-}
-
-.room-card:hover .room-arrow {
-  transform: translateX(5px);
-  opacity: 1;
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+  font-weight: var(--font-medium);
+  margin-top: var(--space-2);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* ==============================
    5. WHY CHOOSE US
    ============================== */
 
-.why-us {
-  padding: var(--space-16) 0;
-  background-color: var(--color-bg-body);
-}
-
-.why-us-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-6);
-}
-
-.why-us-item {
-  background: var(--color-bg-card);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-  box-shadow: var(--shadow-sm);
-}
-
-.why-us-item:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
-.why-us-item img {
-  width: 100%;
-  aspect-ratio: 4/3;
-  max-height: 180px;
-  object-fit: cover;
-  transition: transform var(--transition-slower);
-}
-
-.why-us-item:hover img {
-  transform: scale(1.05);
-}
-
-.text-content {
-  padding: var(--space-4);
-}
-
-.text-content h3 {
-  font-family: var(--font-heading);
-  font-size: var(--text-base);
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
-  font-weight: var(--font-semibold);
-}
-
-.text-content p {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  line-height: var(--leading-relaxed);
-  margin: 0;
-}
+/* Why Choose Us Removed */
 
 /* ==============================
    6. CUSTOM ORDER
    ============================== */
 
 .custom-order {
-  padding: var(--space-16) 0;
+  padding: var(--space-10) 0;
   background-color: var(--color-bg-card);
   border-top: 1px solid var(--color-border);
 }

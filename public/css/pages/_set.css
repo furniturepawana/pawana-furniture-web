@@ -395,15 +395,10 @@
   gap: var(--space-8);
   width: 100%;
 }
-
-/* Force 4:3 aspect ratio for You May Also Like images */
-.related-items-section .product-card img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  display: block;
+.related-set-image {
+    aspect-ratio: 4/ 3;
+    object-fit: cover;
 }
-
 /* Mobile Responsive */
 @media (max-width: 1023px) {
   .set-content {

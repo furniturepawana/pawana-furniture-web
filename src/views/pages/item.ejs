@@ -70,6 +70,7 @@
       <% relatedItems.forEach(relatedItem => { %>
         <a href="/item/<%= relatedItem.slug %>" class="product-card">
           <img
+            class="related-item-image"
             src="<%= relatedItem.images && relatedItem.images.length > 0 ? relatedItem.images[0].url : '/images/placeholder.jpg' %>"
             alt="<%= relatedItem.name %>"
           />

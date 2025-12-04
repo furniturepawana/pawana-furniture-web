@@ -143,3 +143,10 @@ initializeCarousel(
   '[data-carousel="signature"].carousel-next',
   'signature-thumb'
 );
+
+initializeCarousel(
+  'similar-sets-carousel-track',
+  '[data-carousel="similar-sets"].carousel-prev',
+  '[data-carousel="similar-sets"].carousel-next',
+  null // No scrollbar for similar sets
+);

@@ -100,6 +100,7 @@
       <% youMayAlsoLikeSets.forEach(otherSet => { %>
         <a href="/set/<%= otherSet.slug %>" class="product-card">
           <img
+          class="related-set-image"
             src="<%= otherSet.images && otherSet.images.length > 0 ? otherSet.images[0].url : '/images/placeholder.jpg' %>"
             alt="<%= otherSet.name %>"
           />

@@ -225,7 +225,7 @@
   line-height: var(--leading-tight);
 }
 
-/* Similar Items Grid - 3 per row */
+/* Similar Items - 3 per row */
 .related-items-section .product-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -234,7 +234,6 @@
   margin: 0 auto;
 }
 
-/* Mobile Responsive */
 @media (max-width: 1023px) {
   .item-content {
     grid-template-columns: 1fr;
@@ -284,4 +283,10 @@
     grid-template-columns: 1fr;
     gap: var(--space-6);
   }
+}
+
+/* Ensure related items are square */
+.related-items-section .product-card img {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 }

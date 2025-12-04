@@ -114,58 +114,18 @@
     <p class="browse-rooms-subtitle">Explore our curated collections for every space in your home</p>
     <div class="rooms-grid">
       <% rooms.forEach(room => { %>
-      <div class="room-card">
-        <a href="/room/<%= room.slug %>">
-          <div class="room-image">
-            <img src="<%= room.images[0]?.url || '/images/placeholder.jpg' %>" alt="<%= room.name %>">
-            <div class="room-overlay">
-              <span class="room-name"><%= room.name %></span>
-              <span class="room-arrow">→</span>
-            </div>
-          </div>
-        </a>
-      </div>
+      <a href="/room/<%= room.slug %>" class="room-card">
+        <div class="room-image">
+          <img src="<%= room.images[0]?.url || '/images/placeholder.jpg' %>" alt="<%= room.name %>">
+        </div>
+        <span class="room-name"><%= room.name %></span>
+      </a>
       <% }); %>
     </div>
   </div>
 </section>
 
-<!-- Why Choose Us -->
-<section class="why-us">
-  <div class="section-container">
-    <h2 class="section-title">Why Choose Us</h2>
-    <div class="why-us-grid">
-      <div class="why-us-item">
-        <img src="/images/why-us/quality.jpg" alt="Quality Materials">
-        <div class="text-content">
-          <h3>Only The Finest Materials</h3>
-          <p>We use solid hardwoods and source our fabrics from trusted suppliers. Your furniture is built to last for years.</p>
-        </div>
-      </div>
-      <div class="why-us-item">
-        <img src="/images/why-us/workshop.jpg" alt="Modern Workshop">
-        <div class="text-content">
-          <h3>A Modern Workshop</h3>
-          <p>State-of-the-art tools combined with traditional techniques for precision and strength.</p>
-        </div>
-      </div>
-      <div class="why-us-item">
-        <img src="/images/why-us/detail.avif" alt="Attention to Detail">
-        <div class="text-content">
-          <h3>Attention to Detail</h3>
-          <p>Meticulous craftsmanship from precise joinery to flawless finishes. Every piece is a work of art.</p>
-        </div>
-      </div>
-      <div class="why-us-item">
-        <img src="/images/why-us/gurantee.jpg" alt="Delivered on Time">
-        <div class="text-content">
-          <h3>Delivered on Time</h3>
-          <p>Every piece comes with a clear guarantee on structure and joinery. Invest with confidence.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <!-- Custom Order -->
 <section class="custom-order">
