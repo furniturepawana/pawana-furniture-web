@@ -115,8 +115,89 @@
              <a href="/wishlist" class="wishlist-preview-link">View All</a>
            </div>
          </div>
+          <!-- Mobile Menu Button (hamburger) -->
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
        </div>
     </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+    <nav class="mobile-nav-drawer" id="mobileNavDrawer">
+      <div class="mobile-nav-header">
+        <span class="mobile-nav-title">Menu</span>
+        <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <ul class="mobile-nav-links">
+        <li><a href="/about">About Pawana</a></li>
+        <li class="mobile-nav-dropdown">
+          <a href="/catalogue" class="mobile-nav-link-text">Collection</a>
+          <button class="mobile-nav-arrow-btn" aria-label="Expand Collection">
+            <span class="mobile-nav-arrow">›</span>
+          </button>
+        </li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+      <div class="mobile-nav-footer">
+        <a href="/wishlist" class="mobile-nav-wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          View Wishlist
+        </a>
+      </div>
+    </nav>
+
+    <!-- Mobile Rooms Submenu Panel (positioned at Collection level) -->
+    <div class="mobile-rooms-panel" id="mobileRoomsPanel">
+      <div class="mobile-panel-header">
+        <button class="mobile-panel-back" id="mobileRoomsPanelBack" aria-label="Back">
+          <span>‹</span>
+        </button>
+        <span class="mobile-panel-title">Collection</span>
+      </div>
+      <div class="mobile-panel-content">
+        <% if (typeof navRooms !== 'undefined' && navRooms.length > 0) { %>
+          <% navRooms.forEach(room => { %>
+            <div class="mobile-nav-room" data-room="<%= room.slug %>">
+              <a href="/room/<%= room.slug %>" class="mobile-room-link"><%= room.name %></a>
+              <% if (room.types && room.types.length > 0) { %>
+                <button class="mobile-nav-arrow-btn" aria-label="Expand <%= room.name %>">
+                  <span class="mobile-nav-arrow">›</span>
+                </button>
+                <div class="mobile-nav-types">
+                  <% room.types.forEach(type => { %>
+                    <a href="/room/<%= room.slug %>/<%= type.toLowerCase() %>"><%= type %></a>
+                  <% }); %>
+                  <a href="/room/<%= room.slug %>" class="view-all-link">View All</a>
+                </div>
+              <% } %>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="mobile-nav-room">
+            <a href="/room/living-room" class="mobile-room-link">Living Room</a>
+          </div>
+          <div class="mobile-nav-room">
+            <a href="/room/bedroom" class="mobile-room-link">Bedroom</a>
+          </div>
+          <div class="mobile-nav-room">
+            <a href="/room/dining-room" class="mobile-room-link">Dining Room</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
 
     <!-- Main Content -->
     <main>

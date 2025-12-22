@@ -369,7 +369,7 @@
 /* Related Items Section (You May Also Like) */
 .related-items-section {
   padding: var(--section-padding-desktop);
-  background-color: var(--color-bg-body);
+  background-color: rgba(107, 68, 35, 0.15);
 }
 
 .related-items-container {

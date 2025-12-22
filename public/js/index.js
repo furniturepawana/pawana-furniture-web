@@ -1,3 +1,100 @@
+// ========== Mobile Navigation Drawer with Submenu ==========
+(function initMobileNav() {
+  const menuBtn = document.getElementById('mobileMenuBtn');
+  const drawer = document.getElementById('mobileNavDrawer');
+  const overlay = document.getElementById('mobileNavOverlay');
+  const closeBtn = document.getElementById('mobileNavClose');
+  const roomsPanel = document.getElementById('mobileRoomsPanel');
+  const roomsPanelBack = document.getElementById('mobileRoomsPanelBack');
+
+  if (!menuBtn || !drawer || !overlay) return;
+
+  function openDrawer() {
+    drawer.classList.add('active');
+    overlay.classList.add('active');
+    document.body.classList.add('mobile-nav-open');
+  }
+
+  function closeDrawer() {
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.classList.remove('mobile-nav-open');
+    closeRoomsPanel();
+  }
+
+  function openRoomsPanel() {
+    roomsPanel?.classList.add('active');
+  }
+
+  function closeRoomsPanel() {
+    roomsPanel?.classList.remove('active');
+    // Close any expanded rooms
+    roomsPanel?.querySelectorAll('.mobile-nav-room.active').forEach(el => el.classList.remove('active'));
+  }
+
+  // Open on hamburger click
+  menuBtn.addEventListener('click', openDrawer);
+
+  // Close on close button click
+  closeBtn?.addEventListener('click', closeDrawer);
+
+  // Close on overlay click
+  overlay.addEventListener('click', closeDrawer);
+
+  // Close on ESC key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer.classList.contains('active')) {
+      closeDrawer();
+    }
+  });
+
+  // ======== Submenu Panel Logic ========
+
+  // Collection arrow button - opens rooms panel
+  const collectionArrowBtn = drawer.querySelector('.mobile-nav-dropdown .mobile-nav-arrow-btn');
+  if (collectionArrowBtn) {
+    collectionArrowBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openRoomsPanel();
+    });
+  }
+
+  // Rooms panel back button
+  roomsPanelBack?.addEventListener('click', closeRoomsPanel);
+
+  // Room arrow buttons - toggle accordion for furniture types
+  if (roomsPanel) {
+    roomsPanel.querySelectorAll('.mobile-nav-room .mobile-nav-arrow-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const roomItem = btn.closest('.mobile-nav-room');
+        roomItem?.classList.toggle('active');
+      });
+    });
+
+    // Close drawer when clicking room links
+    roomsPanel.querySelectorAll('.mobile-room-link').forEach(link => {
+      link.addEventListener('click', () => setTimeout(closeDrawer, 100));
+    });
+
+    // Close drawer when clicking type links
+    roomsPanel.querySelectorAll('.mobile-nav-types a').forEach(link => {
+      link.addEventListener('click', () => setTimeout(closeDrawer, 100));
+    });
+  }
+
+  // Close drawer for regular nav links (About, Services, Contact)
+  drawer.querySelectorAll('.mobile-nav-links > li:not(.mobile-nav-dropdown) a').forEach(link => {
+    link.addEventListener('click', () => setTimeout(closeDrawer, 100));
+  });
+
+  // Close drawer when clicking Collection link text (navigates to /catalogue)
+  const collectionLinkText = drawer.querySelector('.mobile-nav-link-text');
+  if (collectionLinkText) {
+    collectionLinkText.addEventListener('click', () => setTimeout(closeDrawer, 100));
+  }
+})();
+
 // ========== Smooth scroll for anchor links ==========
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener("click", function (e) {
@@ -74,12 +171,12 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
     isAnimating = true;
 
     currentIndex = index;
-    
+
     // Calculate position
     const itemWidth = originalItems[0].offsetWidth;
     const gap = 32;
     const offset = (currentIndex + 3) * (itemWidth + gap); // +3 because we prepended 3 items
-    
+
     // Apply transformation
     if (animate) {
       carouselTrack.style.transform = `translateX(-${offset}px)`;
@@ -89,7 +186,7 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
       carouselTrack.offsetHeight; // Force reflow
       carouselTrack.style.transition = '';
     }
-    
+
     // Handle loop transitions
     setTimeout(() => {
       if (currentIndex >= originalItems.length) {
@@ -109,7 +206,7 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
         carouselTrack.offsetHeight; // Force reflow
         carouselTrack.style.transition = '';
       }
-      
+
       // Reset animation flag after a small delay to ensure everything is settled
       setTimeout(() => {
         isAnimating = false;
@@ -202,32 +299,116 @@ document.addEventListener('DOMContentLoaded', function() {
   }, 100);
 });
 
-// ========== Auto-scroll for Signature Pieces ==========
-(function initAutoScroll() {
-  const signatureTrack = document.querySelector('#signature-carousel-track');
-  if (!signatureTrack) return;
+// ========== Mobile Snap Swipe for Signature Pieces ==========
+(function initMobileSnapSwipe() {
+  // Only run on mobile
+  const isMobile = window.innerWidth <= 767;
+  if (!isMobile) return;
 
-  const items = signatureTrack.querySelectorAll('.carousel-item');
+  const marqueeContainer = document.querySelector('.home-marquee .marquee-track');
+  if (!marqueeContainer) return;
+
+  const items = marqueeContainer.querySelectorAll('.marquee-item');
   if (items.length <= 1) return;
 
-  let autoScrollIndex = 0;
-  const autoScrollDuration = 25000;
-  const itemDuration = autoScrollDuration / items.length;
+  let currentIndex = 0;
+  let autoAdvanceInterval;
+  const pauseDuration = 5000; // 5 seconds pause on each item (calmer)
 
-  function autoScroll() {
-    const containerWidth = signatureTrack.parentElement.offsetWidth;
-    const firstItem = items[0];
-    const itemWidth = firstItem ? firstItem.offsetWidth : 280;
-    const gap = 32;
-    const itemsToShow = Math.max(1, Math.floor(containerWidth / (itemWidth + gap)));
-    
-    autoScrollIndex = (autoScrollIndex + 1) % items.length;
-    const offset = autoScrollIndex * (itemWidth + gap);
-    
-    signatureTrack.style.transform = `translateX(-${offset}px)`;
+  // Calculate item width including gap
+  function getItemOffset(index) {
+    const itemWidth = window.innerWidth - 32; // 100vw - 2rem
+    const gap = 16; // 1rem gap
+    return index * (itemWidth + gap);
   }
 
-  setInterval(autoScroll, itemDuration);
+  // Move to specific item
+  function moveToItem(index, smooth = true) {
+    // Loop back to start
+    if (index >= items.length) {
+      index = 0;
+    } else if (index < 0) {
+      index = items.length - 1;
+    }
+
+    currentIndex = index;
+    const offset = getItemOffset(currentIndex);
+
+    marqueeContainer.style.transition = smooth ? 'transform 0.8s ease-out' : 'none';
+    marqueeContainer.style.transform = `translateX(-${offset}px)`;
+  }
+
+  // Auto advance to next item
+  function autoAdvance() {
+    moveToItem(currentIndex + 1);
+  }
+
+  // Start auto-advance
+  function startAutoAdvance() {
+    stopAutoAdvance();
+    autoAdvanceInterval = setInterval(autoAdvance, pauseDuration);
+  }
+
+  // Stop auto-advance
+  function stopAutoAdvance() {
+    if (autoAdvanceInterval) {
+      clearInterval(autoAdvanceInterval);
+    }
+  }
+
+  // Touch swipe support
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const minSwipeDistance = 50;
+
+  marqueeContainer.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    stopAutoAdvance(); // Pause auto-advance during interaction
+  }, { passive: true });
+
+  marqueeContainer.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const distance = touchStartX - touchEndX;
+
+    if (Math.abs(distance) > minSwipeDistance) {
+      if (distance > 0) {
+        // Swipe left - go to next
+        moveToItem(currentIndex + 1);
+      } else {
+        // Swipe right - go to previous
+        moveToItem(currentIndex - 1);
+      }
+    }
+
+    // Resume auto-advance after interaction
+    startAutoAdvance();
+  }, { passive: true });
+
+  // Pause on touch/hold
+  marqueeContainer.addEventListener('touchmove', () => {
+    stopAutoAdvance();
+  }, { passive: true });
+
+  // Initialize
+  moveToItem(0, false);
+  startAutoAdvance();
+
+  // Handle resize - reinitialize if switching viewport
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      const nowMobile = window.innerWidth <= 767;
+      if (nowMobile) {
+        moveToItem(currentIndex, false);
+      } else {
+        // Not mobile anymore, reset
+        marqueeContainer.style.transform = '';
+        marqueeContainer.style.transition = '';
+        stopAutoAdvance();
+      }
+    }, 250);
+  });
 })();
 
 // ========== Auto-scroll for Recent Projects ==========
@@ -280,10 +461,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // ========== FAQ Accordion functionality for Contact Page ==========
 function initializeFAQAccordion() {
   const faqItems = document.querySelectorAll('.faq-item');
-  
+
   faqItems.forEach(item => {
     const question = item.querySelector('.faq-question');
-    
+
     question.addEventListener('click', () => {
       // Toggle current item without affecting others
       item.classList.toggle('active');

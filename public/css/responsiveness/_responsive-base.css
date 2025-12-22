@@ -221,3 +221,369 @@
     font-size: 0.8rem;
   }
 }
+
+/* ==============================
+   MOBILE NAVIGATION DRAWER
+   ============================== */
+
+/* Mobile menu button - only visible on mobile */
+.mobile-menu-btn {
+  display: none;
+}
+
+/* Mobile nav overlay & drawer - hidden by default on all screens */
+.mobile-nav-overlay {
+  display: none;
+}
+
+.mobile-nav-drawer {
+  display: none;
+}
+
+/* Mobile flyout panels - hidden by default on all screens */
+.mobile-rooms-panel,
+.mobile-types-panel {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #fff;
+  }
+
+  .mobile-menu-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  /* Overlay backdrop with blur */
+  .mobile-nav-overlay {
+    display: block; /* Override base display: none */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 1998;
+  }
+
+  .mobile-nav-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Drawer panel */
+  .mobile-nav-drawer {
+    display: flex; /* Override base display: none */
+    position: fixed;
+    top: 0;
+    right: -280px;
+    width: 200px;
+    height: 100vh;
+    background: var(--color-bg-dark);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    z-index: 1999;
+    flex-direction: column;
+    transition: right 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+    overflow-y: auto;
+  }
+
+  .mobile-nav-drawer.active {
+    right: 0;
+  }
+
+  /* Drawer header */
+  .mobile-nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .mobile-nav-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+
+  .mobile-nav-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    cursor: pointer;
+    color: rgba(255,255,255,0.6);
+    transition: all 0.2s ease;
+  }
+
+  .mobile-nav-close:hover {
+    border-color: var(--color-primary);
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* Nav links */
+  .mobile-nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 1.5rem 0;
+    flex: 1;
+  }
+
+  .mobile-nav-links li {
+    margin: 0;
+  }
+
+  .mobile-nav-links a {
+    display: block;
+    padding: 1rem 1.5rem;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+  }
+
+  .mobile-nav-links a:hover {
+    background: rgba(61, 40, 23, 0.05);
+    color: var(--color-primary);
+    border-left-color: var(--color-primary);
+  }
+
+  /* ======== Mobile Flyout Panels ======== */
+
+  /* Collection item with separate link and arrow */
+  .mobile-nav-dropdown {
+    display: flex !important;
+    align-items: center;
+    padding: 0 !important;
+  }
+
+  .mobile-nav-link-text {
+    flex: 1;
+    padding: 1rem 0 1rem 1.5rem !important;
+  }
+
+  .mobile-nav-arrow-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 100%;
+    min-height: 52px;
+    background: transparent;
+    border: none;
+    border-left: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    color: rgba(255,255,255,0.6);
+    transition: all 0.2s ease;
+  }
+
+  .mobile-nav-arrow-btn:hover {
+    background: rgba(255,255,255,0.05);
+    color: var(--color-primary);
+  }
+
+  .mobile-nav-arrow {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  /* ======== Rooms Submenu Panel ======== */
+  .mobile-rooms-panel {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 95px; /* Align with Collection item (header + about link height) */
+    right: 200px; /* Position to the left of main drawer (drawer is 200px) */
+    width: 170px;
+    max-height: calc(100vh - 120px);
+    background: var(--color-bg-dark);
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.25);
+    border-radius: 8px 0 0 8px;
+    z-index: 1998;
+    transform: translateX(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    overflow: hidden;
+  }
+
+  .mobile-rooms-panel.active {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Hide types panel - we're using accordion now */
+  .mobile-types-panel {
+    display: none !important;
+  }
+
+  .mobile-panel-header {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    gap: 0.5rem;
+    background: rgba(0,0,0,0.15);
+  }
+
+  .mobile-panel-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50%;
+    cursor: pointer;
+    color: rgba(255,255,255,0.6);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-panel-back:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .mobile-panel-title {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .mobile-panel-content {
+    overflow-y: auto;
+    padding: 0.5rem 0;
+  }
+
+  /* Room items in panel */
+  .mobile-nav-room {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .mobile-room-link {
+    flex: 1;
+    display: block;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-room-link:hover {
+    color: var(--color-primary);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .mobile-nav-room .mobile-nav-arrow-btn {
+    width: 36px;
+    min-height: 40px;
+    border-left: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* Furniture types accordion - inside room item */
+  .mobile-nav-types {
+    display: none;
+    width: 100%;
+    background: rgba(0,0,0,0.12);
+    padding: 0.25rem 0;
+  }
+
+  .mobile-nav-room.active .mobile-nav-types {
+    display: block;
+  }
+
+  .mobile-nav-room.active .mobile-nav-arrow-btn .mobile-nav-arrow {
+    transform: rotate(90deg);
+  }
+
+  .mobile-nav-types a {
+    display: block;
+    padding: 0.6rem 1rem 0.6rem 1.5rem;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-nav-types a:hover {
+    color: var(--color-primary);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .mobile-nav-types .view-all-link {
+    font-weight: 500;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 0.25rem;
+    padding-top: 0.6rem;
+  }
+
+  /* Footer section */
+  .mobile-nav-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin-top: auto;
+  }
+
+  .mobile-nav-wishlist {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    background: rgba(61, 40, 23, 0.05);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+  }
+
+  .mobile-nav-wishlist:hover {
+    background: rgba(61, 40, 23, 0.1);
+    color: var(--color-primary);
+  }
+
+  .mobile-nav-wishlist svg {
+    flex-shrink: 0;
+  }
+
+  /* Prevent body scroll when drawer is open */
+  body.mobile-nav-open {
+    overflow: hidden;
+  }
+}
+
