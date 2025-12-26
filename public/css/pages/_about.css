@@ -5,7 +5,7 @@
 .about-hero {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: var(--color-text-inverse);
-  padding: 1.5rem 2rem 1.25rem;
+  padding: 3rem 2rem 2.5rem;
   text-align: center;
 }
 
@@ -107,6 +107,18 @@
 .value-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
+  color: var(--color-accent);
+}
+
+.value-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: var(--color-accent);
+  transition: transform var(--transition-base);
+}
+
+.value-card:hover .value-icon svg {
+  transform: scale(1.15);
 }
 
 .value-card h3 {
@@ -151,7 +163,7 @@
   font-family: var(--font-heading);
   font-size: var(--text-5xl);
   color: var(--color-accent);
-  opacity: 0.3;
+  opacity: 0.5;
   font-weight: 700;
   margin-bottom: 1rem;
 }
