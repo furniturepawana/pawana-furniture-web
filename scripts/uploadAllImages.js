@@ -29,14 +29,14 @@ const MONGO_URL = process.env.DB_URI;
 // ==========================================
 const CONFIG = {
   rooms: {
-    livingRoom: true,     // Set to false to skip
-    diningRoom: false,    // Enable when folder exists
-    bedroom: false,       // Enable when folder exists
-    office: false,        // Enable when folder exists
-    showpieces: false,    // Enable when folder exists
+    livingRoom: false,    // Already uploaded, set to true to re-upload
+    diningRoom: true,     // Sets only
+    bedroom: true,        // Sets only
+    office: true,         // Sets only
+    showpieces: true,     // Items only (Cabinet, Console, Fireplace)
   },
   overwriteCloudinary: true,   // Overwrite existing images in Cloudinary
-  basePath: path.join(__dirname, "../public/Pawana Furniture"),
+  basePath: path.join(__dirname, "../public/Pawana-Furniture"),
   cloudinaryBaseFolder: "pawana",  // Base folder in Cloudinary
 };
 
@@ -57,6 +57,30 @@ const ROOM_NAMES = {
   showpieces: "Showpieces",
 };
 
+/**
+ * Dynamically detect if a room has items or sets based on folder existence
+ */
+function detectRoomConfig(roomPath) {
+  const itemsPath = path.join(roomPath, "items");
+  const setsPath = path.join(roomPath, "sets");
+
+  // Check if items folder exists and has content
+  let hasItems = false;
+  if (fs.existsSync(itemsPath)) {
+    const itemContents = fs.readdirSync(itemsPath);
+    hasItems = itemContents.some(f => fs.statSync(path.join(itemsPath, f)).isDirectory());
+  }
+
+  // Check if sets folder exists and has content
+  let hasSets = false;
+  if (fs.existsSync(setsPath)) {
+    const setContents = fs.readdirSync(setsPath);
+    hasSets = setContents.some(f => fs.statSync(path.join(setsPath, f)).isDirectory());
+  }
+
+  return { hasItems, hasSets };
+}
+
 // ==========================================
 // HELPER FUNCTIONS
 // ==========================================
@@ -69,7 +93,7 @@ function findImageFiles(dirPath) {
     return [];
   }
 
-  const extensions = [".jpg", ".jpeg", ".png", ".webp", ".PNG", ".JPG", ".JPEG"];
+  const extensions = [".jpg", ".jpeg", ".png", ".webp", ".PNG", ".JPG", ".JPEG", ".WEBP"];
   const files = fs.readdirSync(dirPath);
 
   return files.filter(file => {
@@ -101,10 +125,11 @@ async function uploadToCloudinary(filePath, cloudinaryFolder, publicId) {
 }
 
 /**
- * Process items for a style
+ * Process items for a room (like Living Room and Showpieces)
+ * Folder structure: room/items/style/type/CODE.webp
  */
-async function processItems(roomFolder, styleFolderName, styleName, roomName, cloudinaryBase) {
-  const itemsPath = path.join(roomFolder, styleFolderName, "items");
+async function processItems(roomPath, roomName, folderName, cloudinaryBase) {
+  const itemsPath = path.join(roomPath, "items");
 
   if (!fs.existsSync(itemsPath)) {
     console.log(`    ⚠️  No items folder found at: ${itemsPath}`);
@@ -112,36 +137,50 @@ async function processItems(roomFolder, styleFolderName, styleName, roomName, cl
   }
 
   let uploadCount = 0;
-  const types = fs.readdirSync(itemsPath).filter(f =>
+
+  // Get style folders (modern, royal, traditional)
+  const styleFolders = fs.readdirSync(itemsPath).filter(f =>
     fs.statSync(path.join(itemsPath, f)).isDirectory()
   );
 
-  for (const type of types) {
-    const typePath = path.join(itemsPath, type);
-    const imageFiles = findImageFiles(typePath);
+  for (const styleFolderName of styleFolders) {
+    const stylePath = path.join(itemsPath, styleFolderName);
+    console.log(`\n    📂 Style: ${styleFolderName}`);
 
-    for (const imageFile of imageFiles) {
-      const code = path.parse(imageFile).name;
-      const filePath = path.join(typePath, imageFile);
+    // Get type folders (chair, sofa, table, cabinet, console, fireplace)
+    const typeFolders = fs.readdirSync(stylePath).filter(f =>
+      fs.statSync(path.join(stylePath, f)).isDirectory()
+    );
 
-      // Find document by code
-      const doc = await FurnitureItem.findOne({ code, room: roomName });
+    for (const typeFolderName of typeFolders) {
+      const typePath = path.join(stylePath, typeFolderName);
+      const imageFiles = findImageFiles(typePath);
 
-      if (!doc) {
-        console.log(`    ⚠️  No document found for code: ${code}`);
-        continue;
-      }
+      console.log(`       📁 ${typeFolderName}: ${imageFiles.length} files`);
 
-      console.log(`    📤 Uploading: ${code} (${doc.name})`);
+      for (const imageFile of imageFiles) {
+        const code = path.parse(imageFile).name;
+        const filePath = path.join(typePath, imageFile);
 
-      const cloudinaryFolder = `${cloudinaryBase}/${styleFolderName}/items/${type}`;
-      const imageData = await uploadToCloudinary(filePath, cloudinaryFolder, code);
+        // Find document by code
+        const doc = await FurnitureItem.findOne({ code, room: roomName });
 
-      if (imageData) {
-        doc.images = [imageData];
-        await doc.save();
-        console.log(`       ✔ Uploaded & saved`);
-        uploadCount++;
+        if (!doc) {
+          console.log(`          ⚠️  No document for code: ${code}`);
+          continue;
+        }
+
+        console.log(`          📤 ${code} (${doc.name})`);
+
+        const cloudinaryFolder = `${cloudinaryBase}/items/${styleFolderName}/${typeFolderName}`;
+        const imageData = await uploadToCloudinary(filePath, cloudinaryFolder, code);
+
+        if (imageData) {
+          doc.images = [imageData];
+          await doc.save();
+          console.log(`             ✔ Uploaded`);
+          uploadCount++;
+        }
       }
     }
   }
@@ -150,10 +189,11 @@ async function processItems(roomFolder, styleFolderName, styleName, roomName, cl
 }
 
 /**
- * Process sets for a style
+ * Process sets for a room (Diningroom, Bedroom, Office have sets only)
+ * Folder structure: room/sets/style/CODE.webp
  */
-async function processSets(roomFolder, styleFolderName, styleName, roomName, cloudinaryBase) {
-  const setsPath = path.join(roomFolder, styleFolderName, "sets");
+async function processSets(roomPath, roomName, folderName, cloudinaryBase) {
+  const setsPath = path.join(roomPath, "sets");
 
   if (!fs.existsSync(setsPath)) {
     console.log(`    ⚠️  No sets folder found at: ${setsPath}`);
@@ -161,30 +201,41 @@ async function processSets(roomFolder, styleFolderName, styleName, roomName, clo
   }
 
   let uploadCount = 0;
-  const imageFiles = findImageFiles(setsPath);
 
-  for (const imageFile of imageFiles) {
-    const code = path.parse(imageFile).name;
-    const filePath = path.join(setsPath, imageFile);
+  // Get style folders (modern, royal, traditional)
+  const styleFolders = fs.readdirSync(setsPath).filter(f =>
+    fs.statSync(path.join(setsPath, f)).isDirectory()
+  );
 
-    // Find document by code
-    const doc = await FurnitureSet.findOne({ code, room: roomName });
+  for (const styleFolderName of styleFolders) {
+    const stylePath = path.join(setsPath, styleFolderName);
+    const imageFiles = findImageFiles(stylePath);
 
-    if (!doc) {
-      console.log(`    ⚠️  No document found for code: ${code}`);
-      continue;
-    }
+    console.log(`\n    📂 Style: ${styleFolderName} (${imageFiles.length} sets)`);
 
-    console.log(`    📤 Uploading: ${code} (${doc.name})`);
+    for (const imageFile of imageFiles) {
+      const code = path.parse(imageFile).name;
+      const filePath = path.join(stylePath, imageFile);
 
-    const cloudinaryFolder = `${cloudinaryBase}/${styleFolderName}/sets`;
-    const imageData = await uploadToCloudinary(filePath, cloudinaryFolder, code);
+      // Find document by code
+      const doc = await FurnitureSet.findOne({ code, room: roomName });
 
-    if (imageData) {
-      doc.images = [imageData];
-      await doc.save();
-      console.log(`       ✔ Uploaded & saved`);
-      uploadCount++;
+      if (!doc) {
+        console.log(`       ⚠️  No document for code: ${code}`);
+        continue;
+      }
+
+      console.log(`       📤 ${code} (${doc.name})`);
+
+      const cloudinaryFolder = `${cloudinaryBase}/sets/${styleFolderName}`;
+      const imageData = await uploadToCloudinary(filePath, cloudinaryFolder, code);
+
+      if (imageData) {
+        doc.images = [imageData];
+        await doc.save();
+        console.log(`          ✔ Uploaded`);
+        uploadCount++;
+      }
     }
   }
 
@@ -202,36 +253,32 @@ async function processRoom(roomKey) {
   console.log(`\n${"=".repeat(60)}`);
   console.log(`📦 Processing: ${roomName}`);
   console.log(`   Path: ${roomPath}`);
-  console.log("=".repeat(60));
 
   if (!fs.existsSync(roomPath)) {
     console.log(`❌ Folder not found: ${roomPath}`);
     return { items: 0, sets: 0 };
   }
 
+  // Dynamically detect if room has items/sets based on folder structure
+  const roomConfig = detectRoomConfig(roomPath);
+  console.log(`   Has Items: ${roomConfig.hasItems}, Has Sets: ${roomConfig.hasSets}`);
+  console.log("=".repeat(60));
+
   let totalItems = 0;
   let totalSets = 0;
 
-  // Get all style folders
-  const styleFolders = fs.readdirSync(roomPath).filter(f =>
-    fs.statSync(path.join(roomPath, f)).isDirectory()
-  );
-
   const cloudinaryBase = `${CONFIG.cloudinaryBaseFolder}/${folderName}`;
 
-  for (const styleFolderName of styleFolders) {
-    console.log(`\n  📂 Style: ${styleFolderName}`);
+  // Process items if room has individual items
+  if (roomConfig.hasItems) {
+    const itemCount = await processItems(roomPath, roomName, folderName, cloudinaryBase);
+    totalItems = itemCount;
+  }
 
-    // Map folder name to style name
-    const styleName = styleFolderName.charAt(0).toUpperCase() + styleFolderName.slice(1);
-
-    // Process items
-    const itemCount = await processItems(roomPath, styleFolderName, styleName, roomName, cloudinaryBase);
-    totalItems += itemCount;
-
-    // Process sets
-    const setCount = await processSets(roomPath, styleFolderName, styleName, roomName, cloudinaryBase);
-    totalSets += setCount;
+  // Process sets if room has sets
+  if (roomConfig.hasSets) {
+    const setCount = await processSets(roomPath, roomName, folderName, cloudinaryBase);
+    totalSets = setCount;
   }
 
   console.log(`\n  📊 Room Total: ${totalItems} items, ${totalSets} sets`);
@@ -246,7 +293,7 @@ async function uploadRoomImages() {
   console.log("📦 Processing Room Collection Images");
   console.log("=".repeat(60));
 
-  const roomImagesPath = path.join(CONFIG.basePath, "rooms");
+  const roomImagesPath = path.join(CONFIG.basePath, "..", "rooms");
 
   if (!fs.existsSync(roomImagesPath)) {
     console.log(`⚠️  No rooms folder found at: ${roomImagesPath}`);
@@ -257,20 +304,40 @@ async function uploadRoomImages() {
   let uploadCount = 0;
 
   for (const imageFile of imageFiles) {
-    const slug = path.parse(imageFile).name;
-    const filePath = path.join(roomImagesPath, imageFile);
+    // Extract slug from filename like "room-living.webp" -> "living-room"
+    const baseName = path.parse(imageFile).name;
 
-    const doc = await Room.findOne({ slug });
+    // Try to find room by matching the filename
+    let doc = null;
+
+    // Check common naming patterns
+    if (baseName.includes("living")) {
+      doc = await Room.findOne({ slug: "living-room" });
+    } else if (baseName.includes("dining")) {
+      doc = await Room.findOne({ slug: "dining-room" });
+    } else if (baseName.includes("bedroom")) {
+      doc = await Room.findOne({ slug: "bedroom" });
+    } else if (baseName.includes("office")) {
+      doc = await Room.findOne({ slug: "office" });
+    } else if (baseName.includes("showpiece")) {
+      doc = await Room.findOne({ slug: "showpieces" });
+    }
 
     if (!doc) {
-      console.log(`  ⚠️  No Room document found for slug: ${slug}`);
+      // Try exact slug match
+      doc = await Room.findOne({ slug: baseName });
+    }
+
+    if (!doc) {
+      console.log(`  ⚠️  No Room document found for: ${baseName}`);
       continue;
     }
 
-    console.log(`  📤 Uploading: ${slug} (${doc.name})`);
+    const filePath = path.join(roomImagesPath, imageFile);
+    console.log(`  📤 Uploading: ${imageFile} -> ${doc.name}`);
 
     const cloudinaryFolder = `${CONFIG.cloudinaryBaseFolder}/rooms`;
-    const imageData = await uploadToCloudinary(filePath, cloudinaryFolder, slug);
+    const imageData = await uploadToCloudinary(filePath, cloudinaryFolder, doc.slug);
 
     if (imageData) {
       doc.images = [imageData];
