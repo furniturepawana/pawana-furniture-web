@@ -13,7 +13,9 @@ import servicesRoute from "./src/routes/services.js";
 import contactRoute from "./src/routes/contact.js";
 import searchRoute from "./src/routes/search.js";
 import wishlistRoute from "./src/routes/wishlist.js";
+import adminRoute from "./src/routes/admin.js";
 import { navDataMiddleware } from "./src/middleware/navData.js";
+import { sessionMiddleware } from "./src/middleware/adminAuth.js";
 
 dotenv.config();
 
@@ -32,6 +34,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Session middleware for admin authentication
+app.use(sessionMiddleware);
+
 // Navigation data middleware - makes items, sets, and rooms available to all views
 app.use(navDataMiddleware);
 
@@ -45,6 +50,10 @@ app.use("/services", servicesRoute);
 app.use("/contact", contactRoute);
 app.use("/api/search", searchRoute);
 app.use("/wishlist", wishlistRoute);
+
+// Admin route - mounted at the secret path from .env
+const adminRoutePath = process.env.ADMIN_ROUTE || 'admin';
+app.use(`/${adminRoutePath}`, adminRoute);
 
 mongoose
   .connect(process.env.DB_URI)
