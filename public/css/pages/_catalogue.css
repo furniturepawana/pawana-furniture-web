@@ -46,86 +46,84 @@
   /* No min-height to keep content compact */
 }
 
-/* Header with Dropdown Filters */
+/* Header with 3-Column Layout */
 .catalogue-header {
+  display: grid;
+  grid-template-columns: 1.2fr auto 1.2fr; /* Give more space to sides if needed */
+  align-items: center; /* Strict vertical centering */
+  gap: var(--space-8);
+  margin-bottom: var(--space-10);
+  width: 100%;
+}
+
+.catalogue-header-left {
+  justify-self: start;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-6);
-  margin-bottom: var(--space-1);
-  flex-wrap: wrap;
+  align-items: center;
+  height: 54px; /* Match height of room filter bar */
+}
+
+.title-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .catalogue-header-left h2 {
   font-family: var(--font-heading);
   font-size: var(--text-2xl);
   color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
+  margin-bottom: 0;
   font-weight: var(--font-semibold);
-  line-height: var(--leading-tight);
+  line-height: 1.1;
 }
 
 .results-count {
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
+  margin-top: 2px;
 }
 
-/* Dropdown Filters Container */
-.catalogue-filters-dropdowns {
+/* Room Tabs - Centered & Scaled Up */
+.room-filter-tabs {
+  justify-self: center;
+  height: 54px; /* Harmonized height for middle bar */
   display: flex;
-  gap: var(--space-3);
   align-items: center;
-  flex-wrap: wrap;
+}
+
+/* Dropdown Filters - Right & Scaled Down */
+.catalogue-filters-right {
+  justify-self: end;
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  height: 54px; /* Container height matches others for centering */
+}
+
+.catalogue-filters-right select {
+  height: 40px; /* Scaled down height */
+  min-width: 110px;
+  background-color: var(--color-bg-card); /* Unified background */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm); /* Refined border radius */
+  font-size: var(--text-xs); /* Scaled down font */
+  padding: 0 1.75rem 0 0.75rem;
+  background-position: right 0.5rem center;
+  background-size: 10px;
+  color: var(--color-text-secondary);
 }
 
 /* Individual Filter Dropdown */
 .filter-dropdown {
   position: relative;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
 }
 
-.filter-dropdown label {
-  font-size: var(--text-xs);
-  font-weight: var(--font-medium);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: var(--space-1);
-}
-
-.filter-dropdown select {
-  padding: var(--space-2) var(--space-4);
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-primary);
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  min-width: 140px;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right var(--space-3) center;
-  padding-right: var(--space-8);
-}
-
-.filter-dropdown select:hover {
-  border-color: var(--color-accent);
-}
-
-.filter-dropdown select:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(184, 149, 106, 0.1);
-}
-
-/* Clear Filters Button */
 .clear-filters-btn-top {
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-bg-section-alt);
+  padding: 0;
+  background: var(--color-bg-card); /* Unified background */
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
@@ -134,15 +132,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 38px;
-  width: 38px;
-  margin-top: auto;
+  height: 40px; /* Scaled down to match selects */
+  width: 40px;
+  margin-top: 0;
 }
 
 .clear-filters-btn-top:hover {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: white;
+}
+
+.catalogue-filters-right select:hover {
+  border-color: var(--color-accent);
+}
+
+.catalogue-filters-right select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(184, 149, 106, 0.1);
 }
 
 .clear-filters-btn-top svg {
@@ -218,4 +226,30 @@
   font-size: var(--text-base);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-6);
+}
+
+/* Responsiveness */
+@media (max-width: 1024px) {
+  .catalogue-header {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    text-align: center;
+  }
+
+  .catalogue-header-left,
+  .room-filter-tabs,
+  .catalogue-filters-right {
+    justify-self: center;
+  }
+
+  .catalogue-filters-right {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .catalogue-container {
+    padding: 0 var(--space-4);
+  }
 }

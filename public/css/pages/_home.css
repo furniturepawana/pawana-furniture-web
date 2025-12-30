@@ -96,6 +96,7 @@
   line-height: 1.2;
   font-weight: 400;
   letter-spacing: -0.01em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .hero-actions {
@@ -670,38 +671,38 @@ body.page-home .home-carousel .carousel-header .section-title {
    ============================== */
 
 .custom-order {
-  padding: var(--space-16) 0;
+  padding: var(--space-10) 0;
   background-color: var(--color-bg-card);
   border-top: 1px solid var(--color-border);
 }
 
 .custom-order-content {
-  max-width: 700px;
+  max-width: 550px;
   margin: 0 auto;
   text-align: center;
 }
 
 .custom-order-content h2 {
   font-family: var(--font-heading);
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: var(--color-text-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   font-weight: var(--font-normal);
   line-height: 1.2;
 }
 
 .custom-order-content p {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--color-text-secondary);
-  margin-bottom: 2.5rem;
-  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
 }
 
 .custom-order-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  max-width: 450px;
+  gap: 1rem;
+  max-width: 380px;
   margin: 0 auto;
 }
 
@@ -732,25 +733,25 @@ body.page-home .home-carousel .carousel-header .section-title {
 }
 
 .btn-submit {
-  padding: 1rem 1.75rem;
+  padding: 0.85rem 2.5rem;
   background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   box-shadow: var(--shadow-sm);
 }
 
 .btn-submit:hover {
-  background-color: var(--color-text-primary);
-  transform: translateY(-3px);
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
@@ -759,45 +760,58 @@ body.page-home .home-carousel .carousel-header .section-title {
    ============================== */
 
 .delivery-section {
-  padding: var(--space-20) 0;
+  padding: var(--space-12) 0 var(--space-24);
   background: var(--color-bg-body);
+  overflow: hidden;
+}
+
+.delivery-section .section-container {
+  max-width: none;
+  padding: 0 var(--space-20) 0 0;
 }
 
 .delivery-section .section-title {
-  margin-bottom: var(--space-8);
-  color: var(--color-text-primary);
+  margin-bottom: var(--space-10);
+  max-width: 1600px;
+  padding-left: var(--space-20);
 }
 
 .delivery-content {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-12);
+  max-width: 1600px;
 }
 
 .delivery-map-card {
-  flex: 0 0 450px;
+  flex: 0 0 55%;
+  margin-left: calc(-1 * var(--space-20));
 }
 
 .delivery-map-image {
   width: 100%;
+  max-width: none;
   height: auto;
   display: block;
-  border-radius: var(--radius-md);
+  transform: scale(1.35);
+  transform-origin: left center;
+  margin-left: -12%;
 }
 
 .delivery-text {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  padding: 0;
+  justify-content: center;
+  gap: var(--space-6);
+  padding-right: var(--space-10);
 }
 
 .delivery-text p {
   font-size: 1.15rem;
-  color: var(--color-text-primary);
-  line-height: 1.85;
-  margin-bottom: var(--space-6);
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  margin: 0;
 }
 
 .delivery-highlights {
@@ -809,36 +823,39 @@ body.page-home .home-carousel .carousel-header .section-title {
 .highlight-item {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   padding: var(--space-4) var(--space-5);
-  background: var(--color-bg-section-alt);
-  border-radius: var(--radius-md);
-  transition: all 0.3s ease;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
+  transition: all 0.25s ease;
 }
 
 .highlight-item:hover {
-  transform: translateX(4px);
+  transform: translateY(-2px);
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .highlight-icon {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-bg-card);
+  background: var(--color-bg-section-alt);
   border-radius: var(--radius-full);
   flex-shrink: 0;
 }
 
 .highlight-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   stroke: var(--color-maroon);
 }
 
 .highlight-label {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: var(--color-text-primary);
 }

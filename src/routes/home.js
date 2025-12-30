@@ -6,12 +6,10 @@ import Room from "../models/Room.js";
 const router = express.Router();
 
 const SIGNATURE_ITEMS_CODES = [
-  "LM-011",
-  "LM-002",
-  "LR-007",
-  "LR-013",
-  "LT-019",
-  "LT-001",
+  // Living Room items
+  "LM-011", "LM-002", "LR-007", "LR-013", "LT-019", "LT-001",
+  // Bedroom, Dining, Office items for variety
+  "BM-01", "BM-03", "DR-01", "DR-02", "OF-01", "OF-02",
 ];
 
 const FEATURED_ITEMS_CODES = [

@@ -29,22 +29,45 @@
       <!-- Header with Dropdown Filters -->
       <div class="catalogue-header">
         <div class="catalogue-header-left">
-          <h2>
-            <% if (filters.view === 'items') { %>
-              Individual Items
-            <% } else if (filters.view === 'sets') { %>
-              Furniture Sets
-            <% } else { %>
-              All Products
-            <% } %>
-          </h2>
-          <p class="results-count">
-            Showing <%= (filters.view === 'all' || filters.view === 'items' ? items.length : 0) + (filters.view === 'all' || filters.view === 'sets' ? sets.length : 0) %> results
-          </p>
+          <div class="title-block">
+            <h2>
+              <% if (filters.view === 'items') { %>
+                Individual Items
+              <% } else if (filters.view === 'sets') { %>
+                Furniture Sets
+              <% } else { %>
+                All Products
+              <% } %>
+            </h2>
+            <p class="results-count">
+              Showing <%= (filters.view === 'all' || filters.view === 'items' ? items.length : 0) + (filters.view === 'all' || filters.view === 'sets' ? sets.length : 0) %> results
+            </p>
+          </div>
         </div>
 
-        <!-- Dropdown Filters -->
-        <div class="catalogue-filters-dropdowns">
+        <!-- Room Tabs (Center) -->
+        <div class="room-filter-tabs style-filter-tabs filter-tabs-compact" id="room-tabs">
+          <%
+            const roomDisplayNames = {
+              'Living Room': 'Living',
+              'Bedroom': 'Bedroom',
+              'Dining Room': 'Dining',
+              'Office': 'Office',
+              'Showpieces': 'Showpieces'
+            };
+            const roomOrder = ['Living Room', 'Bedroom', 'Dining Room', 'Office', 'Showpieces'];
+            const sortedRooms = [...allRooms].sort((a, b) => roomOrder.indexOf(a) - roomOrder.indexOf(b));
+          %>
+          <button class="style-tab active" data-room="" onclick="updateRoomFilter('')">All</button>
+          <% sortedRooms.forEach(room => { %>
+            <button class="style-tab" data-room="<%= room %>" onclick="updateRoomFilter('<%= room %>')">
+              <%= roomDisplayNames[room] || room %>
+            </button>
+          <% }); %>
+        </div>
+
+        <!-- Dropdown Filters (Right) -->
+        <div class="catalogue-filters-right">
           <!-- View Dropdown -->
           <div class="filter-dropdown">
             <select id="view-filter" onchange="updateFilter('view', this.value)">
@@ -52,18 +75,6 @@
               <option value="items" <%= filters.view === 'items' ? 'selected' : '' %>>Items</option>
               <option value="sets" <%= filters.view === 'sets' ? 'selected' : '' %>>Sets</option>
             </select>
-            <label for="view-filter">View</label>
-          </div>
-
-          <!-- Room Dropdown -->
-          <div class="filter-dropdown">
-            <select id="room-filter" onchange="updateFilter('room', this.value)">
-              <option value="" <%= !filters.room ? 'selected' : '' %>>All Rooms</option>
-              <% allRooms.forEach(room => { %>
-                <option value="<%= room %>" <%= filters.room === room ? 'selected' : '' %>><%= room %></option>
-              <% }); %>
-            </select>
-            <label for="room-filter">Room</label>
           </div>
 
           <!-- Type Dropdown -->
@@ -74,7 +85,6 @@
                 <option value="<%= type %>" <%= filters.type && filters.type.toLowerCase() === type.toLowerCase() ? 'selected' : '' %>><%= type %></option>
               <% }); %>
             </select>
-            <label for="type-filter">Type</label>
           </div>
 
           <!-- Style Dropdown -->
@@ -85,7 +95,6 @@
                 <option value="<%= style %>" <%= filters.style === style ? 'selected' : '' %>><%= style %></option>
               <% }); %>
             </select>
-            <label for="style-filter">Style</label>
           </div>
 
           <!-- Clear Filters Button -->
@@ -185,6 +194,42 @@
 
 <script>
 let cataloguePagination = null;
+let currentRoomFilter = '';
+let allFilterData = {
+  types: [],
+  styles: []
+};
+
+// Capture all unique types and styles on load
+document.addEventListener('DOMContentLoaded', function() {
+  const cards = document.querySelectorAll('.catalogue-item');
+  const typeSet = new Set();
+  const styleSet = new Set();
+
+  cards.forEach(card => {
+    if (card.dataset.type) typeSet.add(card.dataset.type);
+    if (card.dataset.style) styleSet.add(card.dataset.style);
+  });
+
+  allFilterData.types = Array.from(typeSet).sort();
+  allFilterData.styles = Array.from(styleSet).sort();
+});
+
+function updateRoomFilter(value) {
+  currentRoomFilter = value;
+
+  // Update active tab UI
+  const tabs = document.querySelectorAll('#room-tabs .style-tab');
+  tabs.forEach(tab => {
+    if (tab.getAttribute('data-room') === value) {
+      tab.classList.add('active');
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+
+  applyFilters();
+}
 
 function updateFilter(filterName, value) {
   // If type filter is changed to a specific type (not "All Types"), automatically select "Items"
@@ -196,7 +241,7 @@ function updateFilter(filterName, value) {
 
 function applyFilters() {
   const viewFilter = document.getElementById('view-filter').value;
-  const roomFilter = document.getElementById('room-filter').value;
+  const roomFilter = currentRoomFilter;
   const typeFilter = document.getElementById('type-filter').value;
   const styleFilter = document.getElementById('style-filter').value;
 
@@ -274,10 +319,68 @@ function applyFilters() {
   if (cataloguePagination) {
     cataloguePagination.refresh();
   }
+
+  updateAdaptiveFilters();
+}
+
+function updateAdaptiveFilters() {
+  const viewFilter = document.getElementById('view-filter').value;
+  const roomFilter = currentRoomFilter;
+  const typeFilter = document.getElementById('type-filter');
+  const styleFilter = document.getElementById('style-filter');
+
+  const selectedType = typeFilter.value;
+  const selectedStyle = styleFilter.value;
+
+  const currentCards = Array.from(document.querySelectorAll('.catalogue-item'));
+
+  // Calculate available types based on current View and Room (and Style if we want full adaptive)
+  // For standard "cascading" behavior, we filter options based on other selections.
+
+  const availableTypes = new Set();
+  const availableStyles = new Set();
+
+  currentCards.forEach(card => {
+    // Check if this card matches VIEW and ROOM (the primary filters)
+    const matchesView = (viewFilter === 'all') ||
+                        (viewFilter === 'sets' && card.dataset.productType === 'set') ||
+                        (viewFilter === 'items' && card.dataset.productType === 'item');
+    const matchesRoom = !roomFilter || card.dataset.room === roomFilter;
+
+    if (matchesView && matchesRoom) {
+      if (card.dataset.type) availableTypes.add(card.dataset.type);
+      if (card.dataset.style) availableStyles.add(card.dataset.style);
+    }
+  });
+
+  // Update Type Filter options
+  const typeOptions = Array.from(availableTypes).sort();
+  let typeHtml = '<option value="">All Types</option>';
+  typeOptions.forEach(t => {
+    const selected = t === selectedType ? 'selected' : '';
+    typeHtml += `<option value="${t}" ${selected}>${t}</option>`;
+  });
+  typeFilter.innerHTML = typeHtml;
+
+  // Update Style Filter options
+  const styleOptions = Array.from(availableStyles).sort();
+  let styleHtml = '<option value="">All Styles</option>';
+  styleOptions.forEach(s => {
+    const selected = s === selectedStyle ? 'selected' : '';
+    styleHtml += `<option value="${s}" ${selected}>${s}</option>`;
+  });
+  styleFilter.innerHTML = styleHtml;
 }
 
 function clearFilters() {
-  document.getElementById('room-filter').value = '';
+  currentRoomFilter = '';
+  // Update tabs
+  const tabs = document.querySelectorAll('#room-tabs .style-tab');
+  tabs.forEach(tab => {
+    if (tab.getAttribute('data-room') === '') tab.classList.add('active');
+    else tab.classList.remove('active');
+  });
+
   document.getElementById('type-filter').value = '';
   document.getElementById('style-filter').value = '';
   document.getElementById('view-filter').value = 'all';

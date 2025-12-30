@@ -18,7 +18,10 @@ router.get("/", async (req, res) => {
     sets = sets.sort(() => Math.random() - 0.5);
 
     // Get unique values for filters
-    const allRooms = await FurnitureItem.distinct("room");
+    const roomsFromItems = await FurnitureItem.distinct("room");
+    const roomsFromSets = await FurnitureSet.distinct("room");
+    const allRooms = [...new Set([...roomsFromItems, ...roomsFromSets])];
+
     const allStyles = ["Royal", "Modern", "Traditional"];
     const allTypes = await FurnitureItem.distinct("type");
 

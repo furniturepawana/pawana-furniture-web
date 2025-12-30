@@ -1,0 +1,107 @@
+/* ==============================
+   Filter Component
+   Used in Room and Room-Type pages
+   ============================== */
+
+.style-filter-tabs {
+  display: inline-flex;
+  gap: var(--space-2);
+  padding: var(--space-1);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.style-tab {
+  padding: var(--space-2) var(--space-6);
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-radius: var(--radius-sm);
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+.style-tab:hover {
+  background: rgba(107, 44, 44, 0.05); /* Very light maroon tint */
+  color: var(--color-primary);
+}
+
+.style-tab.active {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Compact Variant for Catalogue Room Filter */
+.filter-tabs-compact {
+  padding: 0; /* Let tabs handle padding for thicker feel */
+  background: var(--color-bg-card);
+  gap: 0;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.filter-tabs-compact .style-tab {
+  padding: var(--space-4) var(--space-8); /* Increased size significantly */
+  border-radius: 0;
+  position: relative;
+  font-weight: var(--font-semibold);
+  font-size: var(--text-base); /* Increased from sm to base */
+}
+
+.filter-tabs-compact .style-tab:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%; /* Taller separator */
+  width: 1px;
+  background: var(--color-border);
+  z-index: 1;
+}
+
+/* Remove separator if active or following active */
+.filter-tabs-compact .style-tab.active::after,
+.filter-tabs-compact .style-tab.active + .style-tab::after {
+  display: none;
+}
+
+.filter-tabs-compact .style-tab.active {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: none;
+}
+
+/* Optional: Add a subtle animation when switching tabs */
+.style-tab.active {
+  animation: tabPulse 0.3s ease-out;
+}
+
+@keyframes tabPulse {
+  0% { transform: scale(0.98); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .style-filter-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+    padding: var(--space-2);
+  }
+
+  .style-tab {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+  }
+}

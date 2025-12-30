@@ -22,6 +22,7 @@
 @import 'components/_breadcrumb.css';
 @import 'components/_related-items.css';
 @import 'components/_pagination.css';
+@import 'components/_filters.css';
 
 /* 4. Pages */
 @import 'pages/_home.css';

@@ -35,7 +35,16 @@
 <% if (items && items.length > 0) { %>
 <%
   // Extract unique styles for the filter dropdown
-  const styles = [...new Set(items.map(item => item.style))].sort();
+  // Custom order: Royal -> Traditional -> Modern
+  const styleOrder = ['Royal', 'Traditional', 'Modern'];
+  const styles = [...new Set(items.map(item => item.style))].sort((a, b) => {
+    const aIndex = styleOrder.indexOf(a);
+    const bIndex = styleOrder.indexOf(b);
+    if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
 %>
 <section class="room-type-items-section">
   <div class="room-type-container">
@@ -46,14 +55,11 @@
       </div>
 
       <div class="room-type-filters">
-        <div class="filter-dropdown">
-          <select id="style-filter" onchange="filterItems(this.value)">
-            <option value="">All Styles</option>
-            <% styles.forEach(style => { %>
-              <option value="<%= style %>"><%= style %></option>
-            <% }); %>
-          </select>
-          <label for="style-filter">Style:</label>
+        <div class="style-filter-tabs" id="style-tabs">
+          <button class="style-tab active" data-style="" onclick="filterItems('')">All</button>
+          <% styles.forEach(style => { %>
+            <button class="style-tab" data-style="<%= style %>" onclick="filterItems('<%= style %>')"><%= style %></button>
+          <% }); %>
         </div>
       </div>
     </div>
@@ -110,6 +116,16 @@
     const noResultsMsg = document.querySelector('.no-results-filter');
     const itemsGrid = document.querySelector('.catalogue-items-grid');
 
+    // Update active tab
+    const tabs = document.querySelectorAll('.style-tab');
+    tabs.forEach(tab => {
+      if (tab.getAttribute('data-style') === selectedStyle) {
+        tab.classList.add('active');
+      } else {
+        tab.classList.remove('active');
+      }
+    });
+
     let visibleCount = 0;
 
     items.forEach(item => {
@@ -143,8 +159,6 @@
   }
 
   function resetFilter() {
-    const dropdown = document.getElementById('style-filter');
-    dropdown.value = '';
     filterItems('');
   }
 

@@ -10,6 +10,12 @@
   text-decoration: none;
   color: inherit;
   position: relative; /* Context */
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.item-card:hover,
+.product-card:hover {
+  transform: translateY(-4px);
 }
 
 /* Image - Square Aspect Ratio */
@@ -21,6 +27,12 @@
   display: block;
   background: var(--color-bg-card);
   margin-bottom: 1.25rem;
+  transition: box-shadow 0.4s ease;
+}
+
+.item-card:hover img,
+.product-card:hover img {
+  box-shadow: 0 12px 32px rgba(90, 45, 45, 0.15);
 }
 
 /* Card Name Row - Title + Wishlist */

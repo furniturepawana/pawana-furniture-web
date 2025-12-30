@@ -53,25 +53,29 @@
 }
 
 .room-type-header {
-  margin-bottom: var(--space-8);
-  display: flex;
-  justify-content: space-between;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-12);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  flex-wrap: wrap;
   gap: var(--space-4);
 }
 
+.room-type-header-left {
+  justify-self: start;
+}
+
+.room-type-filters {
+  justify-self: center;
+}
 
 .room-type-header h2 {
   font-family: var(--font-heading);
   font-size: var(--text-2xl);
   color: var(--color-text-primary);
-  margin-bottom: var(--space-1);
-  margin-top: var(--space-8);
+  margin: 0;
   font-weight: var(--font-semibold);
   line-height: var(--leading-tight);
-  text-align: center;
-  width: 100%;
 }
 
 .room-type-header .results-count {
@@ -81,20 +85,6 @@
 
 .room-type-filters {
   margin-bottom: 0;
-}
-
-/* Specific override for room type filter to be side-by-side */
-.room-type-filters .filter-dropdown {
-  flex-direction: row-reverse; /* Label on left, Select on right */
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.room-type-filters .filter-dropdown label {
-  margin-bottom: 0;
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  color: var(--color-text-primary);
 }
 
 /* Explore Other Types Section */
