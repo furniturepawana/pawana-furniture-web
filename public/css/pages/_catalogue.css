@@ -103,6 +103,18 @@
   margin-bottom: 1rem;
 }
 
+/* Filter Toggle Button - Hidden on desktop */
+.filter-toggle-btn {
+  display: none;
+}
+
+/* Dropdowns wrapper - Always visible on desktop */
+.filter-dropdowns-wrapper {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
 .catalogue-filters-right select {
   height: 34px; /* Scaled down further */
   min-width: 100px;

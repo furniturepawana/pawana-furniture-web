@@ -67,43 +67,53 @@
         </div>
 
         <!-- Dropdown Filters (Right) -->
-        <div class="catalogue-filters-right">
-          <!-- View Dropdown -->
-          <div class="filter-dropdown">
-            <label for="view-filter">View</label>
-            <select id="view-filter" onchange="updateFilter('view', this.value)">
-              <option value="all" <%= filters.view === 'all' ? 'selected' : '' %>>All</option>
-              <option value="items" <%= filters.view === 'items' ? 'selected' : '' %>>Items</option>
-              <option value="sets" <%= filters.view === 'sets' ? 'selected' : '' %>>Sets</option>
-            </select>
+        <div class="catalogue-filters-right" id="catalogue-filters-right">
+          <!-- Dropdowns Wrapper (slides in on mobile) -->
+          <div class="filter-dropdowns-wrapper">
+            <!-- View Dropdown -->
+            <div class="filter-dropdown">
+              <label for="view-filter">View</label>
+              <select id="view-filter" onchange="updateFilter('view', this.value)">
+                <option value="all" <%= filters.view === 'all' ? 'selected' : '' %>>All</option>
+                <option value="items" <%= filters.view === 'items' ? 'selected' : '' %>>Items</option>
+                <option value="sets" <%= filters.view === 'sets' ? 'selected' : '' %>>Sets</option>
+              </select>
+            </div>
+
+            <!-- Type Dropdown -->
+            <div class="filter-dropdown">
+              <label for="type-filter">Type</label>
+              <select id="type-filter" onchange="updateFilter('type', this.value)">
+                <option value="" <%= !filters.type ? 'selected' : '' %>>All Types</option>
+                <% allTypes.forEach(type => { %>
+                  <option value="<%= type %>" <%= filters.type && filters.type.toLowerCase() === type.toLowerCase() ? 'selected' : '' %>><%= type %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <!-- Style Dropdown -->
+            <div class="filter-dropdown">
+              <label for="style-filter">Style</label>
+              <select id="style-filter" onchange="updateFilter('style', this.value)">
+                <option value="" <%= !filters.style ? 'selected' : '' %>>All Styles</option>
+                <% allStyles.forEach(style => { %>
+                  <option value="<%= style %>" <%= filters.style === style ? 'selected' : '' %>><%= style %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <!-- Clear Filters Button -->
+            <button class="clear-filters-btn-top" onclick="clearFilters()" title="Clear all filters">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
           </div>
 
-          <!-- Type Dropdown -->
-          <div class="filter-dropdown">
-            <label for="type-filter">Type</label>
-            <select id="type-filter" onchange="updateFilter('type', this.value)">
-              <option value="" <%= !filters.type ? 'selected' : '' %>>All Types</option>
-              <% allTypes.forEach(type => { %>
-                <option value="<%= type %>" <%= filters.type && filters.type.toLowerCase() === type.toLowerCase() ? 'selected' : '' %>><%= type %></option>
-              <% }); %>
-            </select>
-          </div>
-
-          <!-- Style Dropdown -->
-          <div class="filter-dropdown">
-            <label for="style-filter">Style</label>
-            <select id="style-filter" onchange="updateFilter('style', this.value)">
-              <option value="" <%= !filters.style ? 'selected' : '' %>>All Styles</option>
-              <% allStyles.forEach(style => { %>
-                <option value="<%= style %>" <%= filters.style === style ? 'selected' : '' %>><%= style %></option>
-              <% }); %>
-            </select>
-          </div>
-
-          <!-- Clear Filters Button -->
-          <button class="clear-filters-btn-top" onclick="clearFilters()" title="Clear all filters">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <!-- Filter Toggle Button (mobile only) -->
+          <button class="filter-toggle-btn" id="filterToggleBtn" aria-label="Toggle filters">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
             </svg>
           </button>
         </div>
@@ -216,6 +226,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   allFilterData.types = Array.from(typeSet).sort();
   allFilterData.styles = Array.from(styleSet).sort();
+
+  // Mobile Filter Toggle
+  const filterToggleBtn = document.getElementById('filterToggleBtn');
+  const filtersRight = document.getElementById('catalogue-filters-right');
+
+  if (filterToggleBtn && filtersRight) {
+    filterToggleBtn.addEventListener('click', function() {
+      filtersRight.classList.toggle('filters-open');
+      filterToggleBtn.classList.toggle('active');
+    });
+  }
 });
 
 function updateRoomFilter(value) {
