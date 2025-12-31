@@ -1,10 +1,27 @@
 /* ==============================
    RESPONSIVE BASE & LAYOUT STYLES
    Contains media queries for:
+   - Section Titles (global)
    - Header
    - Footer
    - Buttons (global component)
    ============================== */
+
+/* ==============================
+   GLOBAL SECTION TITLES
+   ============================== */
+
+@media (max-width: 767px) {
+  .section-title {
+    font-size: 1.55rem;
+    margin-bottom: var(--space-2);
+  }
+
+  .section-subtitle {
+    font-size: 0.85rem;
+    margin-bottom: var(--space-3);
+  }
+}
 
 /* ==============================
    HEADER RESPONSIVE
@@ -38,10 +55,33 @@
     height: 34px;
   }
 
-  /* Search on mobile */
+  /* Search Modal Mobile Adjustments */
+  .search-modal-container {
+    width: 92%;
+    max-height: 75vh;
+  }
+
+  .search-modal .search-result-item {
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .search-modal .search-result-item img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .search-modal .search-result-name {
+    font-size: 0.95rem;
+  }
+
+  /* Ensure the inline search is hidden on mobile */
+  .search-box {
+    display: none !important;
+  }
+
   .search-wrapper.expanded .search-box {
-    width: 200px;
-    padding: 0 0.4rem 0 0.75rem;
+    display: none !important;
   }
 
   .search-input {
@@ -258,6 +298,12 @@
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s ease;
+    color: var(--color-text-primary);
+    z-index: 1001;
+  }
+
+  /* White/Ivory button for Home Page hero or scrolled states where needed */
+  .page-home:not(.scrolled) .mobile-menu-btn {
     color: var(--color-text-inverse);
   }
 

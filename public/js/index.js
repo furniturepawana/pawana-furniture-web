@@ -10,27 +10,27 @@
   if (!menuBtn || !drawer || !overlay) return;
 
   function openDrawer() {
-    drawer.classList.add('open');
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
+    drawer.classList.add('active');
+    overlay.classList.add('active');
+    document.body.classList.add('mobile-nav-open');
   }
 
   function closeDrawer() {
-    drawer.classList.remove('open');
-    overlay.classList.remove('open');
-    roomsPanel?.classList.remove('open');
-    document.body.style.overflow = '';
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+    roomsPanel?.classList.remove('active');
+    document.body.classList.remove('mobile-nav-open');
   }
 
   function openRoomsPanel() {
-    roomsPanel?.classList.add('open');
+    roomsPanel?.classList.add('active');
   }
 
   function closeRoomsPanel() {
-    roomsPanel?.classList.remove('open');
+    roomsPanel?.classList.remove('active');
     // Also collapse any expanded room types
-    roomsPanel?.querySelectorAll('.mobile-nav-room.expanded').forEach(room => {
-      room.classList.remove('expanded');
+    roomsPanel?.querySelectorAll('.mobile-nav-room.active').forEach(room => {
+      room.classList.remove('active');
     });
   }
 
@@ -68,7 +68,7 @@
         const roomItem = btn.closest('.mobile-nav-room');
 
         // Toggle this room's expanded state
-        roomItem.classList.toggle('expanded');
+        roomItem.classList.toggle('active');
       });
     });
   }

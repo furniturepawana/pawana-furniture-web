@@ -38,6 +38,18 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
     }
   }
 
+  // Update active state classes
+  function updateActiveStates() {
+    const allItems = carouselTrack.querySelectorAll('.carousel-item');
+    allItems.forEach(item => item.classList.remove('active'));
+
+    // The current active item is at index (currentIndex + 3)
+    const activeItem = allItems[currentIndex + 3];
+    if (activeItem) {
+      activeItem.classList.add('active');
+    }
+  }
+
   // Move carousel to specific position
   function moveToIndex(index, animate = true) {
     if (isAnimating) return;
@@ -47,11 +59,21 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
 
     // Calculate position
     const itemWidth = originalItems[0].offsetWidth;
-    const gap = 32;
-    const offset = (currentIndex + 3) * (itemWidth + gap); // +3 because we prepended 3 items
+    const gap = window.innerWidth <= 767 ? 16 : 32; // Smaller gap on mobile
+    const isMobile = window.innerWidth <= 767;
+
+    let offset = (currentIndex + 3) * (itemWidth + gap); // +3 because we prepended 3 items
+
+    // Centering logic for mobile - center the item in the viewport
+    if (isMobile) {
+      const containerWidth = carouselTrack.parentElement.offsetWidth;
+      // Account for the gap on both sides of the centered item
+      offset = offset - (containerWidth - itemWidth) / 2 + gap / 2;
+    }
 
     // Apply transformation
     if (animate) {
+      carouselTrack.style.transition = `transform ${transitionDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
       carouselTrack.style.transform = `translateX(-${offset}px)`;
     } else {
       carouselTrack.style.transition = 'none';
@@ -60,24 +82,38 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
       carouselTrack.style.transition = '';
     }
 
+    // Update active visual state immediately or after animation?
+    // Usually better during animation for smooth feel
+    updateActiveStates();
+
     // Handle loop transitions
     setTimeout(() => {
       if (currentIndex >= originalItems.length) {
         // Went past last item, jump to first
         currentIndex = 0;
-        const resetOffset = (currentIndex + 3) * (itemWidth + gap);
+        let resetOffset = (currentIndex + 3) * (itemWidth + gap);
+        if (isMobile) {
+          const containerWidth = carouselTrack.parentElement.offsetWidth;
+          resetOffset = resetOffset - (containerWidth - itemWidth) / 2;
+        }
         carouselTrack.style.transition = 'none';
         carouselTrack.style.transform = `translateX(-${resetOffset}px)`;
         carouselTrack.offsetHeight; // Force reflow
         carouselTrack.style.transition = '';
+        updateActiveStates();
       } else if (currentIndex < 0) {
         // Went before first item, jump to last
         currentIndex = originalItems.length - 1;
-        const resetOffset = (currentIndex + 3) * (itemWidth + gap);
+        let resetOffset = (currentIndex + 3) * (itemWidth + gap);
+        if (isMobile) {
+          const containerWidth = carouselTrack.parentElement.offsetWidth;
+          resetOffset = resetOffset - (containerWidth - itemWidth) / 2;
+        }
         carouselTrack.style.transition = 'none';
         carouselTrack.style.transform = `translateX(-${resetOffset}px)`;
         carouselTrack.offsetHeight; // Force reflow
         carouselTrack.style.transition = '';
+        updateActiveStates();
       }
 
       // Reset animation flag after a small delay to ensure everything is settled

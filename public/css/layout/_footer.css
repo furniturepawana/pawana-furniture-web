@@ -206,8 +206,30 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 767px) {
   .footer-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1; /* Brand still spans full width */
+  }
+
+  .footer-col h4 {
+    font-size: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-col ul li {
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-col ul li a {
+    font-size: 0.75rem;
+  }
+
+  .newsletter {
+    grid-column: 1 / -1; /* Newsletter spans full width */
   }
 }

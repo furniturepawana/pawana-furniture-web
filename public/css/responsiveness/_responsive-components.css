@@ -98,26 +98,60 @@
    ============================== */
 
 @media (max-width: 767px) {
-  .product-card {
+  .product-card,
+  .item-card {
     border-radius: var(--radius-sm);
   }
 
-  .product-card .image-container {
+  .product-card .image-container,
+  .item-card .image-container {
     aspect-ratio: 1/1;
   }
 
-  .product-card-info {
+  .product-card-info,
+  .item-card-info {
     padding: var(--space-2) var(--space-1);
   }
 
-  .product-card h3 {
-    font-size: 0.9rem;
-    margin-bottom: var(--space-1);
+  /* Card titles - consistent sizing */
+  .product-card h3,
+  .item-card h3,
+  .card-name-row h3 {
+    font-size: 1.05rem;
+    margin: 0.5rem 0 0.2rem 0;
+    line-height: 1.25;
   }
 
-  .product-card .product-type,
-  .product-card .card-meta {
+  /* Card meta - consistent compact layout */
+  .product-card-meta,
+  .item-card-meta {
+    padding: 0.2rem 0 0.35rem;
+    margin-top: 0.3rem;
+    gap: 0.5rem;
+  }
+
+  .product-card-meta p,
+  .item-card-meta p {
     font-size: 0.65rem;
+  }
+
+  /* Style badges - consistent sizing */
+  .item-style-badge {
+    font-size: 0.55rem;
+    padding: 0.2rem 0.5rem;
+    letter-spacing: 0.5px;
+  }
+
+  /* Card image margin */
+  .product-card img,
+  .item-card img {
+    margin-bottom: 0.6rem;
+  }
+
+  /* Wishlist button */
+  .wishlist-btn svg {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -138,19 +172,37 @@
     padding: var(--space-2) var(--space-1);
   }
 
-  .set-card h3 {
-    font-size: 0.9rem;
-    margin-bottom: var(--space-1);
+  /* Set card titles - consistent sizing */
+  .set-card h3,
+  .set-card .card-name-row h3 {
+    font-size: 1.05rem;
+    margin: 0.5rem 0 0.2rem 0;
+    line-height: 1.25;
   }
 
+  /* Set card meta - consistent compact layout */
+  .set-card-meta {
+    padding: 0.2rem 0 0.35rem;
+    margin-top: 0.3rem;
+    gap: 0.5rem;
+  }
+
+  .set-card-meta p,
   .set-card .set-meta,
   .set-card .card-meta {
     font-size: 0.65rem;
   }
 
+  /* Set style badge - consistent sizing */
   .set-style-badge {
     font-size: 0.55rem;
-    padding: 0.15rem 0.4rem;
+    padding: 0.2rem 0.5rem;
+    letter-spacing: 0.5px;
+  }
+
+  /* Set card image margin */
+  .set-card img {
+    margin-bottom: 0.6rem;
   }
 }
 

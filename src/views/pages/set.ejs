@@ -95,12 +95,12 @@
   <div class="section-container">
     <div class="carousel-header">
       <h2 class="section-title">Similar <%= set.style %> Sets for <%= set.room %></h2>
+    </div>
+    <div class="carousel-wrapper">
       <div class="carousel-nav">
         <button class="carousel-arrow carousel-prev" data-carousel="similar-sets" aria-label="Previous set">‹</button>
         <button class="carousel-arrow carousel-next" data-carousel="similar-sets" aria-label="Next set">›</button>
       </div>
-    </div>
-    <div class="carousel-wrapper">
       <div class="carousel-container">
         <div class="carousel-track" id="similar-sets-carousel-track">
           <% similarSets.forEach(similarSet => { %>

@@ -86,9 +86,10 @@
   }
 
   /* Section titles - smaller on mobile */
-  .section-title {
-    font-size: 1.35rem;
-    margin-bottom: var(--space-3);
+  .section-title,
+  body.page-home .home-carousel .carousel-header .section-title {
+    font-size: 1.55rem;
+    margin-bottom: var(--space-2); /* Reduced from space-3 */
   }
 
   /* Sections - less padding on mobile, but keep groups consistent */
@@ -124,31 +125,118 @@
     height: 200px;
   }
 
-  /* Carousels - 1 item, smaller */
-  .home-carousel .carousel-item {
-    flex: 0 0 100%;
+  /* Carousels - Centered Peek Effect */
+  .home-carousel .carousel-header {
+    margin-bottom: var(--space-2); /* Reduced from space-4 */
   }
 
-  .home-carousel .carousel-item h3,
-  .home-carousel .carousel-item h4 {
-    font-size: 1rem;
-    margin: var(--space-2) 0 var(--space-1) 0;
+  .home-carousel .carousel-wrapper {
+    overflow: hidden; /* Contain the track to prevent horizontal page scroll */
+    padding: 1rem 0; /* Reduced from 1.5rem */
+    position: relative;
+  }
+
+  .home-carousel .carousel-container {
+    overflow: visible; /* Allow elevated item shadow/scale to show */
+  }
+
+  .home-carousel .carousel-track {
+    gap: 1rem; /* Smaller gap for mobile peeking */
+  }
+
+  .home-carousel .carousel-item,
+  .home-carousel.featured-items-peek .carousel-item {
+    flex: 0 0 76%; /* Shows 76% of one item, leaving 12% peek on each side */
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease;
+    opacity: 0.45;
+    transform: scale(0.94);
+  }
+
+  .home-carousel .carousel-item.active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 2;
+  }
+
+  /* Reposition arrows - lower and more spaced out */
+  .carousel-nav {
+    position: absolute;
+    top: 55%; /* Moved down from 50% */
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1%; /* Reduced from 3% for arrows to be more outside */
+    pointer-events: none;
+    z-index: 10;
+    margin-top: 0; /* Removed negative margin */
+  }
+
+  /* Target specific carousels if needed for arrow vertical alignment */
+  .home-carousel .carousel-nav {
+    top: 42%; /* Position at roughly middle of image */
+  }
+
+  .carousel-nav .carousel-arrow {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--color-border-light);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    pointer-events: auto; /* Re-enable clicks */
+    font-size: 1.1rem;
+    color: var(--color-primary);
+  }
+
+  .carousel-nav .carousel-arrow:active {
+    transform: scale(0.95);
+  }
+
+  /* Adjust product card meta for compact mobile view */
+  .home-carousel .carousel-item h3 {
+    font-size: 1.05rem;
+    margin: 0.5rem 0 0.2rem 0;
   }
 
   .home-carousel .carousel-item p {
     font-size: 0.65rem;
   }
 
-  /* Carousel header more compact */
-  .home-carousel .carousel-header {
-    margin-bottom: var(--space-2);
+  .home-carousel .carousel-item .product-card-meta,
+  .home-carousel .carousel-item .item-card-meta {
+    padding: 0.2rem 0 0.35rem;
+    margin-top: 0.3rem;
+    gap: 0.5rem;
   }
 
-  .carousel-nav .carousel-arrow {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
+  .home-carousel .carousel-item .set-card-meta {
+    padding: 0.2rem 0 0.35rem;
+    margin-top: 0.3rem;
+    gap: 0.5rem;
   }
+
+  /* Smaller style badges on mobile home carousel */
+  .home-carousel .carousel-item .item-style-badge,
+  .home-carousel .carousel-item .set-style-badge {
+    font-size: 0.55rem;
+    padding: 0.2rem 0.5rem;
+    letter-spacing: 0.5px;
+  }
+
+  /* Card image margin reduction */
+  .home-carousel .carousel-item .product-card img,
+  .home-carousel .carousel-item .item-card img,
+  .home-carousel .carousel-item .set-card img {
+    margin-bottom: 0.6rem;
+  }
+
+  /* Wishlist button sizing */
+  .home-carousel .carousel-item .wishlist-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
 
   /* Rooms - 1 column, shorter cards */
   .rooms-grid {
@@ -207,6 +295,69 @@
   .btn-submit {
     padding: 0.75rem 1.25rem;
     font-size: 0.8rem;
+  }
+
+  /* Delivery Section - Map first, text below */
+  .delivery-section {
+    padding: var(--space-8) 0;
+  }
+
+  .delivery-section .section-container {
+    padding: 0 var(--space-4);
+  }
+
+  .delivery-section .section-title {
+    padding-left: 0;
+    margin-bottom: var(--space-2); /* Reduced since map will have padding */
+  }
+
+  .delivery-content {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .delivery-map-card {
+    flex: none;
+    width: 100%;
+    margin-left: 0;
+    padding: 4rem 0 6rem 0; /* More bottom padding for scaled image */
+    overflow: hidden;
+  }
+
+  .delivery-map-image {
+    transform: scale(2);
+    transform-origin: center center;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .delivery-text {
+    padding-right: 0;
+    gap: var(--space-3);
+    margin-top: var(--space-4); /* Extra space from map */
+  }
+
+  .delivery-text p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .delivery-highlights {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+
+  .highlight-item {
+    padding: 0.5rem;
+  }
+
+  .highlight-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .highlight-label {
+    font-size: 0.65rem;
   }
 }
 

@@ -39,6 +39,8 @@
 /* 5. Responsiveness (must be last to override base styles) */
 @import 'responsiveness/_responsive-base.css';
 @import 'responsiveness/_responsive-components.css';
+@import 'responsiveness/_header.responsive.css';
+@import 'responsiveness/_footer.responsive.css';
 
 /* Page-specific responsive styles */
 @import 'responsiveness/pages/_home.responsive.css';

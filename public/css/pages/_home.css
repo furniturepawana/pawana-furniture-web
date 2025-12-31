@@ -182,7 +182,7 @@
   background-color: var(--color-bg-body);
 }
 
-/* Carousel header with title and arrows */
+/* Carousel header with title */
 .home-carousel .carousel-header {
   display: flex;
   justify-content: space-between;
@@ -204,6 +204,16 @@ body.page-home .home-carousel .carousel-header .section-title {
 .home-carousel .carousel-wrapper {
   position: relative;
   overflow: hidden;
+}
+
+/* Desktop: Position nav in top-right corner of wrapper */
+.home-carousel .carousel-nav {
+  position: absolute;
+  top: -65px; /* Position it back up to line with the header */
+  right: 0;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
 }
 
 .home-carousel .carousel-container {

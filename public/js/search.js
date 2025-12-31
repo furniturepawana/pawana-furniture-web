@@ -6,8 +6,29 @@ let hasTyped = false;
 
 // Toggle search expansion
 function toggleSearch(expand) {
+  const isMobile = window.innerWidth <= 767;
   const wrapper = document.querySelector('.search-wrapper');
+
+  if (isMobile) {
+    const modal = document.getElementById('searchModal');
+    const modalInput = modal?.querySelector('.search-modal-input');
+
+    if (expand) {
+      modal?.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => modalInput?.focus(), 300);
+      showSearchSuggestions();
+    } else {
+      modal?.classList.remove('active');
+      document.body.style.overflow = '';
+      clearSearchResults();
+    }
+    return;
+  }
+
+  // Desktop Inline logic
   const searchInput = wrapper?.querySelector('.search-input');
+  const header = document.querySelector('.site-header');
 
   if (wrapper) {
     if (expand) {
@@ -26,7 +47,11 @@ function toggleSearch(expand) {
 
 // Perform search
 async function performSearch(query) {
-  const resultsContainer = document.querySelector('.search-results');
+  const isMobile = window.innerWidth <= 767;
+  const resultsContainer = isMobile
+    ? document.querySelector('.search-modal-results')
+    : document.querySelector('.search-results');
+
   if (!resultsContainer) return;
 
   if (!query || query.trim().length < 1) {
@@ -49,7 +74,11 @@ async function performSearch(query) {
 
 // Display search results
 function displaySearchResults(data) {
-  const resultsContainer = document.querySelector('.search-results');
+  const isMobile = window.innerWidth <= 767;
+  const resultsContainer = isMobile
+    ? document.querySelector('.search-modal-results')
+    : document.querySelector('.search-results');
+
   if (!resultsContainer) return;
 
   const { items, sets } = data;
@@ -97,7 +126,6 @@ function displaySearchResults(data) {
 
   if (items.length > 0) {
     html += '<div class="search-category" data-type="items"><h4>Items</h4>';
-    // Show more items (increase from 6 to 15)
     html += items.slice(0, 15).map(item => `
       <a href="/item/${item.slug}" class="search-result-item">
         <img src="${item.images?.[0]?.url || '/images/placeholder.jpg'}" alt="${item.name}">
@@ -122,8 +150,8 @@ function displaySearchResults(data) {
   if (filterSelect) {
     filterSelect.addEventListener('change', function() {
       const value = this.value;
-      const setsCategory = document.querySelector('.search-category[data-type="sets"]');
-      const itemsCategory = document.querySelector('.search-category[data-type="items"]');
+      const setsCategory = resultsContainer.querySelector('.search-category[data-type="sets"]');
+      const itemsCategory = resultsContainer.querySelector('.search-category[data-type="items"]');
 
       if (value === 'all') {
         if (setsCategory) setsCategory.style.display = 'block';
@@ -141,7 +169,11 @@ function displaySearchResults(data) {
 
 // Show default search suggestions
 function showSearchSuggestions() {
-  const resultsContainer = document.querySelector('.search-results');
+  const isMobile = window.innerWidth <= 767;
+  const resultsContainer = isMobile
+    ? document.querySelector('.search-modal-results')
+    : document.querySelector('.search-results');
+
   if (!resultsContainer) return;
 
   resultsContainer.innerHTML = `
@@ -211,10 +243,9 @@ function showSearchSuggestions() {
   // Add click handlers to suggestion items
   resultsContainer.querySelectorAll('.suggestion-item').forEach(tag => {
     tag.addEventListener('click', (e) => {
-      // Prevent the click from bubbling up to the document level
       e.stopPropagation();
-
-      const searchInput = document.querySelector('.search-input');
+      const inputClass = isMobile ? '.search-modal-input' : '.search-input';
+      const searchInput = document.querySelector(inputClass);
       if (searchInput) {
         searchInput.value = tag.dataset.query;
         hasTyped = true;
@@ -226,8 +257,12 @@ function showSearchSuggestions() {
 
 // Clear search results
 function clearSearchResults() {
-  const searchInput = document.querySelector('.search-input');
-  const resultsContainer = document.querySelector('.search-results');
+  const isMobile = window.innerWidth <= 767;
+  const resultsContainer = isMobile
+    ? document.querySelector('.search-modal-results')
+    : document.querySelector('.search-results');
+  const inputClass = isMobile ? '.search-modal-input' : '.search-input';
+  const searchInput = document.querySelector(inputClass);
 
   if (searchInput) searchInput.value = '';
   if (resultsContainer) resultsContainer.innerHTML = '';
@@ -237,54 +272,60 @@ function clearSearchResults() {
 document.addEventListener('DOMContentLoaded', () => {
   const wrapper = document.querySelector('.search-wrapper');
   const searchIcon = document.querySelector('.search-icon');
-  const closeSearch = document.querySelector('.search-box .search-close');
-  const searchInput = document.querySelector('.search-input');
+  const modal = document.getElementById('searchModal');
+  const closeModal = modal?.querySelector('.search-modal-close');
+  const modalOverlay = modal?.querySelector('.search-modal-overlay');
+  const modalInput = modal?.querySelector('.search-modal-input');
 
   if (!wrapper) return;
 
-  // Expand on hover over search icon
-  searchIcon?.addEventListener('mouseenter', () => {
+  // Search Icon Click
+  searchIcon?.addEventListener('click', (e) => {
+    e.preventDefault();
     toggleSearch(true);
   });
 
-  // Close search button
+  // Expand on hover ONLY on desktop
+  searchIcon?.addEventListener('mouseenter', () => {
+    if (window.innerWidth > 767) toggleSearch(true);
+  });
+
+  // Modal Close Click
+  closeModal?.addEventListener('click', () => toggleSearch(false));
+
+  // Modal Overlay (Gaps) Click
+  modalOverlay?.addEventListener('click', () => {
+    if (!modalInput || modalInput.value.trim() === '') {
+      toggleSearch(false);
+    }
+  });
+
+  // Desktop Inline Close button
+  const closeSearch = document.querySelector('.search-box .search-close');
   closeSearch?.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleSearch(false);
   });
 
-  // Search input with debounce
-  searchInput?.addEventListener('input', (e) => {
-    hasTyped = e.target.value.length > 0;
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      performSearch(e.target.value);
-    }, SEARCH_DEBOUNCE);
+  // Inputs with debounce
+  [document.querySelector('.search-input'), modalInput].forEach(input => {
+    input?.addEventListener('input', (e) => {
+      hasTyped = e.target.value.length > 0;
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        performSearch(e.target.value);
+      }, SEARCH_DEBOUNCE);
+    });
+
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') toggleSearch(false);
+    });
   });
 
-  // Keyboard shortcuts
-  searchInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      toggleSearch(false);
-    }
-  });
-
-  // Close when clicking outside
+  // Close desktop search when clicking outside
   document.addEventListener('click', (e) => {
-    if (!wrapper.contains(e.target)) {
+    if (window.innerWidth > 767 && !wrapper.contains(e.target)) {
       toggleSearch(false);
-    }
-  });
-
-  // Close when mouse leaves if user hasn't typed anything
-  wrapper.addEventListener('mouseleave', () => {
-    if (!hasTyped && wrapper.classList.contains('expanded')) {
-      // Small delay to prevent accidental closing
-      setTimeout(() => {
-        if (!hasTyped && !wrapper.matches(':hover')) {
-          toggleSearch(false);
-        }
-      }, 100);
     }
   });
 

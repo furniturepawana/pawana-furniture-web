@@ -92,12 +92,12 @@
   <div class="section-container">
     <div class="carousel-header">
       <h2 class="section-title">Similar <%= item.style %> <%= item.type %> for <%= item.room %></h2>
+    </div>
+    <div class="carousel-wrapper">
       <div class="carousel-nav">
         <button class="carousel-arrow carousel-prev" data-carousel="similar-items" aria-label="Previous item">‹</button>
         <button class="carousel-arrow carousel-next" data-carousel="similar-items" aria-label="Next item">›</button>
       </div>
-    </div>
-    <div class="carousel-wrapper">
       <div class="carousel-container">
         <div class="carousel-track" id="similar-items-carousel-track">
           <% similarItems.forEach(similarItem => { %>
