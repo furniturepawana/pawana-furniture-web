@@ -29,19 +29,50 @@
   }
 
   .related-items-section {
-    padding: var(--space-6) var(--space-4);
+    padding: var(--space-6) var(--space-4) var(--space-12);
   }
 
   .item-content {
     margin-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Constrain image section and info to same width for alignment */
+  .item-image-section,
+  .item-info {
+    width: 90%;
+    max-width: 90%;
   }
 
   .item-image-main img {
-    max-height: 300px;
+    max-height: none;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+
+  /* Left-aligned product meta - aligns with image edges */
+  .item-info {
+    text-align: left;
+  }
+
+  .item-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: var(--space-1);
   }
 
   .item-title {
     font-size: 1.15rem;
+    margin: 0;
+  }
+
+  .detail-wishlist {
+    margin-top: 0;
   }
 
   .item-description {
@@ -50,6 +81,7 @@
 
   .item-header {
     flex-direction: column;
+    align-items: flex-start;
     gap: var(--space-2);
     margin-bottom: var(--space-4);
   }
@@ -58,6 +90,10 @@
   .item-type {
     font-size: 0.65rem;
     padding: var(--space-1) var(--space-2);
+  }
+
+  .item-thumbnails {
+    justify-content: flex-start;
   }
 
   .item-thumbnails .thumbnail {
@@ -79,19 +115,49 @@
     font-size: 0.65rem;
   }
 
-  .enquiry-btn {
+  /* Enquiry button - smaller size */
+  .item-info .enquiry-btn {
     padding: var(--space-2) var(--space-4);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
-  /* Similar Items - 1 per row on mobile */
+  /* Furniture type - uppercase and prominent */
+  .item-type-code {
+    text-transform: uppercase;
+    font-weight: var(--font-semibold);
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+
+  /* Similar Items carousel title - match home page (1.55rem) */
+  .related-items-container h2 {
+    font-size: 1.55rem;
+    margin-bottom: var(--space-6);
+  }
+
+  /* You may also like grid - smaller images, more vertical gap */
   .related-items-section .product-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-4);
+    gap: var(--space-8);
   }
 
-  .related-items-container h2 {
-    font-size: 1.3rem;
-    margin-bottom: var(--space-6);
+  /* Centered cards for 'You May Also Like' */
+  .related-items-section .product-grid .product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .related-items-section .product-grid .product-card img {
+    max-width: 85%;
+  }
+
+  .related-items-section .product-grid .product-card .card-name-row,
+  .related-items-section .product-card .product-card-meta,
+  .related-items-section .product-card .item-card-meta,
+  .related-items-section .product-card .set-card-meta {
+    max-width: 85%;
+    width: 85%;
+    text-align: left;
   }
 }

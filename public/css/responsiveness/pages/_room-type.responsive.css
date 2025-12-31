@@ -37,12 +37,38 @@
   }
 
   .room-type-header {
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+  }
+
+  .room-type-header-left {
+    order: 1;
+  }
+
+  .room-type-filters {
+    order: 2;
   }
 
   .room-type-header h2 {
-    font-size: 1.3rem;
-    margin-top: var(--space-4);
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: var(--space-6);
+  }
+
+  /* Keep filter tabs in a single row on mobile */
+  .room-type-header .style-filter-tabs {
+    flex-wrap: nowrap;
+    padding: var(--space-1);
+  }
+
+  .room-type-header .style-tab {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    white-space: nowrap;
   }
 
   .room-type-header .results-count {
@@ -50,7 +76,7 @@
   }
 
   .room-type-items-section .catalogue-items-grid {
-    gap: var(--space-4);
+    gap: var(--space-8);
   }
 
   .explore-types-section h2 {

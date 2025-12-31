@@ -91,3 +91,45 @@
   color: var(--color-text-primary);
   font-weight: 600;
 }
+
+/* ==============================
+   RESPONSIVE BREADCRUMB
+   ============================== */
+
+@media (max-width: 767px) {
+  .breadcrumb-section {
+    width: 100%;
+    margin-left: 0;
+    padding: var(--space-1) 0;
+    padding-left: 0.75rem; /* Tighter left alignment */
+    overflow: hidden;
+  }
+
+  .breadcrumb-container {
+    padding-left: 0;
+    width: 100%;
+    margin: 0;
+  }
+
+  /* Universal Mobile Breadcrumb Style */
+  .breadcrumb,
+  .item-breadcrumb,
+  .set-breadcrumb,
+  .page-breadcrumb {
+    font-size: 0.55rem; /* Slightly smaller for a tighter look */
+    justify-content: flex-start;
+    gap: var(--space-1);
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-back {
+    width: 28px; /* Slightly smaller circle */
+    height: 28px;
+    margin-right: 0.4rem;
+  }
+
+  .breadcrumb-back svg {
+    width: 16px;
+    height: 16px;
+  }
+}

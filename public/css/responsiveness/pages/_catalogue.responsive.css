@@ -223,7 +223,7 @@
   .catalogue-sets-grid,
   .catalogue-items-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-4);
+    gap: var(--space-12);
   }
 }
 

@@ -334,7 +334,7 @@
     visibility: visible;
   }
 
-  /* Drawer panel */
+  /* Drawer panel - Dark Maroon Theme */
   .mobile-nav-drawer {
     display: flex; /* Override base display: none */
     position: fixed;
@@ -342,8 +342,8 @@
     right: -280px;
     width: 200px;
     height: 100vh;
-    background: var(--color-bg-dark);
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(185deg, #5c1f26 0%, #4a181e 100%); /* Darker maroon - matches submenu */
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
     z-index: 1999;
     flex-direction: column;
     transition: right 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -360,7 +360,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.1);
   }
 
   .mobile-nav-title {
@@ -415,9 +416,9 @@
   }
 
   .mobile-nav-links a:hover {
-    background: rgba(61, 40, 23, 0.05);
-    color: var(--color-primary);
-    border-left-color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.06);
+    color: #f5d4ba; /* Warm cream accent */
+    border-left-color: #f5d4ba;
   }
 
   /* ======== Mobile Flyout Panels ======== */
@@ -430,7 +431,7 @@
   }
 
   .mobile-nav-link-text {
-    flex: 1;
+    flex: none; /* Don't expand - arrow stays right next to text */
     padding: 1rem 0 1rem 1.5rem !important;
   }
 
@@ -438,28 +439,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px;
+    width: 32px;
     height: 100%;
     min-height: 52px;
     background: transparent;
     border: none;
-    border-left: 1px solid rgba(255,255,255,0.1);
     cursor: pointer;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.7);
     transition: all 0.2s ease;
+    margin-left: 0.75rem; /* More gap from text */
   }
 
   .mobile-nav-arrow-btn:hover {
-    background: rgba(255,255,255,0.05);
-    color: var(--color-primary);
+    color: #f5d4ba; /* Warm accent color */
   }
 
   .mobile-nav-arrow {
-    font-size: 1.2rem;
+    font-size: 1.3rem; /* Bigger arrow */
     transition: transform 0.3s ease;
   }
 
-  /* ======== Rooms Submenu Panel ======== */
+  /* Arrow rotates when submenu is open */
+  .mobile-nav-dropdown.active .mobile-nav-arrow {
+    transform: rotate(90deg);
+  }
+
+  /* ======== Rooms Submenu Panel - Maroon Theme ======== */
   .mobile-rooms-panel {
     display: flex;
     flex-direction: column;
@@ -468,8 +473,8 @@
     right: 200px; /* Position to the left of main drawer (drawer is 200px) */
     width: 170px;
     max-height: calc(100vh - 120px);
-    background: var(--color-bg-dark);
-    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(185deg, #5c1f26 0%, #4a181e 100%); /* Slightly darker maroon */
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
     border-radius: 8px 0 0 8px;
     z-index: 1998;
     transform: translateX(100%);
@@ -550,14 +555,15 @@
   }
 
   .mobile-room-link:hover {
-    color: var(--color-primary);
-    background: rgba(255,255,255,0.03);
+    color: #f5d4ba; /* Warm cream accent */
+    background: rgba(255,255,255,0.05);
   }
 
   .mobile-nav-room .mobile-nav-arrow-btn {
-    width: 36px;
+    width: 24px; /* Very compact */
     min-height: 40px;
-    border-left: 1px solid rgba(255,255,255,0.08);
+    border: none; /* No separator */
+    margin-right: 0.75rem;
   }
 
   /* Furniture types accordion - inside room item */
@@ -586,8 +592,8 @@
   }
 
   .mobile-nav-types a:hover {
-    color: var(--color-primary);
-    background: rgba(255,255,255,0.03);
+    color: #f5d4ba; /* Warm cream accent */
+    background: rgba(255,255,255,0.05);
   }
 
   .mobile-nav-types .view-all-link {
@@ -619,8 +625,8 @@
   }
 
   .mobile-nav-wishlist:hover {
-    background: rgba(61, 40, 23, 0.1);
-    color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.1);
+    color: #f5d4ba; /* Warm accent color */
   }
 
   .mobile-nav-wishlist svg {

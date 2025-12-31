@@ -37,16 +37,50 @@
     padding: var(--space-6) var(--space-4);
   }
 
+  /* Add extra bottom padding for related items section before footer */
+  .related-items-section {
+    padding-bottom: var(--space-12);
+  }
+
   .set-content {
     margin-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Constrain image section and info to same width for alignment */
+  .set-image-section,
+  .set-info {
+    width: 90%;
+    max-width: 90%;
   }
 
   .set-image-main img {
     max-height: 300px;
+    width: 100%;
+  }
+
+  /* Left-aligned product meta - aligns with image edges */
+  .set-info {
+    text-align: left;
+  }
+
+  .set-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: var(--space-1);
   }
 
   .set-title {
     font-size: 1.15rem;
+    margin: 0;
+  }
+
+  .detail-wishlist {
+    margin-top: 0;
   }
 
   .set-description {
@@ -55,6 +89,7 @@
 
   .set-header {
     flex-direction: column;
+    align-items: flex-start;
     gap: var(--space-2);
     margin-bottom: var(--space-4);
   }
@@ -63,6 +98,10 @@
   .set-items-count {
     font-size: 0.65rem;
     padding: var(--space-1) var(--space-2);
+  }
+
+  .set-thumbnails {
+    justify-content: flex-start;
   }
 
   .thumbnail {
@@ -84,9 +123,10 @@
     font-size: 0.65rem;
   }
 
-  .enquiry-btn {
+  /* Enquiry button - smaller size */
+  .set-info .enquiry-btn {
     padding: var(--space-2) var(--space-4);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   .set-items-container h2 {
@@ -116,14 +156,34 @@
     font-size: 0.65rem;
   }
 
-  /* Similar Items - 1 per row on mobile */
-  .related-items-section .product-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-
+  /* Similar Items carousel title - match home page (1.55rem) */
   .related-items-container h2 {
-    font-size: 1.3rem;
+    font-size: 1.55rem;
     margin-bottom: var(--space-6);
   }
+
+  /* You may also like grid - smaller images, more vertical gap */
+  .related-items-section .product-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  /* Centered cards for 'You May Also Like' */
+  .related-items-section .product-grid .set-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .related-items-section .product-grid .set-card img {
+    max-width: 85%;
+  }
+
+  .related-items-section .product-grid .set-card .card-name-row,
+  .related-items-section .product-grid .set-card .set-card-meta {
+    max-width: 85%;
+    width: 85%;
+    text-align: left;
+  }
 }
+

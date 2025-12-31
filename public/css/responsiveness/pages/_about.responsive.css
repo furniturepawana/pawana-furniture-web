@@ -25,11 +25,21 @@
 
   .about-content {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem; /* Reduced gap */
+    align-items: stretch;
+  }
+
+  .about-image {
+    flex: none; /* Reset fixed width */
+    width: 100%;
+    margin-top: 2rem; /* Move image more down */
   }
 
   .about-image img {
-    height: 250px;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+    width: 100%;
   }
 
   .about-text h2 {

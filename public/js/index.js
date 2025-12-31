@@ -19,6 +19,8 @@
     drawer.classList.remove('active');
     overlay.classList.remove('active');
     roomsPanel?.classList.remove('active');
+    // Also remove active class from collection dropdown (resets arrow)
+    drawer.querySelector('.mobile-nav-dropdown')?.classList.remove('active');
     document.body.classList.remove('mobile-nav-open');
   }
 
@@ -48,12 +50,22 @@
     if (e.key === 'Escape') closeDrawer();
   });
 
-  // Collection dropdown - arrow button to open submenu
+  // Collection dropdown - arrow button to toggle submenu
   const collectionArrow = drawer.querySelector('.mobile-nav-dropdown .mobile-nav-arrow-btn');
+  const collectionDropdown = drawer.querySelector('.mobile-nav-dropdown');
   if (collectionArrow) {
     collectionArrow.addEventListener('click', (e) => {
       e.preventDefault();
-      openRoomsPanel();
+      e.stopPropagation();
+
+      // Toggle the rooms panel
+      if (roomsPanel?.classList.contains('active')) {
+        closeRoomsPanel();
+        collectionDropdown?.classList.remove('active');
+      } else {
+        openRoomsPanel();
+        collectionDropdown?.classList.add('active');
+      }
     });
   }
 
