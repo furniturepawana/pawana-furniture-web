@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Only The Finest Furniture</title>
 
+    <!-- No-Cache Meta Tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <!-- Google Fonts: Playfair Display + Lato -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +19,7 @@
     <link rel="icon" type="image/webp" href="https://res.cloudinary.com/duiix4ryu/image/upload/v1767292400/pf_logo_1_1_k5oges.webp">
     <link rel="apple-touch-icon" href="https://res.cloudinary.com/duiix4ryu/image/upload/v1767292400/pf_logo_1_1_k5oges.webp">
 
-    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/main.css?v=<%= version %>" />
   </head>
 
   <body class="<%= typeof pageClass !== 'undefined' ? pageClass : '' %>">
@@ -318,13 +323,13 @@
       </div>
     </footer>
 
-    <script src="/js/index.js"></script>
-    <script src="/js/carousel.js"></script>
-    <script src="/js/marquee.js"></script>
-    <script src="/js/dropdown.js"></script>
-    <script src="/js/wishlist.js"></script>
-    <script src="/js/pagination.js"></script>
-    <script src="/js/search.js"></script>
+    <script src="/js/index.js?v=<%= version %>"></script>
+    <script src="/js/carousel.js?v=<%= version %>"></script>
+    <script src="/js/marquee.js?v=<%= version %>"></script>
+    <script src="/js/dropdown.js?v=<%= version %>"></script>
+    <script src="/js/wishlist.js?v=<%= version %>"></script>
+    <script src="/js/pagination.js?v=<%= version %>"></script>
+    <script src="/js/search.js?v=<%= version %>"></script>
 
     <!-- Scroll Animations -->
     <script>

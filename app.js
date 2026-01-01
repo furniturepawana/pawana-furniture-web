@@ -88,6 +88,9 @@ app.use(sessionMiddleware);
 // Navigation data middleware - makes items, sets, and rooms available to all views
 app.use(navDataMiddleware);
 
+// Add a version for cache busting
+app.locals.version = Date.now();
+
 app.use("/", homeRoute);
 app.use("/item", itemRoute);
 app.use("/set", setRoute);
