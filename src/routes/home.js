@@ -6,46 +6,42 @@ import Room from "../models/Room.js";
 const router = express.Router();
 
 const SIGNATURE_ITEMS_CODES = [
-  // Living Room items
-  "LM-011", "LM-002", "LR-007", "LR-013", "LT-019", "LT-001",
-  // Bedroom, Dining, Office items for variety
-  "BM-01", "BM-03", "DR-01", "DR-02", "OF-01", "OF-02",
+  "LR-04", "BR-28", "DR-05", "SM-039", "LR-06", "LR-008", "BR-23", "LR-012", "ST-053", "BR-21", "SR-039", "DR-17", "DR-03", "SR-024", "SR-066"
 ];
 
 const FEATURED_ITEMS_CODES = [
-  "LM-005",
-  "LM-008",
-  "LM-014",
-  "LR-017",
-  "LR-009",
-  "LR-004",
-  "LT-011",
-  "LT-024",
-  "LT-010",
+  "LM-011", "ST-011", "LR-011", "LM-018", "SR-060", "LR-004", "ST-051", "LT-010", "LR-010", "SR-062", "LT-008", "SR-085"
 ];
 
 const FEATURED_SETS_CODES = [
-  "LR-07",
-  "LR-05",
-  "LT-02",
-  "LT-01",
-  "LM-03",
-  "LM-01",
+  "OT-02", "LR-01", "BT-27", "DM-01", "OT-08", "BR-06", "BT-13", "DM-09", "LR-02", "DR-06"
 ];
 
 router.get("/", async (req, res) => {
   try {
-    const featuredItems = await FurnitureItem.find({
+    const featuredItemsRaw = await FurnitureItem.find({
       code: { $in: SIGNATURE_ITEMS_CODES },
     });
+    // Sort items to match SIGNATURE_ITEMS_CODES order
+    const featuredItems = SIGNATURE_ITEMS_CODES.map(code =>
+      featuredItemsRaw.find(item => item.code === code)
+    ).filter(Boolean);
 
-    const carouselItems = await FurnitureItem.find({
+    const carouselItemsRaw = await FurnitureItem.find({
       code: { $in: FEATURED_ITEMS_CODES },
     });
+    // Sort items to match FEATURED_ITEMS_CODES order
+    const carouselItems = FEATURED_ITEMS_CODES.map(code =>
+      carouselItemsRaw.find(item => item.code === code)
+    ).filter(Boolean);
 
-    const carouselSets = await FurnitureSet.find({
+    const carouselSetsRaw = await FurnitureSet.find({
       code: { $in: FEATURED_SETS_CODES },
     });
+    // Sort sets to match FEATURED_SETS_CODES order
+    const carouselSets = FEATURED_SETS_CODES.map(code =>
+      carouselSetsRaw.find(set => set.code === code)
+    ).filter(Boolean);
 
     // Fetch all furniture items
     const allItems = await FurnitureItem.find().sort({ createdAt: -1 });

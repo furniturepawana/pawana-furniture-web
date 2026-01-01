@@ -37,9 +37,19 @@
 
   .about-image img {
     height: auto;
-    max-height: 300px;
+    max-height: 380px; /* Increased height for better visibility */
     object-fit: cover;
-    width: 100%;
+    object-position: top center;
+    width: 85%;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .story-title {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    text-align: center;
   }
 
   .about-text h2 {
@@ -58,41 +68,55 @@
   .about-values h2,
   .about-process h2 {
     font-size: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
-  .values-grid,
-  .process-steps {
+  .values-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
-  .value-card {
-    padding: 1.5rem;
-  }
-
-  .value-icon {
-    font-size: 2rem;
-  }
-
-  .value-card h3 {
-    font-size: 1.1rem;
-  }
-
-  .value-card p {
+  .process-intro {
     font-size: 0.85rem;
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+  }
+
+  .process-steps {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .process-step {
+    flex: 0 0 100%;
+    flex-direction: row;
+    gap: 1rem;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .step-image {
+    flex: 0 0 110px; /* Scaled up from 80px */
+    height: 110px;
+    margin-bottom: 0;
+  }
+
+  .step-header {
+    margin-bottom: 0.25rem;
+    gap: 0.5rem;
   }
 
   .step-number {
-    font-size: 2.5rem;
-  }
-
-  .process-step h3 {
     font-size: 1.1rem;
   }
 
+  .process-step h3 {
+    font-size: 0.95rem;
+  }
+
   .process-step p {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
   }
 
   .about-cta {
