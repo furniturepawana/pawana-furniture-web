@@ -28,37 +28,65 @@
   }
 
   .services-list {
-    padding: 1.5rem 0 2rem;
+    padding: 1rem 0 2rem;
   }
 
   .services-list .services-container {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
   }
 
   .service-item {
-    padding: 1.25rem;
+    padding: 1.25rem 1rem;
+    background: var(--color-bg-section-alt);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
   }
 
-  .service-icon {
-    font-size: 2rem;
+  .service-item:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: transparent;
   }
 
-  .service-content h3 {
+  .service-content {
+    flex-direction: row;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .service-image {
+    flex: 0 0 110px;
+    width: 110px;
+    height: 110px;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .service-text {
+    flex: 1;
+    padding: 0;
+  }
+
+  .service-text h3 {
     font-size: 1.1rem;
+    margin-bottom: 0.35rem;
+    line-height: 1.3;
   }
 
-  .service-content p {
-    font-size: 0.85rem;
+  .service-text p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.5rem;
   }
 
-  .service-content ul {
-    grid-template-columns: 1fr;
-  }
-
-  .service-content ul li {
-    font-size: 0.85rem;
+  .service-text ul {
+    display: none; /* Hide list on mobile for cleaner look */
   }
 
   .services-cta {

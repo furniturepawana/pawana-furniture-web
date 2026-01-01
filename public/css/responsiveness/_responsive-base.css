@@ -335,7 +335,7 @@
     visibility: visible;
   }
 
-  /* Drawer panel - Dark Maroon Theme */
+  /* Drawer panel - Dark Maroon Theme (matches footer) */
   .mobile-nav-drawer {
     display: flex; /* Override base display: none */
     position: fixed;
@@ -343,7 +343,7 @@
     right: -280px;
     width: 200px;
     height: 100vh;
-    background: linear-gradient(185deg, #5c1f26 0%, #4a181e 100%); /* Darker maroon - matches submenu */
+    background: linear-gradient(185deg, #3d151a 0%, #2a0f12 100%); /* Matches footer */
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
     z-index: 1999;
     flex-direction: column;
@@ -474,7 +474,7 @@
     right: 200px; /* Position to the left of main drawer (drawer is 200px) */
     width: 170px;
     max-height: calc(100vh - 120px);
-    background: linear-gradient(185deg, #5c1f26 0%, #4a181e 100%); /* Slightly darker maroon */
+    background: linear-gradient(185deg, #3d151a 0%, #2a0f12 100%); /* Matches footer */
     box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
     border-radius: 8px 0 0 8px;
     z-index: 1998;
