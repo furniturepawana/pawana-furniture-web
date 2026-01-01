@@ -226,6 +226,39 @@
   margin: 0;
 }
 
+/* Heritage Section */
+.about-heritage {
+  padding: 6rem 0;
+  background: var(--color-bg-body);
+  text-align: center;
+}
+
+.heritage-icon-wrapper {
+  margin-bottom: 2rem;
+  color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+}
+
+.heritage-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heritage-content h2 {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  color: var(--color-text-primary);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.heritage-content p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+}
+
 /* CTA Section */
 .about-cta {
   padding: 4rem 0;

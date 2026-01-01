@@ -144,4 +144,22 @@
     padding: 0.75rem 1.5rem;
     font-size: 0.75rem;
   }
+
+  .about-heritage {
+    padding: 4rem 0;
+  }
+
+  .heritage-content {
+    padding: 0 1.5rem;
+  }
+
+  .heritage-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .heritage-content p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
 }
