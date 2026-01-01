@@ -25,16 +25,27 @@
     backdrop-filter: blur(0px);
   }
 
+  /* Hero Badges Container - Left aligned and closer to title */
+  .hero-badges {
+    position: relative;
+    top: auto;
+    left: auto;
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+    z-index: 3;
+  }
+
   /* Badge - Inline, smaller */
   .hero-badge {
-    font-size: 0.5rem;
-    padding: 0.15rem 0.5rem;
-    position: relative;
-    top: 0.1rem;
-    left: 0;
+    font-size: 0.55rem;
+    padding: 0.2rem 0.6rem;
+    position: static;
     transform: none;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     display: inline-block;
+    letter-spacing: 0.1em;
   }
 
   .hero h1 {
@@ -96,7 +107,7 @@
   /* Group 1: Carousels + Browse Rooms */
   .home-carousel,
   .browse-rooms {
-    padding: var(--space-6) 0;
+    padding: var(--space-5) 0;
   }
 
   /* Group 2: Marquees (Recent Projects, Brands, Testimonials) */
@@ -109,6 +120,11 @@
   .why-us,
   .custom-order {
     padding: var(--space-8) 0;
+  }
+
+  .home-carousel,
+  .browse-rooms {
+    margin-top: var(--space-4);
   }
 
   .section-container {
@@ -132,7 +148,7 @@
 
   .home-carousel .carousel-wrapper {
     overflow: hidden; /* Contain the track to prevent horizontal page scroll */
-    padding: 1rem 0; /* Reduced from 1.5rem */
+    padding: 0rem 0; /* Reduced from 1.5rem */
     position: relative;
   }
 
@@ -259,6 +275,7 @@
   /* Browse rooms section */
   .browse-rooms-subtitle {
     font-size: 0.85rem;
+    margin-top: var(--space-1);
     margin-bottom: var(--space-4);
   }
 

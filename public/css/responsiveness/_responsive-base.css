@@ -19,6 +19,7 @@
 
   .section-subtitle {
     font-size: 0.85rem;
+    margin-top: var(--space-1);
     margin-bottom: var(--space-3);
   }
 }

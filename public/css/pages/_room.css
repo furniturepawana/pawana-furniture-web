@@ -64,11 +64,11 @@ section.room-hero {
 }
 
 .section-subtitle {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-8);
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-6);
   line-height: var(--leading-relaxed);
-  text-align: center;
 }
 
 /* Sets Grid - Fixed 3 Columns, Wider Images */

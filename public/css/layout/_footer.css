@@ -3,7 +3,7 @@
    ============================== */
 
 .site-footer {
-  background: var(--color-primary-dark); /* Dark maroon background */
+  background: linear-gradient(185deg, #3d151a 0%, #2a0f12 100%); /* Much darker maroon */
   color: var(--color-text-inverse);
   padding: 4rem 0 1.5rem;
   margin-top: auto; /* Push to bottom if content is short */

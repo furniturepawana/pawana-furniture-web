@@ -3,7 +3,7 @@
    ============================== */
 
 .services-hero {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  background: linear-gradient(135deg, #5c1f26 0%, #4a181e 100%); /* Darker maroon for premium feel */
   color: var(--color-text-inverse);
   padding: 3rem 2rem 2.5rem;
   text-align: center;

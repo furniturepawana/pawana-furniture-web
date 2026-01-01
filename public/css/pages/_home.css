@@ -72,6 +72,15 @@
 
 .hero-content {}
 
+.hero-badges {
+  display: flex;
+  gap: 0.5rem;
+  position: absolute;
+  top: -2.5rem;
+  left: 2.5rem;
+  z-index: 3;
+}
+
 .hero-badge {
   display: inline-block;
   padding: 0.25rem 0.85rem;
@@ -82,10 +91,6 @@
   letter-spacing: 0.15em;
   color: var(--color-text-inverse);
   background: rgba(61, 40, 23, 0.3);
-  position: absolute;
-  top: -2.5rem;
-  left: 2.5rem;
-  z-index: 3;
 }
 
 .hero h1 {
@@ -174,7 +179,7 @@
    ============================== */
 
 .home-carousel {
-  padding: var(--space-10) 0;
+  padding: var(--space-8) 0;
   background-color: var(--color-bg-section-alt);
 }
 
@@ -185,8 +190,8 @@
 /* Carousel header with title */
 .home-carousel .carousel-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* Stack title and subtitle vertically */
+  align-items: flex-start;
   margin-bottom: var(--space-4);
 }
 
@@ -203,7 +208,7 @@ body.page-home .home-carousel .carousel-header .section-title {
 /* Carousel wrapper */
 .home-carousel .carousel-wrapper {
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Changed to show carousel arrows */
 }
 
 /* Desktop: Position nav in top-right corner of wrapper */
@@ -300,6 +305,10 @@ body.page-home .home-carousel .carousel-header .section-title {
 }
 
 /* Signature Pieces Carousel - Large cards with 1:1 images */
+.signature-carousel {
+  margin-top: var(--space-8);
+}
+
 .signature-carousel .carousel-item {
   flex: 0 0 calc((100% - 4rem) / 3);
 }
@@ -504,11 +513,12 @@ body.page-home .home-carousel .carousel-header .section-title {
   background-color: var(--color-bg-section-alt);
 }
 
-.browse-rooms-subtitle {
+.browse-rooms-subtitle,
+.section-subtitle {
   font-size: var(--text-base);
   color: var(--color-text-secondary);
   margin-top: var(--space-2);
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
 }
 
 .rooms-grid {
