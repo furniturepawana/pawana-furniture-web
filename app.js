@@ -63,7 +63,7 @@ app.set('layout', 'layout');
 
 // Static files with caching (1 year for production)
 app.use(express.static(path.join(__dirname, "public"), {
-  maxAge: process.env.NODE_ENV === 'production' ? '1y' : 0
+  maxAge: 0
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
