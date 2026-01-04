@@ -49,11 +49,14 @@ app.use(helmet({
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.cloudinary.com", "https://maps.google.com", "https://*.googleapis.com", "https://*.gstatic.com"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
       scriptSrcAttr: ["'unsafe-inline'"], // Allow inline event handlers (onclick, onchange, etc.)
-      frameSrc: ["'self'", "https://maps.google.com", "https://*.google.com"],
-      connectSrc: ["'self'", "https://formsubmit.co"]
+      frameSrc: ["'self'", "https://maps.google.com", "https://*.google.com", "https://formsubmit.co"],
+      connectSrc: ["'self'", "https://formsubmit.co"],
+      formAction: ["'self'", "https://formsubmit.co", "https://formsubmit.co/"]
     }
   },
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  // Allow Referer header to be sent - required for FormSubmit to work
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" }
 }));
 
 // Compression middleware - gzip responses for faster transfer
