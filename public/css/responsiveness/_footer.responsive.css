@@ -54,7 +54,7 @@
   /* Footer Columns - 2 per row, centered text */
   .footer-col {
     padding: 0;
-    text-align: left; /* Changed from center to left */
+    text-align: center;
   }
 
   .footer-col h4 {
@@ -62,7 +62,7 @@
     margin-bottom: 0.75rem;
     letter-spacing: 1.2px;
     color: rgba(255, 255, 255, 0.9);
-    text-align: left; /* Changed from center to left */
+    text-align: center;
   }
 
   .footer-col ul li {
@@ -73,13 +73,13 @@
     font-size: 0.78rem;
   }
 
-  /* Contact Column */
+  /* Contact Column - Content left-aligned within centered container */
   .footer-contact-info p {
     font-size: 0.78rem;
     margin-bottom: 0.8rem;
     gap: 0.5rem;
     line-height: 1.45;
-    justify-content: flex-start; /* Changed from center to left */
+    justify-content: flex-start;
   }
 
   /* Prominent icon wrappers on mobile */
@@ -101,11 +101,11 @@
     opacity: 0.7;
   }
 
-  /* Social Icons - Centered */
+  /* Social Icons - Left aligned within container */
   .footer-social {
     gap: 0.6rem;
     margin-top: 0.8rem;
-    justify-content: flex-start; /* Changed from center to left */
+    justify-content: flex-start;
   }
 
   .footer-social-icon {
@@ -128,10 +128,21 @@
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
+  /* Contact section - centered container with left-aligned content */
   .footer-contact h4,
   .footer-col:has(.newsletter) h4 {
     text-align: left;
     margin-bottom: 0.8rem;
+  }
+
+  .footer-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-contact-info {
+    text-align: left;
   }
 
   .newsletter {

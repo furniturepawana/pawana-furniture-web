@@ -132,7 +132,7 @@ section.room-hero {
 .showpiece-type-image {
   position: relative;
   width: 100%;
-  aspect-ratio: 4/5;
+  aspect-ratio: 1/1;
   overflow: hidden;
 }
 
