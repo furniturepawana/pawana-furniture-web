@@ -6,6 +6,7 @@ import expressEjsLayouts from "express-ejs-layouts";
 import compression from "compression";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
 import homeRoute from "./src/routes/home.js";
 import itemRoute from "./src/routes/item.js";
 import setRoute from "./src/routes/set.js";
@@ -18,7 +19,6 @@ import searchRoute from "./src/routes/search.js";
 import wishlistRoute from "./src/routes/wishlist.js";
 import adminRoute from "./src/routes/admin.js";
 import { navDataMiddleware } from "./src/middleware/navData.js";
-import { sessionMiddleware } from "./src/middleware/adminAuth.js";
 import { initRedis } from "./src/utils/cache.js";
 
 dotenv.config();
@@ -88,8 +88,8 @@ app.use(express.static(path.join(__dirname, "public"), {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Session middleware for admin authentication
-app.use(sessionMiddleware);
+// Cookie parser for admin authentication
+app.use(cookieParser());
 
 // Navigation data middleware - makes items, sets, and rooms available to all views
 app.use(navDataMiddleware);

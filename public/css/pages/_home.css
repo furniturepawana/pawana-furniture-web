@@ -969,6 +969,107 @@
   margin-top: -1.5rem; /* Additional upward shift */
 }
 
+/* Delivery Paragraphs */
+.delivery-paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.delivery-paragraphs p {
+  font-size: 1.1rem;
+  color: #1a1a1a;
+  line-height: 1.75;
+  margin: 0;
+  font-weight: 450;
+}
+
+/* Delivery Locations - Where We Have Delivered */
+.delivery-locations {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.delivery-locations-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-5) 0;
+}
+
+.delivery-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-10);
+}
+
+.delivery-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.column-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-maroon);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 var(--space-3) 0;
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--color-maroon);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+}
+
+.location-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.location-list li {
+  font-size: 0.95rem;
+  color: black;
+  position: relative;
+  padding-left: var(--space-4);
+  display: flex;
+  align-items: center;
+}
+
+.location-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--color-maroon);
+  font-weight: bold;
+}
+
+/* Flag Icons in Delivery Locations */
+.flag-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.column-title .flag-icon {
+  margin-left: 0;
+}
+
+.location-list .flag-icon {
+  margin-right: 0.4rem;
+}
+
 .delivery-text p {
   font-size: 1.15rem;
   color: #1a1a1a; /* More blacker text */

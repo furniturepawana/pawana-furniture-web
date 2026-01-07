@@ -384,6 +384,42 @@
   .country-name {
     font-size: 0.75rem;
   }
+
+  /* Delivery Paragraphs - Mobile */
+  .delivery-paragraphs {
+    gap: var(--space-4);
+  }
+
+  .delivery-paragraphs p {
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  /* Delivery Locations - Mobile */
+  .delivery-locations {
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+  }
+
+  .delivery-locations-title {
+    font-size: 1.05rem;
+    margin-bottom: var(--space-4);
+  }
+
+  .delivery-columns {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+  }
+
+  .column-title {
+    font-size: 0.85rem;
+    margin-bottom: var(--space-2);
+  }
+
+  .location-list li {
+    font-size: 0.8rem;
+    padding-left: var(--space-3);
+  }
 }
 
 /* Tablet (768px - 1023px) */

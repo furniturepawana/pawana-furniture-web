@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
-import { requireAdminAuth, validateAdminLogin } from '../middleware/adminAuth.js';
+import { requireAdminAuth, isAdminLoggedIn, validateAdminLogin, setAdminCookie, clearAdminCookie } from '../middleware/adminAuth.js';
 import FurnitureSet from '../models/FurnitureSet.js';
 import FurnitureItem from '../models/FurnitureItem.js';
 import Room from '../models/Room.js';
@@ -69,9 +69,9 @@ const STYLE_INITIALS = {
 // LOGIN ROUTES
 // ==========================================
 
-// GET /admin-route - Login page
+// GET /admin-route - Login page or redirect to dashboard
 router.get('/', (req, res) => {
-  if (req.session && req.session.isAdmin) {
+  if (isAdminLoggedIn(req)) {
     return res.redirect(`/${process.env.ADMIN_ROUTE}/dashboard`);
   }
   res.render('admin/login', {
@@ -84,8 +84,9 @@ router.get('/', (req, res) => {
 router.post('/login', (req, res) => {
   const { adminId, password } = req.body;
 
-  if (validateAdminLogin(adminId, password)) {
-    req.session.isAdmin = true;
+  const token = validateAdminLogin(adminId, password);
+  if (token) {
+    setAdminCookie(res, token);
     res.redirect(`/${process.env.ADMIN_ROUTE}/dashboard`);
   } else {
     res.render('admin/login', {
@@ -112,9 +113,8 @@ router.get('/dashboard', requireAdminAuth, async (req, res) => {
 
 // POST /admin-route/logout
 router.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    res.redirect(`/${process.env.ADMIN_ROUTE}`);
-  });
+  clearAdminCookie(res);
+  res.redirect(`/${process.env.ADMIN_ROUTE}`);
 });
 
 // ==========================================
