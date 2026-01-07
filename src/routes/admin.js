@@ -76,13 +76,23 @@ router.get('/', (req, res) => {
   }
   res.render('admin/login', {
     layout: false,
-    error: null
+    error: null,
+    adminRoute: process.env.ADMIN_ROUTE
   });
 });
 
 // POST /admin-route/login - Handle login
 router.post('/login', (req, res) => {
   const { adminId, password } = req.body;
+
+  // Debug logging for production troubleshooting
+  console.log('Login attempt:', {
+    adminId,
+    passwordLength: password?.length,
+    envAdminId: process.env.ADMIN_ID,
+    envPasswordLength: process.env.ADMIN_PASSWORD?.length,
+    match: adminId === process.env.ADMIN_ID && password === process.env.ADMIN_PASSWORD
+  });
 
   const token = validateAdminLogin(adminId, password);
   if (token) {
@@ -91,7 +101,8 @@ router.post('/login', (req, res) => {
   } else {
     res.render('admin/login', {
       layout: false,
-      error: 'Invalid credentials. Please try again.'
+      error: 'Invalid credentials. Please try again.',
+      adminRoute: process.env.ADMIN_ROUTE
     });
   }
 });
