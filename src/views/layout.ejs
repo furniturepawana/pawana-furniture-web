@@ -327,7 +327,7 @@
           </div>
 
           <div class="footer-col">
-            <h4><center> Stay in the loop</center></h4>
+            <h4>Stay in the loop</h4>
             <!-- Hidden iframe for newsletter submission -->
             <iframe name="newsletterFormTarget" id="newsletterFormTarget" style="display:none;"></iframe>
 
@@ -382,40 +382,48 @@
         let isNavHidden = false;
         let ticking = false;
 
+        // Use hysteresis to prevent flickering at threshold boundaries
+        const SCROLL_THRESHOLD_ADD = 80;    // Add scrolled class after this
+        const SCROLL_THRESHOLD_REMOVE = 40; // Remove scrolled class below this
+        const NAV_HIDE_THRESHOLD = 120;     // Hide nav after scrolling down this much
+        const NAV_SHOW_THRESHOLD = 100;     // Show nav after scrolling up this much
+
         if (header) {
+          // Set initial state without transition
+          const initialScrollY = window.scrollY;
+          if (initialScrollY > SCROLL_THRESHOLD_ADD) {
+            header.classList.add('scrolled');
+          }
+
           window.addEventListener('scroll', () => {
             if (!ticking) {
               window.requestAnimationFrame(() => {
                 const currentScrollY = window.scrollY;
                 const scrollDelta = lastScrollY - currentScrollY;
 
-                // Get hero section height (if on home page)
-                const heroSection = document.querySelector('.hero');
-                const heroHeight = heroSection ? heroSection.offsetHeight : 300;
-
-                // Add scrolled class only after passing a reasonable scroll distance
-                if (currentScrollY > 60) {
+                // Hysteresis for scrolled class - prevents flickering at boundary
+                if (currentScrollY > SCROLL_THRESHOLD_ADD && !header.classList.contains('scrolled')) {
                   header.classList.add('scrolled');
-                } else {
+                } else if (currentScrollY < SCROLL_THRESHOLD_REMOVE && header.classList.contains('scrolled')) {
                   header.classList.remove('scrolled');
                 }
 
-                // Track scroll direction
+                // Track scroll direction for nav hide/show
                 if (scrollDelta > 0) {
                   // Scrolling up
                   scrollUpDistance += scrollDelta;
 
-                  // Only show navbar after 120px of deliberate upward scrolling
-                  if (scrollUpDistance >= 120 && isNavHidden) {
+                  // Show navbar after deliberate upward scrolling
+                  if (scrollUpDistance >= NAV_SHOW_THRESHOLD && isNavHidden) {
                     header.classList.remove('nav-hidden');
                     isNavHidden = false;
                   }
-                } else {
+                } else if (scrollDelta < 0) {
                   // Scrolling down - reset upward distance
                   scrollUpDistance = 0;
 
-                  // Hide navbar after 100px of downward scrolling
-                  if (currentScrollY > 100 && !isNavHidden) {
+                  // Hide navbar after threshold
+                  if (currentScrollY > NAV_HIDE_THRESHOLD && !isNavHidden) {
                     header.classList.add('nav-hidden');
                     isNavHidden = true;
                   }
@@ -426,7 +434,7 @@
               });
               ticking = true;
             }
-          });
+          }, { passive: true });
         }
 
         // Intersection Observer for fade-in animations

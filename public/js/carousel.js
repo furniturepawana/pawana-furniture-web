@@ -19,8 +19,11 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
   const existingClones = carouselTrack.querySelectorAll('.carousel-item[data-cloned]');
   existingClones.forEach(clone => clone.remove());
 
-  // Create clones for infinite scrolling
+  // Create clones for infinite scrolling (only if we have enough items)
   function createClones() {
+    // Don't create clones if there are 3 or fewer items - not enough for infinite scroll
+    if (originalItems.length <= 3) return;
+
     // Clone first few items and append to the end
     for (let i = 0; i < Math.min(3, originalItems.length); i++) {
       const clone = originalItems[i].cloneNode(true);
@@ -38,13 +41,17 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
     }
   }
 
+  // Track if clones were created
+  const hasClones = originalItems.length > 3;
+  const cloneOffset = hasClones ? 3 : 0;
+
   // Update active state classes
   function updateActiveStates() {
     const allItems = carouselTrack.querySelectorAll('.carousel-item');
     allItems.forEach(item => item.classList.remove('active'));
 
-    // The current active item is at index (currentIndex + 3)
-    const activeItem = allItems[currentIndex + 3];
+    // The current active item offset depends on whether clones exist
+    const activeItem = allItems[currentIndex + cloneOffset];
     if (activeItem) {
       activeItem.classList.add('active');
     }
@@ -55,6 +62,11 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
     if (isAnimating) return;
     isAnimating = true;
 
+    // For carousels without clones, clamp the index to valid range
+    if (!hasClones) {
+      index = Math.max(0, Math.min(index, originalItems.length - 1));
+    }
+
     currentIndex = index;
 
     // Calculate position
@@ -62,7 +74,7 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
     const gap = window.innerWidth <= 767 ? 8.5 : 32; // Smaller gap on mobile (0.5rem)
     const isMobile = window.innerWidth <= 767;
 
-    let offset = (currentIndex + 3) * (itemWidth + gap); // +3 because we prepended 3 items
+    let offset = (currentIndex + cloneOffset) * (itemWidth + gap);
 
     // Centering logic for mobile - center the item in the viewport
     if (isMobile) {
@@ -81,38 +93,39 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
       carouselTrack.style.transition = '';
     }
 
-    // Update active visual state immediately or after animation?
-    // Usually better during animation for smooth feel
+    // Update active visual state
     updateActiveStates();
 
-    // Handle loop transitions
+    // Handle loop transitions (only for carousels with clones)
     setTimeout(() => {
-      if (currentIndex >= originalItems.length) {
-        // Went past last item, jump to first
-        currentIndex = 0;
-        let resetOffset = (currentIndex + 3) * (itemWidth + gap);
-        if (isMobile) {
-          const containerWidth = carouselTrack.parentElement.offsetWidth;
-          resetOffset = resetOffset - (containerWidth - itemWidth) / 2;
+      if (hasClones) {
+        if (currentIndex >= originalItems.length) {
+          // Went past last item, jump to first
+          currentIndex = 0;
+          let resetOffset = (currentIndex + cloneOffset) * (itemWidth + gap);
+          if (isMobile) {
+            const containerWidth = carouselTrack.parentElement.offsetWidth;
+            resetOffset = resetOffset - (containerWidth - itemWidth) / 2;
+          }
+          carouselTrack.style.transition = 'none';
+          carouselTrack.style.transform = `translateX(-${resetOffset}px)`;
+          carouselTrack.offsetHeight; // Force reflow
+          carouselTrack.style.transition = '';
+          updateActiveStates();
+        } else if (currentIndex < 0) {
+          // Went before first item, jump to last
+          currentIndex = originalItems.length - 1;
+          let resetOffset = (currentIndex + cloneOffset) * (itemWidth + gap);
+          if (isMobile) {
+            const containerWidth = carouselTrack.parentElement.offsetWidth;
+            resetOffset = resetOffset - (containerWidth - itemWidth) / 2;
+          }
+          carouselTrack.style.transition = 'none';
+          carouselTrack.style.transform = `translateX(-${resetOffset}px)`;
+          carouselTrack.offsetHeight; // Force reflow
+          carouselTrack.style.transition = '';
+          updateActiveStates();
         }
-        carouselTrack.style.transition = 'none';
-        carouselTrack.style.transform = `translateX(-${resetOffset}px)`;
-        carouselTrack.offsetHeight; // Force reflow
-        carouselTrack.style.transition = '';
-        updateActiveStates();
-      } else if (currentIndex < 0) {
-        // Went before first item, jump to last
-        currentIndex = originalItems.length - 1;
-        let resetOffset = (currentIndex + 3) * (itemWidth + gap);
-        if (isMobile) {
-          const containerWidth = carouselTrack.parentElement.offsetWidth;
-          resetOffset = resetOffset - (containerWidth - itemWidth) / 2;
-        }
-        carouselTrack.style.transition = 'none';
-        carouselTrack.style.transform = `translateX(-${resetOffset}px)`;
-        carouselTrack.offsetHeight; // Force reflow
-        carouselTrack.style.transition = '';
-        updateActiveStates();
       }
 
       // Reset animation flag after a small delay to ensure everything is settled
@@ -125,11 +138,13 @@ function initializeCarousel(trackId, prevSelector, nextSelector, thumbId) {
   // Navigation functions
   function next() {
     if (isAnimating) return;
+    if (!hasClones && currentIndex >= originalItems.length - 1) return; // Don't go past end
     moveToIndex(currentIndex + 1);
   }
 
   function prev() {
     if (isAnimating) return;
+    if (!hasClones && currentIndex <= 0) return; // Don't go before start
     moveToIndex(currentIndex - 1);
   }
 

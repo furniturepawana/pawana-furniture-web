@@ -39,13 +39,19 @@ router.get("/:slug", async (req, res) => {
 
     const { item, settings, styleVariants, similarItems } = itemData;
 
+    // Build a set of IDs to exclude (current item + all similar items)
+    const excludeIds = [
+      item._id,
+      ...similarItems.map(s => s._id)
+    ];
+
     // Get related items (same type, random mix of other styles) for "You may also like"
     const relatedItems = await FurnitureItem.aggregate([
       {
         $match: {
           type: item.type,
           style: { $ne: item.style },
-          _id: { $ne: item._id },
+          _id: { $nin: excludeIds },
         }
       },
       { $sample: { size: 6 } }

@@ -36,10 +36,28 @@ router.get("/:slug", async (req, res) => {
       return res.status(404).send("Set not found");
     }
 
-    const { set, settings, similarSets, youMayAlsoLikeSetsRaw } = setData;
+    const { set, settings, similarSets: similarSetsRaw, youMayAlsoLikeSetsRaw } = setData;
 
-    // Randomize and limit to 9 (done after cache so each request varies)
-    const youMayAlsoLikeSets = [...youMayAlsoLikeSetsRaw].sort(() => Math.random() - 0.5).slice(0, 9);
+    // Deduplicate similarSets (remove any duplicates based on _id)
+    const seenSimilarIds = new Set();
+    const similarSets = similarSetsRaw.filter(s => {
+      const id = s._id.toString();
+      if (seenSimilarIds.has(id)) return false;
+      seenSimilarIds.add(id);
+      return true;
+    });
+
+    // Build a set of IDs to exclude (current set + all similar sets)
+    const excludeIds = new Set([
+      set._id.toString(),
+      ...similarSets.map(s => s._id.toString())
+    ]);
+
+    // Filter out any duplicates from youMayAlsoLike and randomize
+    const youMayAlsoLikeSets = [...youMayAlsoLikeSetsRaw]
+      .filter(s => !excludeIds.has(s._id.toString()))
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 9);
 
     res.render("pages/set", {
       title: set.name,

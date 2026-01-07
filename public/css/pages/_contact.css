@@ -308,7 +308,7 @@
   font-size: 0.95rem; /* Restored size for readability */
   line-height: 1.5; /* Balanced line height */
   color: var(--color-text-secondary); /* Better contrast with secondary if primary is too heavy */
-  margin: 0;
+  margin-top: 1rem;
   font-weight: 450;
 }
 

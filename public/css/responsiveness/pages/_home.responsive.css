@@ -315,6 +315,12 @@
     gap: var(--space-4);
   }
 
+  .delivery-left {
+    width: 100%;
+    flex: none;
+    gap: var(--space-4);
+  }
+
   .delivery-map-card {
     flex: none;
     width: 100%;
@@ -341,7 +347,10 @@
     line-height: 1.6;
   }
 
+  /* Mobile highlight boxes - reset desktop styles */
   .delivery-highlights {
+    margin-top: var(--space-6);
+    max-width: none;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);
   }
@@ -350,9 +359,14 @@
     padding: 0.5rem;
   }
 
+  .highlight-icon {
+    width: 30px;
+    height: 30px;
+  }
+
   .highlight-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 
   .highlight-label {

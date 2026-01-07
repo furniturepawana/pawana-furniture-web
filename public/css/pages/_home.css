@@ -939,13 +939,20 @@
 
 .delivery-content {
   display: flex;
-  align-items: flex-start; /* Moved upwards */
-  gap: var(--space-8);      /* Moved slightly leftwards by reducing gap */
+  align-items: flex-start;
+  gap: var(--space-8);
   max-width: 1600px;
 }
 
-.delivery-map-card {
+/* Left column containing map and highlight boxes */
+.delivery-left {
   flex: 0 0 55%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.delivery-map-card {
   margin-left: calc(-1 * var(--space-20));
 }
 
@@ -966,7 +973,7 @@
   justify-content: flex-start;
   gap: var(--space-6);
   padding-right: var(--space-10);
-  margin-top: -1.5rem; /* Additional upward shift */
+  margin-top: 1rem; /* Additional upward shift */
 }
 
 /* Delivery Paragraphs */
@@ -1081,15 +1088,20 @@
 .delivery-highlights {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
+  gap: var(--space-6);
+  margin-top: var(--space-24);
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .highlight-item {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
-  background: rgba(255, 255, 255, 0.08);  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-border-light);
   transition: all 0.25s ease;
 }
@@ -1101,8 +1113,8 @@
 }
 
 .highlight-icon {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1112,15 +1124,15 @@
 }
 
 .highlight-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   stroke: var(--color-maroon);
 }
 
 .highlight-label {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #111; /* More blacker text */
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111;
 }
 
 /* International Delivery Meta */
