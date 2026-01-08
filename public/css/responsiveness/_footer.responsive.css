@@ -51,6 +51,10 @@
     text-align: center;
   }
 
+  .footer-brand .footer-tagline {
+    margin-top: 0.5rem;
+  }
+
   /* Footer Columns - 2 per row, centered text */
   .footer-col {
     padding: 0;

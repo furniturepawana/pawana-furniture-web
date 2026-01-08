@@ -46,11 +46,11 @@
 .about-content {
   display: flex;
   gap: 3rem;
-  align-items: center; /* Vertically centered aligning image to text */
 }
 
 .about-image {
   flex: 0 0 320px; /* Scaled down from 450px */
+  margin-top: 8rem; /* Push image downwards */
 }
 
 .about-image img {

@@ -69,6 +69,10 @@
   line-height: 1.6;
 }
 
+.footer-brand .footer-tagline {
+  margin-top: -0.2rem;
+}
+
 /* Links Columns */
 .footer-col h4 {
   color: rgba(255, 255, 255, 0.9);
