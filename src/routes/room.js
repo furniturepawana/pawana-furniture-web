@@ -83,7 +83,11 @@ router.get("/:slug", async (req, res) => {
     let typeImages = {};
     if (sets.length === 0 && roomTypes.length > 0) {
       const settings = await SiteSettings.getSettings();
-      const typeCodes = settings.home?.showpiecesTypeCodes || {};
+      // Convert Map to plain object if necessary
+      const typeCodesMap = settings.home?.showpiecesTypeCodes;
+      const typeCodes = typeCodesMap instanceof Map
+        ? Object.fromEntries(typeCodesMap)
+        : (typeCodesMap || {});
 
       // Fetch items by code for each type
       const typeImagePromises = roomTypes.map(async (typeName) => {

@@ -1,7 +1,7 @@
 <section class="contact-hero">
   <div class="contact-hero-content">
-    <h1>Get in Touch</h1>
-    <p>Let's discuss how we can bring your furniture vision to life</p>
+    <h1><%= contactSettings.pageTitle || 'Get in Touch' %></h1>
+    <p><%= contactSettings.pageDescription || "Let's discuss how we can bring your furniture vision to life" %></p>
   </div>
 </section>
 
@@ -26,8 +26,8 @@
     <div class="contact-grid">
       <!-- Contact Form -->
       <div class="contact-form-section">
-        <h2>Send Us a Message</h2>
-        <p>Fill out the form below and we'll get back to you within 24 hours</p>
+        <h2><%= contactSettings.formSection?.title || 'Send Us a Message' %></h2>
+        <p><%= contactSettings.formSection?.description || 'Fill out the form below and we\'ll get back to you within 24 hours' %></p>
 
         <!-- Hidden iframe for form submission -->
         <iframe name="contactFormTarget" id="contactFormTarget" style="display:none;"></iframe>
@@ -207,42 +207,25 @@
   <div class="contact-container">
     <h2>Frequently Asked Questions</h2>
     <div class="faq-list">
+      <%
+        const faqs = (contactSettings.faq && contactSettings.faq.length > 0) ? contactSettings.faq : [
+          { question: "Do you offer home consultations?", answer: "Yes! We offer complimentary home consultations for custom furniture projects. Contact us to schedule an appointment." },
+          { question: "What is your delivery timeframe?", answer: "Standard items are delivered within 2-4 weeks. Custom pieces typically take 6-8 weeks depending on complexity." },
+          { question: "Do you ship nationwide?", answer: "Yes, we ship across India. Delivery charges vary based on location and order size." },
+          { question: "What payment methods do you accept?", answer: "We accept cash, credit/debit cards, bank transfers, and offer flexible EMI options for larger purchases." }
+        ];
+      %>
+      <% faqs.forEach(item => { %>
       <div class="faq-item">
         <button class="faq-question">
-          Do you offer home consultations?
+          <%= item.question %>
           <span class="faq-toggle">+</span>
         </button>
         <div class="faq-answer">
-          <p>Yes! We offer complimentary home consultations for custom furniture projects. Contact us to schedule an appointment.</p>
+          <p><%= item.answer %></p>
         </div>
       </div>
-      <div class="faq-item">
-        <button class="faq-question">
-          What is your delivery timeframe?
-          <span class="faq-toggle">+</span>
-        </button>
-        <div class="faq-answer">
-          <p>Standard items are delivered within 2-4 weeks. Custom pieces typically take 6-8 weeks depending on complexity.</p>
-        </div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-question">
-          Do you ship nationwide?
-          <span class="faq-toggle">+</span>
-        </button>
-        <div class="faq-answer">
-          <p>Yes, we ship across India. Delivery charges vary based on location and order size.</p>
-        </div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-question">
-          What payment methods do you accept?
-          <span class="faq-toggle">+</span>
-        </button>
-        <div class="faq-answer">
-          <p>We accept cash, credit/debit cards, bank transfers, and offer flexible EMI options for larger purchases.</p>
-        </div>
-      </div>
+      <% }); %>
     </div>
   </div>
 </section>

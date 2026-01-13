@@ -1,6 +1,7 @@
 import express from "express";
 import FurnitureItem from "../models/FurnitureItem.js";
 import FurnitureSet from "../models/FurnitureSet.js";
+import SiteSettings from "../models/SiteSettings.js";
 import { getOrSet } from "../utils/cache.js";
 
 const router = express.Router();
@@ -33,6 +34,8 @@ router.get("/", async (req, res) => {
     const allRooms = [...new Set([...roomsFromItems, ...roomsFromSets])];
     const allStyles = ["Royal", "Modern", "Traditional"];
 
+    const settings = await SiteSettings.getSettings();
+
     res.render("pages/catalogue", {
       title: "Collection",
       items,
@@ -41,6 +44,7 @@ router.get("/", async (req, res) => {
       allStyles,
       allTypes,
       filters: { style, room, type, view: view || "all" },
+      catalogueSettings: settings.catalogue,
     });
   } catch (error) {
     console.error("Error loading catalogue page:", error);

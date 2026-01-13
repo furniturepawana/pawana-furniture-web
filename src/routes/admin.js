@@ -10,6 +10,62 @@ import { invalidate } from '../utils/cache.js';
 
 const router = express.Router();
 
+// ==========================================
+// UPLOAD CONFIGURATION
+// Centralized settings for file size limits and aspect ratios
+// Modify these values to adjust upload constraints
+// ==========================================
+
+const UPLOAD_CONFIG = {
+  // File size limits (in MB)
+  fileSizeLimits: {
+    default: 1,           // Default limit for all uploads
+    sets: 3,              // Furniture sets
+    items: 3,             // Individual furniture items
+    heroImage: 5,         // Home page hero images (largest for quality)
+    aboutStory: 3,        // About page "Our Story" image
+    aboutProcess: 1,      // About page process step images
+    services: 1,          // Services page images
+    rooms: 1              // Room featured images
+  },
+
+  // Enforced aspect ratios (width:height)
+  // Only specify for sections that REQUIRE specific ratios
+  // Omit sections that allow any aspect ratio
+  aspectRatios: {
+    sets: '4:3',          // Square for product cards
+    items: '1:1',         // Square for product cards
+    heroImage: '16:9'     // Widescreen for hero banner
+    // aboutStory, aboutProcess, services, rooms - no enforcement
+  },
+
+  // Max image dimensions (width in pixels, used by Cloudinary)
+  maxWidth: {
+    default: 1200,
+    heroImage: 1920,      // Full-width hero needs more resolution
+    sets: 1200,
+    items: 1200,
+    aboutStory: 1200,
+    aboutProcess: 1200,
+    services: 1200,
+    rooms: 1200
+  },
+
+  // Allowed file types
+  allowedTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+};
+
+// Helper to get file size limit in bytes
+function getFileSizeLimit(section = 'default') {
+  const limitMB = UPLOAD_CONFIG.fileSizeLimits[section] || UPLOAD_CONFIG.fileSizeLimits.default;
+  return limitMB * 1024 * 1024;
+}
+
+// Helper to get max width for a section
+function getMaxWidth(section = 'default') {
+  return UPLOAD_CONFIG.maxWidth[section] || UPLOAD_CONFIG.maxWidth.default;
+}
+
 // Helper to clear relevant caches when data changes
 async function clearProductCaches() {
   await Promise.all([
@@ -24,31 +80,26 @@ async function clearProductCaches() {
 }
 
 // Configure multer for memory storage (for Cloudinary uploads)
+// Uses the largest limit from config; section-specific validation can be added per route
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: getFileSizeLimit('heroImage') }, // Use largest limit as base; routes can validate further
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (allowedTypes.includes(file.mimetype)) {
+    if (UPLOAD_CONFIG.allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only JPG, PNG, and WebP allowed.'));
+      cb(new Error('Invalid file type. Only JPG, PNG, GIF, and WebP allowed.'));
     }
   }
 });
 
 // Lazy Cloudinary configuration (env vars loaded after import)
 let cloudinaryConfigured = false;
+// Cloudinary is auto-configured via CLOUDINARY_URL environment variable
+// No manual config needed - the library reads it automatically
 function ensureCloudinaryConfig() {
-  if (!cloudinaryConfigured) {
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-    });
     cloudinaryConfigured = true;
   }
-}
 
 // Centralized Cloudinary upload helper with optimized transformations
 // Ensures all uploads are webp, optimized quality, and reasonable file sizes (~500KB max)
@@ -178,7 +229,17 @@ router.post('/login', (req, res) => {
 // GET /admin-route/dashboard - Main dashboard
 router.get('/dashboard', requireAdminAuth, async (req, res) => {
   try {
-    const rooms = await Room.find().sort({ name: 1 });
+    const allRooms = await Room.find();
+
+    // Custom room order for admin panel
+    const roomOrder = ['Living Room', 'Bedroom', 'Dining Room', 'Office', 'Showpieces'];
+    const rooms = allRooms.sort((a, b) => {
+      const indexA = roomOrder.indexOf(a.name);
+      const indexB = roomOrder.indexOf(b.name);
+      // Put unknown rooms at the end
+      return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+    });
+
     res.render('admin/dashboard', {
       layout: false,
       rooms,
@@ -441,6 +502,11 @@ router.post('/api/items', requireAdminAuth, upload.single('image'), async (req, 
     ensureCloudinaryConfig();
     const { room, style, name, type, description, price, customCode } = req.body;
 
+    console.log('[DEBUG POST ITEM] ============================');
+    console.log('[DEBUG POST ITEM] Room:', room);
+    console.log('[DEBUG POST ITEM] Type:', type);
+    console.log('[DEBUG POST ITEM] Room === "Showpieces":', room === 'Showpieces');
+
     if (!room || !style || !name || !type) {
       return res.status(400).json({ error: 'Room, style, name, and type are required' });
     }
@@ -500,6 +566,34 @@ router.post('/api/items', requireAdminAuth, upload.single('image'), async (req, 
     });
 
     await newItem.save();
+
+    // For Showpieces: auto-assign this item's code as featured image for new furniture types
+    if (room === 'Showpieces') {
+      console.log('[DEBUG ITEM CREATE] Room is Showpieces, checking type codes...');
+      console.log('[DEBUG ITEM CREATE] Type:', type, 'Code:', code);
+
+      const settings = await SiteSettings.getSettings();
+      // Convert Map to plain object if necessary
+      const typeCodesMap = settings.home?.showpiecesTypeCodes;
+      const typeCodes = typeCodesMap instanceof Map
+        ? Object.fromEntries(typeCodesMap)
+        : (typeCodesMap || {});
+      console.log('[DEBUG ITEM CREATE] Existing typeCodes:', typeCodes);
+
+      // If this type doesn't have a code assigned yet, assign this item's code
+      if (!typeCodes[type]) {
+        console.log('[DEBUG ITEM CREATE] Type not found, assigning code:', code);
+        typeCodes[type] = code;
+
+        const updateResult = await SiteSettings.updateSettings({
+          'home.showpiecesTypeCodes': typeCodes
+        });
+        console.log('[DEBUG ITEM CREATE] After update, typeCodes:', updateResult?.home?.showpiecesTypeCodes);
+      } else {
+        console.log('[DEBUG ITEM CREATE] Type already has code:', typeCodes[type]);
+      }
+    }
+
     await clearProductCaches();
     res.json(newItem);
   } catch (error) {
@@ -560,11 +654,27 @@ router.delete('/api/items/:id', requireAdminAuth, async (req, res) => {
 // API ROUTES - ROOMS
 // ==========================================
 
-// GET all rooms
+// GET all rooms (with featured codes from SiteSettings)
 router.get('/api/rooms', requireAdminAuth, async (req, res) => {
   try {
-    const rooms = await Room.find().sort({ name: 1 });
-    res.json(rooms);
+    const [rooms, settings] = await Promise.all([
+      Room.find().sort({ name: 1 }).lean(),
+      SiteSettings.getSettings()
+    ]);
+
+    // Convert Map to plain object if necessary
+    const browseByRoomCodesMap = settings.home?.browseByRoomCodes;
+    const browseByRoomCodes = browseByRoomCodesMap instanceof Map
+      ? Object.fromEntries(browseByRoomCodesMap)
+      : (browseByRoomCodesMap || {});
+
+    // Attach featuredCode from SiteSettings to each room
+    const roomsWithCodes = rooms.map(room => ({
+      ...room,
+      featuredCode: browseByRoomCodes[room.name] || ''
+    }));
+
+    res.json(roomsWithCodes);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -573,8 +683,16 @@ router.get('/api/rooms', requireAdminAuth, async (req, res) => {
 // PUT update room (no delete allowed)
 router.put('/api/rooms/:id', requireAdminAuth, async (req, res) => {
   try {
-    const { description, hasIndividualItems } = req.body;
+    console.log('[DEBUG PUT ROOM] ============================');
+    console.log('[DEBUG PUT ROOM] Request body:', JSON.stringify(req.body, null, 2));
+
+    const { description, hasIndividualItems, featuredCode, showpiecesTypeCodes } = req.body;
+    console.log('[DEBUG PUT ROOM] showpiecesTypeCodes value:', showpiecesTypeCodes);
+    console.log('[DEBUG PUT ROOM] showpiecesTypeCodes is truthy:', !!showpiecesTypeCodes);
+
     const room = await Room.findById(req.params.id);
+    console.log('[DEBUG PUT ROOM] Room name:', room?.name);
+    console.log('[DEBUG PUT ROOM] Is Showpieces:', room?.name === 'Showpieces');
 
     if (!room) {
       return res.status(404).json({ error: 'Room not found' });
@@ -584,11 +702,138 @@ router.put('/api/rooms/:id', requireAdminAuth, async (req, res) => {
     if (hasIndividualItems !== undefined) room.hasIndividualItems = hasIndividualItems;
 
     await room.save();
-    res.json(room);
+
+    // Update featuredCode in SiteSettings browseByRoomCodes
+    if (featuredCode !== undefined) {
+      const settings = await SiteSettings.getSettings();
+      // Convert Map to plain object if necessary
+      const browseByRoomCodesMap = settings.home?.browseByRoomCodes;
+      const browseByRoomCodes = browseByRoomCodesMap instanceof Map
+        ? Object.fromEntries(browseByRoomCodesMap)
+        : (browseByRoomCodesMap || {});
+      browseByRoomCodes[room.name] = featuredCode;
+      await SiteSettings.updateSettings({
+        'home.browseByRoomCodes': browseByRoomCodes
+      });
+    }
+
+    // For Showpieces room, also update the showpiecesTypeCodes in SiteSettings
+    if (room.name === 'Showpieces' && showpiecesTypeCodes) {
+      console.log('[DEBUG] Updating showpiecesTypeCodes:');
+      console.log('[DEBUG] Received from frontend:', showpiecesTypeCodes);
+
+      // Merge with existing type codes to preserve any codes not included in update
+      const settings = await SiteSettings.getSettings();
+      // Convert Map to plain object if necessary
+      const existingTypeCodesMap = settings.home?.showpiecesTypeCodes;
+      const existingTypeCodes = existingTypeCodesMap instanceof Map
+        ? Object.fromEntries(existingTypeCodesMap)
+        : (existingTypeCodesMap || {});
+      console.log('[DEBUG] Existing in DB (converted):', existingTypeCodes);
+
+      const mergedTypeCodes = { ...existingTypeCodes, ...showpiecesTypeCodes };
+      console.log('[DEBUG] Merged result:', mergedTypeCodes);
+
+      const updateResult = await SiteSettings.updateSettings({
+        'home.showpiecesTypeCodes': mergedTypeCodes
+      });
+      console.log('[DEBUG] After save, showpiecesTypeCodes:', updateResult?.home?.showpiecesTypeCodes);
+    }
+
+    await clearProductCaches();
+
+    // Return room with updated featuredCode
+    const updatedRoom = room.toObject();
+    updatedRoom.featuredCode = featuredCode;
+    res.json(updatedRoom);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+// GET validate a code for a room (checks if code exists and matches room)
+router.get('/api/validate-code', requireAdminAuth, async (req, res) => {
+  try {
+    const { code, room: roomName } = req.query;
+
+    if (!code) {
+      return res.status(400).json({ valid: false, error: 'Code is required' });
+    }
+
+    // For Showpieces, only items exist (no sets)
+    if (roomName === 'Showpieces') {
+      const item = await FurnitureItem.findOne({ code, room: 'Showpieces' });
+      if (item) {
+        return res.json({
+          valid: true,
+          type: 'item',
+          name: item.name,
+          image: item.images?.[0]?.url || null
+        });
+      }
+      return res.json({ valid: false, error: 'Item not found in Showpieces' });
+    }
+
+    // For other rooms, check both sets and items
+    const [set, item] = await Promise.all([
+      FurnitureSet.findOne({ code, room: roomName }),
+      FurnitureItem.findOne({ code, room: roomName })
+    ]);
+
+    if (set) {
+      return res.json({
+        valid: true,
+        type: 'set',
+        name: set.name,
+        image: set.images?.[0]?.url || null
+      });
+    }
+
+    if (item) {
+      return res.json({
+        valid: true,
+        type: 'item',
+        name: item.name,
+        image: item.images?.[0]?.url || null
+      });
+    }
+
+    return res.json({ valid: false, error: `Code not found in ${roomName}` });
+  } catch (error) {
+    res.status(500).json({ valid: false, error: error.message });
+  }
+});
+
+// GET furniture types for a room (for Showpieces type codes management)
+router.get('/api/room-types/:roomName', requireAdminAuth, async (req, res) => {
+  try {
+    const { roomName } = req.params;
+    const types = await FurnitureItem.distinct('type', { room: roomName });
+
+    // For Showpieces, also get the current type codes from settings
+    if (roomName === 'Showpieces') {
+      const settings = await SiteSettings.getSettings();
+      // Convert Map to plain object if necessary
+      const typeCodesMap = settings.home?.showpiecesTypeCodes;
+      const typeCodes = typeCodesMap instanceof Map
+        ? Object.fromEntries(typeCodesMap)
+        : (typeCodesMap || {});
+
+      // Return types with their current codes
+      const result = types.sort().map(type => ({
+        type,
+        code: typeCodes[type] || ''
+      }));
+
+      return res.json(result);
+    }
+
+    res.json(types.sort());
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 // ==========================================
 // API ROUTES - IMAGE UPLOAD
@@ -696,6 +941,11 @@ router.post('/api/upload-image', requireAdminAuth, upload.single('image'), async
 // API ROUTES - SITE SETTINGS
 // ==========================================
 
+// GET upload configuration (for client-side validation)
+router.get('/api/upload-config', requireAdminAuth, (req, res) => {
+  res.json(UPLOAD_CONFIG);
+});
+
 // GET all settings
 router.get('/api/settings', requireAdminAuth, async (req, res) => {
   try {
@@ -709,7 +959,29 @@ router.get('/api/settings', requireAdminAuth, async (req, res) => {
 // PUT update home settings
 router.put('/api/settings/home', requireAdminAuth, async (req, res) => {
   try {
-    const { tagline, badges, stats, signatureItems, featuredItems, featuredSets } = req.body;
+    const {
+      tagline, badges, stats, signatureItems, featuredItems, featuredSets,
+      deliveryTitle, deliveryParagraphs, indiaLocations, internationalLocations,
+      footer, sections
+    } = req.body;
+
+    // Get current settings to preserve existing flag images
+    const currentSettings = await SiteSettings.getSettings();
+    const existingIntlLocations = currentSettings.home?.delivery?.internationalLocations || [];
+
+    // Merge international locations - preserve flag images for existing entries unless new one provided
+    const mergedIntlLocations = (internationalLocations || []).map((loc, index) => {
+      const existing = existingIntlLocations[index];
+      // Use incoming flag if provided (has url), otherwise fallback to existing
+      const flagImage = (loc.flagImage && loc.flagImage.url)
+        ? loc.flagImage
+        : (existing?.flagImage || { url: '', publicId: '' });
+
+      return {
+        name: loc.name,
+        flagImage
+      };
+    });
 
     const updates = {
       'home.hero.tagline': tagline,
@@ -717,7 +989,16 @@ router.put('/api/settings/home', requireAdminAuth, async (req, res) => {
       'home.hero.stats': stats,
       'home.featuredCodes.signatureItems': signatureItems,
       'home.featuredCodes.featuredItems': featuredItems,
-      'home.featuredCodes.featuredSets': featuredSets
+      'home.featuredCodes.featuredSets': featuredSets,
+      // Delivery section
+      'home.delivery.title': deliveryTitle,
+      'home.delivery.paragraphs': deliveryParagraphs,
+      'home.delivery.indiaLocations': indiaLocations,
+      'home.delivery.internationalLocations': mergedIntlLocations,
+      // Footer section
+      'home.footer': footer,
+      // Section Text Configuration
+      'home.sections': sections
     };
 
     const settings = await SiteSettings.updateSettings(updates);
@@ -868,16 +1149,100 @@ router.delete('/api/settings/home/hero-image/:slotIndex', requireAdminAuth, asyn
   }
 });
 
+// POST upload delivery map image
+router.post('/api/settings/home/delivery-map', requireAdminAuth, upload.single('image'), async (req, res) => {
+  try {
+    ensureCloudinaryConfig();
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    const settings = await SiteSettings.getSettings();
+    const oldPublicId = settings.home?.delivery?.mapImage?.publicId;
+
+    // Upload to Cloudinary
+    const folder = 'pawana/delivery';
+    const shortHash = Date.now().toString(36).slice(-4);
+    const uniqueId = `delivery-map_${shortHash}`;
+
+    const uploadResult = await uploadToCloudinary(req.file.buffer, {
+      folder,
+      publicId: uniqueId
+    });
+
+    // Delete old image if exists
+    if (oldPublicId) {
+      try {
+        await cloudinary.uploader.destroy(oldPublicId);
+      } catch (e) {
+        console.log('Could not delete old delivery map:', e.message);
+      }
+    }
+
+    await SiteSettings.updateSettings({
+      'home.delivery.mapImage': {
+        url: uploadResult.secure_url,
+        publicId: uploadResult.public_id
+      }
+    });
+    await clearProductCaches();
+
+    res.json({
+      success: true,
+      image: { url: uploadResult.secure_url, publicId: uploadResult.public_id }
+    });
+  } catch (error) {
+    console.error('Delivery map upload error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST upload international flag
+router.post('/api/settings/home/international-flag', requireAdminAuth, upload.single('image'), async (req, res) => {
+  try {
+    ensureCloudinaryConfig();
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    // Upload to Cloudinary
+    const folder = 'pawana/flags';
+    const shortHash = Date.now().toString(36).slice(-4);
+    const uniqueId = `flag_${shortHash}`;
+
+    const uploadResult = await uploadToCloudinary(req.file.buffer, {
+      folder,
+      publicId: uniqueId
+    });
+
+    // Just return the url, don't update settings directly
+    res.json({
+      success: true,
+      image: { url: uploadResult.secure_url, publicId: uploadResult.public_id }
+    });
+
+  } catch (error) {
+    console.error('Flag upload error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // PUT update contact settings
 router.put('/api/settings/contact', requireAdminAuth, async (req, res) => {
   try {
     const {
+      pageTitle, pageDescription, faq,
       phone1, phone2, whatsappEnquiry, email, formEmail,
       addressLine1, addressLine2, addressLine3, addressCountry,
-      hoursWeekday, hoursWeekend
+      hoursWeekday, hoursWeekend, socialMedia, formSection
     } = req.body;
 
     const updates = {
+      'contact.pageTitle': pageTitle,
+      'contact.pageDescription': pageDescription,
+      'contact.faq': faq,
       'contact.phone1': phone1,
       'contact.phone2': phone2,
       'contact.whatsappEnquiry': whatsappEnquiry,
@@ -888,7 +1253,9 @@ router.put('/api/settings/contact', requireAdminAuth, async (req, res) => {
       'contact.address.line3': addressLine3,
       'contact.address.country': addressCountry,
       'contact.businessHours.weekday': hoursWeekday,
-      'contact.businessHours.weekend': hoursWeekend
+      'contact.businessHours.weekend': hoursWeekend,
+      'contact.socialMedia': socialMedia,
+      'contact.formSection': formSection
     };
 
     const settings = await SiteSettings.updateSettings(updates);
@@ -902,9 +1269,12 @@ router.put('/api/settings/contact', requireAdminAuth, async (req, res) => {
 // PUT update about settings
 router.put('/api/settings/about', requireAdminAuth, async (req, res) => {
   try {
-    const { story, values, process, heritage } = req.body;
+    const { pageTitle, pageDescription, story, values, process, heritage, cta } = req.body;
 
     const updates = {};
+
+    if (pageTitle !== undefined) updates['about.pageTitle'] = pageTitle;
+    if (pageDescription !== undefined) updates['about.pageDescription'] = pageDescription;
 
     // Story text fields (not image - that's handled by image upload route)
     if (story) {
@@ -930,6 +1300,12 @@ router.put('/api/settings/about', requireAdminAuth, async (req, res) => {
       if (heritage.description !== undefined) updates['about.heritage.description'] = heritage.description;
     }
 
+    // CTA section
+    if (cta) {
+      if (cta.title !== undefined) updates['about.cta.title'] = cta.title;
+      if (cta.description !== undefined) updates['about.cta.description'] = cta.description;
+    }
+
     const settings = await SiteSettings.updateSettings(updates);
     await clearProductCaches();
     res.json({ success: true, settings });
@@ -941,9 +1317,12 @@ router.put('/api/settings/about', requireAdminAuth, async (req, res) => {
 // PUT update services settings
 router.put('/api/settings/services', requireAdminAuth, async (req, res) => {
   try {
-    const { intro, items } = req.body;
+    const { pageTitle, pageDescription, intro, items, cta } = req.body;
 
     const updates = {};
+
+    if (pageTitle !== undefined) updates['services.pageTitle'] = pageTitle;
+    if (pageDescription !== undefined) updates['services.pageDescription'] = pageDescription;
 
     if (intro) {
       if (intro.title !== undefined) updates['services.intro.title'] = intro.title;
@@ -953,6 +1332,29 @@ router.put('/api/settings/services', requireAdminAuth, async (req, res) => {
     if (items !== undefined) {
       updates['services.items'] = items;
     }
+
+    // CTA section
+    if (cta) {
+      if (cta.title !== undefined) updates['services.cta.title'] = cta.title;
+      if (cta.description !== undefined) updates['services.cta.description'] = cta.description;
+    }
+
+    const settings = await SiteSettings.updateSettings(updates);
+    await clearProductCaches();
+    res.json({ success: true, settings });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT update catalogue settings
+router.put('/api/settings/catalogue', requireAdminAuth, async (req, res) => {
+  try {
+    const { pageTitle, pageDescription } = req.body;
+    const updates = {};
+
+    if (pageTitle !== undefined) updates['catalogue.pageTitle'] = pageTitle;
+    if (pageDescription !== undefined) updates['catalogue.pageDescription'] = pageDescription;
 
     const settings = await SiteSettings.updateSettings(updates);
     await clearProductCaches();

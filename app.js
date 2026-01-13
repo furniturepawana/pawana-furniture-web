@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import path from "path";
@@ -21,7 +21,7 @@ import adminRoute from "./src/routes/admin.js";
 import { navDataMiddleware } from "./src/middleware/navData.js";
 import { initRedis } from "./src/utils/cache.js";
 
-dotenv.config();
+// dotenv loaded at start
 
 // Initialize Redis cache
 initRedis();
@@ -46,7 +46,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.cloudinary.com", "https://maps.google.com", "https://*.googleapis.com", "https://*.gstatic.com"],
+      imgSrc: ["'self'", "data:", "blob:", "https://res.cloudinary.com", "https://*.cloudinary.com", "https://maps.google.com", "https://*.googleapis.com", "https://*.gstatic.com"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
       scriptSrcAttr: ["'unsafe-inline'"], // Allow inline event handlers (onclick, onchange, etc.)
       frameSrc: ["'self'", "https://maps.google.com", "https://*.google.com", "https://formsubmit.co"],
@@ -55,6 +55,7 @@ app.use(helmet({
     }
   },
   crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" },
   // Allow Referer header to be sent - required for FormSubmit to work
   referrerPolicy: { policy: "strict-origin-when-cross-origin" }
 }));

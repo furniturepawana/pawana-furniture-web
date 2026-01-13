@@ -26,8 +26,8 @@
   <div class="section-container">
     <div class="carousel-header">
       <div class="carousel-title-group">
-        <h2 class="section-title">Signature Pieces</h2>
-        <p class="section-subtitle">Masterpieces that define your living space</p>
+        <h2 class="section-title"><%= homeSettings.sections?.signaturePieces?.title || 'Signature Pieces' %></h2>
+        <p class="section-subtitle"><%= homeSettings.sections?.signaturePieces?.subtitle || 'Masterpieces that define your living space' %></p>
       </div>
       <div class="carousel-nav">
         <button class="carousel-arrow carousel-prev" data-carousel="signature" aria-label="Previous">‹</button>
@@ -73,8 +73,8 @@
   <div class="section-container">
     <div class="carousel-header">
       <div class="carousel-title-group">
-        <h2 class="section-title">Featured Items</h2>
-        <p class="section-subtitle">Curated selection of our finest individual pieces</p>
+        <h2 class="section-title"><%= homeSettings.sections?.featuredItems?.title || 'Featured Items' %></h2>
+        <p class="section-subtitle"><%= homeSettings.sections?.featuredItems?.subtitle || 'Curated selection of our finest individual pieces' %></p>
       </div>
       <div class="carousel-nav">
         <button class="carousel-arrow carousel-prev" data-carousel="items" aria-label="Previous">‹</button>
@@ -120,8 +120,8 @@
   <div class="section-container">
     <div class="carousel-header">
       <div class="carousel-title-group">
-        <h2 class="section-title">Featured Sets</h2>
-        <p class="section-subtitle">Complete furniture collections for every room</p>
+        <h2 class="section-title"><%= homeSettings.sections?.featuredSets?.title || 'Featured Sets' %></h2>
+        <p class="section-subtitle"><%= homeSettings.sections?.featuredSets?.subtitle || 'Complete furniture collections for every room' %></p>
       </div>
       <div class="carousel-nav">
         <button class="carousel-arrow carousel-prev" data-carousel="sets" aria-label="Previous">‹</button>
@@ -166,8 +166,8 @@
 <!-- Browse by Rooms -->
 <section class="browse-rooms">
   <div class="section-container">
-    <h2 class="section-title">Browse by Rooms</h2>
-    <p class="browse-rooms-subtitle">Explore our curated collections for every space in your home</p>
+    <h2 class="section-title"><%= homeSettings.sections?.browseRooms?.title || 'Browse by Rooms' %></h2>
+    <p class="browse-rooms-subtitle"><%= homeSettings.sections?.browseRooms?.subtitle || 'Explore our curated collections for every space in your home' %></p>
     <div class="rooms-grid">
       <% rooms.forEach(room => { %>
       <a href="/room/<%= room.slug %>" class="room-card">
@@ -402,13 +402,22 @@
 */%>
 
 <!-- Crafted In India, Delivered Worldwide -->
+<%
+  const deliveryData = homeSettings?.delivery || {};
+  const deliveryParagraphs = deliveryData.paragraphs || [];
+  const indiaLocations = deliveryData.indiaLocations || [];
+  const intlLocations = deliveryData.internationalLocations || [];
+  const mapImageUrl = deliveryData.mapImage?.url || '';
+%>
 <section class="delivery-section">
   <div class="section-container">
-    <h2 class="section-title">Crafted In India, Delivered Worldwide</h2>
+    <h2 class="section-title"><%= deliveryData.title || 'Crafted In India, Delivered Worldwide' %></h2>
     <div class="delivery-content">
       <div class="delivery-left">
         <div class="delivery-map-card">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767895640/Gurgaon_4_-Picsart-BackgroundRemover_upscayl_2x_upscayl-lite-4x_qhszwe.png" alt="India Delivery Map showing our coverage across major cities" class="delivery-map-image" loading="lazy">
+          <% if (mapImageUrl) { %>
+            <img src="<%= mapImageUrl %>" alt="India Delivery Map showing our coverage across major cities" class="delivery-map-image" loading="lazy">
+          <% } %>
         </div>
         <div class="delivery-highlights">
           <div class="highlight-item">
@@ -453,13 +462,9 @@
       </div>
       <div class="delivery-text">
         <div class="delivery-paragraphs">
-          <p>From Kashmir to Kanyakumari - and across the world, every piece is delivered with utmost care and professional precision.</p>
-
-          <p>Each product is securely packed, safe global shipping, and attention to every detail ensure your furniture arrives perfectly.</p>
-
-          <p>We ensure reliable global delivery, with expert assembly available on request, wherever you are.</p>
-
-          <p>Your furniture, delivered with trust, care, and excellence - worldwide.</p>
+          <% deliveryParagraphs.forEach(p => { %>
+            <p><%= p %></p>
+          <% }); %>
         </div>
 
         <!-- Where We Have Delivered -->
@@ -469,21 +474,24 @@
             <div class="delivery-column">
               <h4 class="column-title">India <img src="/images/india-flag.png" alt="India" class="flag-icon"></h4>
               <ul class="location-list">
-                <li>Chandigarh</li>
-                <li>Uttrakhand</li>
-                <li>Himachal Pradesh</li>
-                <li>Maharashtra</li>
-                <li>Delhi</li>
-                <li>Haryana</li>
-                <li>Punjab</li>
-                <li>Uttar Pradesh</li>
-                <li>Jammu</li>
+                <% indiaLocations.forEach(loc => { %>
+                  <li><%= loc %></li>
+                <% }); %>
               </ul>
             </div>
             <div class="delivery-column">
               <h4 class="column-title">International</h4>
               <ul class="location-list">
-                <li><img src="/images/uae-flag.png" alt="UAE" class="flag-icon"> UAE (Dubai)</li>
+                <% if (intlLocations.length > 0) { %>
+                  <% intlLocations.forEach(loc => { %>
+                    <li>
+                      <% if (loc.flagImage?.url) { %><img src="<%= loc.flagImage.url %>" alt="<%= loc.name %>" class="flag-icon"><% } %>
+                      <%= loc.name %>
+                    </li>
+                  <% }); %>
+                <% } else { %>
+                  <li><img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1768307975/uae-flag_v1gbmj.png" alt="UAE" class="flag-icon"> UAE (Dubai)</li>
+                <% } %>
               </ul>
             </div>
           </div>
@@ -499,8 +507,8 @@
 <section class="custom-order">
   <div class="section-container">
     <div class="custom-order-content">
-      <h2>Ready to Start Your Custom Order?</h2>
-      <p>Tell us what you have in mind, and we'll help bring your vision to life.</p>
+      <h2><%= homeSettings.sections?.customOrder?.title || 'Ready to Start Your Custom Order?' %></h2>
+      <p><%= homeSettings.sections?.customOrder?.description || 'Tell us what you have in mind, and we\'ll help bring your vision to life.' %></p>
 
       <!-- Hidden iframe for form submission -->
       <iframe name="homeFormTarget" id="homeFormTarget" style="display:none;"></iframe>

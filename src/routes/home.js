@@ -55,8 +55,11 @@ router.get("/", async (req, res) => {
       return acc;
     }, {});
 
-    // Get browse by rooms codes from settings
-    const browseByRoomCodes = settings.home.browseByRoomCodes || {};
+    // Get browse by rooms codes from settings (convert Map to plain object if necessary)
+    const browseByRoomCodesMap = settings.home.browseByRoomCodes;
+    const browseByRoomCodes = browseByRoomCodesMap instanceof Map
+      ? Object.fromEntries(browseByRoomCodesMap)
+      : (browseByRoomCodesMap || {});
 
     // Collect all product codes needed for room images
     const productCodes = Object.values(browseByRoomCodes).filter(Boolean);
@@ -100,6 +103,7 @@ router.get("/", async (req, res) => {
       heroContent: settings.home.hero,
       heroImageUrl: activeHeroImage,
       contactSettings: settings.contact,
+      homeSettings: settings.home,
     });
   } catch (error) {
     console.error("Error loading home page:", error);

@@ -1,7 +1,7 @@
 <section class="catalogue-hero">
   <div class="catalogue-hero-content">
-    <h1>Our Collection</h1>
-    <p>Explore our exquisite range of handcrafted furniture</p>
+    <h1><%= (typeof catalogueSettings !== 'undefined' && catalogueSettings.pageTitle) ? catalogueSettings.pageTitle : 'Our Collection' %></h1>
+    <p><%= (typeof catalogueSettings !== 'undefined' && catalogueSettings.pageDescription) ? catalogueSettings.pageDescription : 'Explore our exquisite range of handcrafted furniture' %></p>
   </div>
 </section>
 

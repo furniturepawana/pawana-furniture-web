@@ -18,9 +18,12 @@
 
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+
     <link rel="manifest" href="/images/site.webmanifest">
+    <link rel="shortcut icon" href="/favicon.ico">
 
     <link rel="stylesheet" href="/css/bundle.css?v=1767524000" />
   </head>
@@ -249,8 +252,8 @@
             <a href="/" class="logo footer-logo">
               <span class="logo-text">Pawana® <span class="logo-text-light">Furniture</span></span>
             </a>
-            <p>We Turn Your Imagination Into Reality</p>
-            <p class="footer-tagline">Redefining luxury interiors with timeless design and sustainable practices. Since 1980</p>
+            <p><%= footerSettings.tagline1 %></p>
+            <p class="footer-tagline"><%= footerSettings.tagline2 %></p>
           </div>
 
           <div class="footer-col">
@@ -312,18 +315,22 @@
               </div>
             </div>
             <div class="footer-social">
-              <a href="https://www.facebook.com/share/1DWyf3U5Nt/" class="footer-social-icon" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+              <% if (contactSettings.socialMedia?.facebook) { %>
+              <a href="<%= contactSettings.socialMedia.facebook %>" class="footer-social-icon" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
                 </svg>
               </a>
-              <a href="https://www.instagram.com/pawana.furniture?igsh=MWF4M3V2ZzI5enExaw==" class="footer-social-icon" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <% } %>
+              <% if (contactSettings.socialMedia?.instagram) { %>
+              <a href="<%= contactSettings.socialMedia.instagram %>" class="footer-social-icon" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
                 </svg>
               </a>
+              <% } %>
             </div>
           </div>
 
@@ -360,7 +367,7 @@
           </div>
         </div>
         <div class="copyright">
-          &copy; <%= new Date().getFullYear() %> Pawana Furniture. All rights reserved.
+          <%= footerSettings.copyright %>
         </div>
       </div>
     </footer>

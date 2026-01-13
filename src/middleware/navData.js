@@ -41,6 +41,11 @@ export const navDataMiddleware = async (req, res, next) => {
     // Make data available to all views
     res.locals.navRooms = roomsWithTypes;
     res.locals.contactSettings = settings.contact;
+    res.locals.footerSettings = settings.home?.footer || {
+      tagline1: 'We Turn Your Imagination Into Reality',
+      tagline2: 'Redefining luxury interiors with timeless design and sustainable practices. Since 1980',
+      copyright: `© ${new Date().getFullYear()} Pawana Furniture. All rights reserved.`
+    };
     next();
   } catch (error) {
     console.error("Error fetching navigation data:", error);

@@ -1,7 +1,7 @@
 <section class="services-hero">
   <div class="services-hero-content">
-    <h1>Our Services</h1>
-    <p>Services designed to make your furniture experience easy.</p>
+    <h1><%= servicesSettings.pageTitle || 'Our Services' %></h1>
+    <p><%= servicesSettings.pageDescription || 'Services designed to make your furniture experience easy.' %></p>
   </div>
 </section>
 
@@ -34,173 +34,102 @@
 
 <section class="services-list">
   <div class="services-container">
-    <div class="service-item">
-      <div class="service-content">
-        <div class="service-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767288381/service1_r8chue.jpg" alt="Custom Furniture Design" loading="lazy">
-        </div>
-        <div class="service-text">
-          <h3>Custom Furniture Design</h3>
-          <p>
-            Bring your vision to life with our bespoke furniture design service. Our expert designers work closely with you to create unique pieces that perfectly match your style, space, and functional requirements. From concept sketches to final product, we ensure every detail reflects your personality.
-          </p>
-          <ul>
-            <li>Personalized design consultations</li>
-            <li>3D visualizations and mockups</li>
-            <li>Material and finish selection guidance</li>
-            <li>Unlimited design revisions</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <%
+      // Define default services with fallback content
+      const defaultServices = [
+        {
+          title: 'Custom Furniture Design',
+          description: 'Bring your vision to life with our bespoke furniture design service. Our expert designers work closely with you to create unique pieces that perfectly match your style, space, and functional requirements. From concept sketches to final product, we ensure every detail reflects your personality.',
+          features: ['Personalized design consultations', '3D visualizations and mockups', 'Material and finish selection guidance', 'Unlimited design revisions'],
+          defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767288381/service1_r8chue.jpg'
+        },
+        {
+          title: 'Space Planning & Interior Consultation',
+          description: 'Not sure how to arrange your furniture or which pieces would work best in your space? Our interior consultants provide expert advice on space planning, furniture placement, and style coordination to create harmonious and functional living spaces.',
+          features: ['On-site space assessment', 'Furniture layout planning', 'Color and style recommendations', 'Complete room design packages'],
+          defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767288375/service2_hmtqdi.jpg'
+        },
+        {
+          title: 'Professional Installation',
+          description: 'Our skilled installation team ensures your furniture is assembled and positioned perfectly. We handle everything with care and precision, so you can start enjoying your new furniture immediately without any hassle.',
+          features: ['Expert assembly and installation', 'Careful handling and placement', 'Packaging removal and cleanup', 'Final quality inspection'],
+          defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767288371/service3_e5v3tl.jpg'
+        },
+        {
+          title: 'Furniture Restoration & Repair',
+          description: 'Give your beloved furniture pieces a new lease on life. Our restoration experts can repair, refinish, and restore antique or damaged furniture to its former glory, preserving memories while enhancing functionality.',
+          features: ['Wood repair and refinishing', 'Upholstery replacement', 'Antique furniture restoration', 'Hardware replacement and upgrades'],
+          defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767288376/service4_dm1dyn.jpg'
+        },
+        {
+          title: 'Customization & Modifications',
+          description: 'Already have furniture but want to update its look or functionality? We offer customization services including reupholstering, refinishing, resizing, and style modifications to breathe new life into your existing pieces.',
+          features: ['Fabric and leather reupholstering', 'Wood staining and painting', 'Size and configuration changes', 'Hardware and accent updates'],
+          defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767288369/service5_k6nux3.jpg'
+        },
+        {
+          title: 'Delivery & White Glove Service',
+          description: 'We offer secure, timely delivery with our white glove service. Our team handles your furniture with utmost care, from our workshop to your home, ensuring it arrives in perfect condition and is set up exactly where you want it.',
+          features: ['Scheduled delivery at your convenience', 'Protective packaging and transport', 'Room-of-choice placement', 'Assembly and setup included'],
+          defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767288372/service6_npggev.jpg'
+        },
+        {
+          title: 'Maintenance & Care Services',
+          description: 'Keep your furniture looking beautiful for years to come with our maintenance and care services. We provide professional cleaning, polishing, and preventive care to protect your investment.',
+          features: ['Professional furniture cleaning', 'Wood polishing and conditioning', 'Leather care and treatment', 'Annual maintenance packages'],
+          defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767535744/service7_s6tlkh.jpg'
+        },
+        {
+          title: 'Commercial & Hospitality Solutions',
+          description: 'We partner with businesses, hotels, restaurants, and offices to provide comprehensive furniture solutions. From design to installation, we handle projects of all sizes with professionalism and efficiency.',
+          features: ['Bulk orders and volume discounts', 'Commercial-grade furniture options', 'Project management and coordination', 'Flexible payment and delivery terms'],
+          defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767535744/service8_tbg15k.jpg'
+        }
+      ];
 
+      // Use database items if available, otherwise use defaults
+      const serviceItems = servicesSettings.items && servicesSettings.items.length > 0
+        ? servicesSettings.items
+        : defaultServices;
+    %>
+    <% serviceItems.forEach((item, index) => {
+      const defaultItem = defaultServices[index] || {};
+      const imageUrl = item.image?.url || defaultItem.defaultImage || '';
+      const title = item.title || defaultItem.title || 'Our Service';
+      const description = item.description || defaultItem.description || '';
+      const features = (item.features && item.features.length > 0) ? item.features : (defaultItem.features || []);
+    %>
     <div class="service-item">
       <div class="service-content">
         <div class="service-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767288375/service2_hmtqdi.jpg" alt="Space Planning & Interior Consultation" loading="lazy">
+          <% if (imageUrl) { %>
+          <img src="<%= imageUrl %>" alt="<%= title %>" loading="lazy">
+          <% } else { %>
+          <div class="no-image-placeholder">No Image</div>
+          <% } %>
         </div>
         <div class="service-text">
-          <h3>Space Planning & Interior Consultation</h3>
-          <p>
-            Not sure how to arrange your furniture or which pieces would work best in your space? Our interior consultants provide expert advice on space planning, furniture placement, and style coordination to create harmonious and functional living spaces.
-          </p>
+          <h3><%= title %></h3>
+          <p><%= description %></p>
+          <% if (features.length > 0) { %>
           <ul>
-            <li>On-site space assessment</li>
-            <li>Furniture layout planning</li>
-            <li>Color and style recommendations</li>
-            <li>Complete room design packages</li>
+            <% features.forEach(feature => { %>
+            <li><%= feature %></li>
+            <% }); %>
           </ul>
+          <% } %>
         </div>
       </div>
     </div>
-
-    <div class="service-item">
-      <div class="service-content">
-        <div class="service-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767288371/service3_e5v3tl.jpg" alt="Professional Installation" loading="lazy">
-        </div>
-        <div class="service-text">
-          <h3>Professional Installation</h3>
-          <p>
-            Our skilled installation team ensures your furniture is assembled and positioned perfectly. We handle everything with care and precision, so you can start enjoying your new furniture immediately without any hassle.
-          </p>
-          <ul>
-            <li>Expert assembly and installation</li>
-            <li>Careful handling and placement</li>
-            <li>Packaging removal and cleanup</li>
-            <li>Final quality inspection</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="service-item">
-      <div class="service-content">
-        <div class="service-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767288376/service4_dm1dyn.jpg" alt="Furniture Restoration & Repair" loading="lazy">
-        </div>
-        <div class="service-text">
-          <h3>Furniture Restoration & Repair</h3>
-          <p>
-            Give your beloved furniture pieces a new lease on life. Our restoration experts can repair, refinish, and restore antique or damaged furniture to its former glory, preserving memories while enhancing functionality.
-          </p>
-          <ul>
-            <li>Wood repair and refinishing</li>
-            <li>Upholstery replacement</li>
-            <li>Antique furniture restoration</li>
-            <li>Hardware replacement and upgrades</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="service-item">
-      <div class="service-content">
-        <div class="service-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767288369/service5_k6nux3.jpg" alt="Customization & Modifications" loading="lazy">
-        </div>
-        <div class="service-text">
-          <h3>Customization & Modifications</h3>
-          <p>
-            Already have furniture but want to update its look or functionality? We offer customization services including reupholstering, refinishing, resizing, and style modifications to breathe new life into your existing pieces.
-          </p>
-          <ul>
-            <li>Fabric and leather reupholstering</li>
-            <li>Wood staining and painting</li>
-            <li>Size and configuration changes</li>
-            <li>Hardware and accent updates</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="service-item">
-      <div class="service-content">
-        <div class="service-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767288372/service6_npggev.jpg" alt="Delivery & White Glove Service" loading="lazy">
-        </div>
-        <div class="service-text">
-          <h3>Delivery & White Glove Service</h3>
-          <p>
-            We offer secure, timely delivery with our white glove service. Our team handles your furniture with utmost care, from our workshop to your home, ensuring it arrives in perfect condition and is set up exactly where you want it.
-          </p>
-          <ul>
-            <li>Scheduled delivery at your convenience</li>
-            <li>Protective packaging and transport</li>
-            <li>Room-of-choice placement</li>
-            <li>Assembly and setup included</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="service-item">
-      <div class="service-content">
-        <div class="service-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767535744/service7_s6tlkh.jpg" alt="Maintenance & Care Services" loading="lazy">
-        </div>
-        <div class="service-text">
-          <h3>Maintenance & Care Services</h3>
-          <p>
-            Keep your furniture looking beautiful for years to come with our maintenance and care services. We provide professional cleaning, polishing, and preventive care to protect your investment.
-          </p>
-          <ul>
-            <li>Professional furniture cleaning</li>
-            <li>Wood polishing and conditioning</li>
-            <li>Leather care and treatment</li>
-            <li>Annual maintenance packages</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="service-item">
-      <div class="service-content">
-        <div class="service-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767535744/service8_tbg15k.jpg" alt="Commercial & Hospitality Solutions" loading="lazy">
-        </div>
-        <div class="service-text">
-          <h3>Commercial & Hospitality Solutions</h3>
-          <p>
-            We partner with businesses, hotels, restaurants, and offices to provide comprehensive furniture solutions. From design to installation, we handle projects of all sizes with professionalism and efficiency.
-          </p>
-          <ul>
-            <li>Bulk orders and volume discounts</li>
-            <li>Commercial-grade furniture options</li>
-            <li>Project management and coordination</li>
-            <li>Flexible payment and delivery terms</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <% }); %>
   </div>
 </section>
 
 <section class="services-cta">
   <div class="services-container">
     <div class="cta-content">
-      <h2>Need a Custom Solution?</h2>
-      <p>Let's discuss how we can help bring your furniture vision to life</p>
+      <h2><%= servicesSettings.cta?.title || 'Need a Custom Solution?' %></h2>
+      <p><%= servicesSettings.cta?.description || 'Let\'s discuss how we can help bring your furniture vision to life' %></p>
       <div class="cta-buttons">
         <a href="/contact" class="btn-primary">Get in Touch</a>
         <a href="/catalogue" class="btn-secondary">View Our Work</a>

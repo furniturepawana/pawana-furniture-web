@@ -98,7 +98,22 @@ document.querySelectorAll('#rooms-room-tabs .room-tab').forEach(tab => {
     document.querySelectorAll('#rooms-room-tabs .room-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     currentRoom = tab.dataset.room;
-    loadRoomDetails();
+
+    const roomDetails = document.getElementById('room-details');
+    const catalogueDetails = document.getElementById('catalogue-details');
+
+    if (currentRoom === 'Catalogue') {
+        roomDetails.style.display = 'none';
+        catalogueDetails.style.display = 'block';
+        document.getElementById('rooms-header-title').textContent = 'Catalogue Settings';
+        if (!siteSettings) loadSettings();
+        else populateCatalogueSettings();
+    } else {
+        catalogueDetails.style.display = 'none';
+        roomDetails.style.display = 'block';
+        loadRoomDetails();
+    }
+    updateRoomsSaveButton(false);
   });
 });
 
@@ -122,7 +137,16 @@ function loadData() {
       loadItems();
       break;
     case 'rooms':
-      loadRoomDetails();
+      if (currentRoom === 'Catalogue') {
+        if (!siteSettings) loadSettings();
+        else populateCatalogueSettings();
+        document.getElementById('room-details').style.display = 'none';
+        document.getElementById('catalogue-details').style.display = 'block';
+      } else {
+        document.getElementById('room-details').style.display = 'block';
+        document.getElementById('catalogue-details').style.display = 'none';
+        loadRoomDetails();
+      }
       break;
     case 'home-settings':
     case 'contact-settings':
@@ -210,7 +234,10 @@ async function loadRoomDetails() {
     }
 
     container.innerHTML = createRoomCard(room);
+    document.getElementById('rooms-header-title').textContent = room.name + ' Settings';
+    storeOriginalRoomData(room);
     attachRoomListeners(container, room);
+    updateRoomsSaveButton(false);
   } catch (error) {
     container.innerHTML = '<div class="empty-text">Error loading room details.</div>';
     console.error(error);
@@ -229,7 +256,7 @@ function createSetCard(set) {
     <div class="card" data-id="${set._id}" data-description="${description.replace(/"/g, '&quot;')}">
       <div class="card-image">
         ${imageUrl
-          ? `<img src="${imageUrl}" alt="${set.name}">`
+          ? `<img src="${imageUrl}" alt="${set.name}" loading="lazy">`
           : '<div class="no-image">No image</div>'
         }
         <button class="image-edit-btn" title="Update image">
@@ -299,7 +326,7 @@ function createItemCard(item) {
     <div class="card" data-id="${item._id}" data-description="${description.replace(/"/g, '&quot;')}">
       <div class="card-image">
         ${imageUrl
-          ? `<img src="${imageUrl}" alt="${item.name}">`
+          ? `<img src="${imageUrl}" alt="${item.name}" loading="lazy">`
           : '<div class="no-image">No image</div>'
         }
         <button class="image-edit-btn" title="Update image">
@@ -362,34 +389,47 @@ function createItemCard(item) {
 }
 
 function createRoomCard(room) {
-  const imageUrl = room.images && room.images[0] ? room.images[0].url : '';
+  const isShowpieces = room.name === 'Showpieces';
+
   return `
-    <div class="room-card" data-id="${room._id}">
-      <div class="room-image">
-        ${imageUrl
-          ? `<img src="${imageUrl}" alt="${room.name}">`
-          : '<div class="no-image">No image</div>'
-        }
-        <button class="image-edit-btn" title="Update image">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-          </svg>
-        </button>
-      </div>
+    <div class="room-card" data-id="${room._id}" data-name="${room.name}">
       <div class="room-body">
         <h3>${room.name}</h3>
+
+        <div class="room-field">
+          <label>Featured Image Code</label>
+          <div class="code-input-row">
+            <input type="text" id="room-featured-code" placeholder="e.g., ${isShowpieces ? 'SR-044' : room.name === 'Living Room' ? 'LR-01' : 'XX-001'}"
+                   value="${room.featuredCode || ''}" class="code-input">
+            <button type="button" class="btn-validate-code" title="Validate code">✓</button>
+          </div>
+          <div class="code-preview" id="room-code-preview">
+            ${room.featuredCode ? '<span class="loading-hint">Loading preview...</span>' : '<span class="hint-text">Enter a code to see image preview</span>'}
+          </div>
+        </div>
+
+        ${isShowpieces ? `
+        <div class="room-field showpieces-types-section">
+          <label>Furniture Type Featured Images</label>
+          <p class="section-hint">Set featured image code for each showpiece type displayed on the room page.</p>
+          <div id="showpieces-types-container" class="types-codes-list">
+            <span class="loading-hint">Loading furniture types...</span>
+          </div>
+        </div>
+        ` : ''}
+
         <div class="room-field">
           <label>Description</label>
           <textarea id="room-description">${room.description || ''}</textarea>
         </div>
-        <div class="room-actions">
-          <button class="save-room-btn">Save Changes</button>
+
         </div>
       </div>
     </div>
   `;
+
 }
+
 
 // ==========================================
 // Card Event Listeners
@@ -483,33 +523,173 @@ function attachCardListeners(grid, collection) {
 }
 
 function attachRoomListeners(container, room) {
-  // Image edit
-  container.querySelector('.image-edit-btn').addEventListener('click', () => {
-    openImageModal('Room', room._id, room.images && room.images.length > 0 ? 0 : -1);
-  });
+  const isShowpieces = room.name === 'Showpieces';
 
-  // Save room (only description - hasIndividualItems is auto-calculated)
-  container.querySelector('.save-room-btn').addEventListener('click', async () => {
-    const description = document.getElementById('room-description').value;
+  // Validate code and show preview
+  async function validateAndPreview(code, previewEl, roomName = room.name) {
+    if (!code.trim()) {
+      previewEl.innerHTML = '<span class="hint-text">Enter a code to see image preview</span>';
+      return null;
+    }
+
+    previewEl.innerHTML = '<span class="loading-hint">Validating...</span>';
 
     try {
-      const response = await fetch(`/${ADMIN_ROUTE}/api/rooms/${room._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description })
-      });
+      const response = await fetch(`/${ADMIN_ROUTE}/api/validate-code?code=${encodeURIComponent(code)}&room=${encodeURIComponent(roomName)}`);
+      const result = await response.json();
 
-      if (response.ok) {
-        showToast('Room updated successfully', 'success');
+      if (result.valid) {
+        if (result.image) {
+          previewEl.innerHTML = `
+            <div class="preview-success">
+              <img src="${result.image}" alt="${result.name}">
+              <span class="preview-info">${result.type}: ${result.name}</span>
+            </div>
+          `;
+        } else {
+          previewEl.innerHTML = `<span class="preview-success-text">✓ ${result.type}: ${result.name} (no image)</span>`;
+        }
+        return result;
       } else {
-        showToast('Error updating room', 'error');
+        previewEl.innerHTML = `<span class="preview-error">✗ ${result.error}</span>`;
+        return null;
       }
     } catch (error) {
-      showToast('Error updating room', 'error');
+      previewEl.innerHTML = '<span class="preview-error">✗ Error validating code</span>';
       console.error(error);
+      return null;
+    }
+  }
+
+  // Validate button click
+  container.querySelector('.btn-validate-code').addEventListener('click', async () => {
+    const code = document.getElementById('room-featured-code').value;
+    const previewEl = document.getElementById('room-code-preview');
+    await validateAndPreview(code, previewEl);
+  });
+
+  // Auto-validate on blur
+  document.getElementById('room-featured-code').addEventListener('blur', async (e) => {
+    const code = e.target.value;
+    if (code.trim()) {
+      const previewEl = document.getElementById('room-code-preview');
+      await validateAndPreview(code, previewEl);
     }
   });
+
+  // Load initial preview if code exists
+  if (room.featuredCode) {
+    const previewEl = document.getElementById('room-code-preview');
+    validateAndPreview(room.featuredCode, previewEl);
+  }
+
+  // Load Showpieces types if applicable
+  if (isShowpieces) {
+    loadShowpiecesTypes(container);
+  }
+
+  // Change detection listeners
+  const roomDesc = document.getElementById('room-description');
+  const roomCode = document.getElementById('room-featured-code');
+
+  if (roomDesc) {
+    roomDesc.addEventListener('input', onRoomSettingsChanged);
+  }
+  if (roomCode) {
+    roomCode.addEventListener('input', onRoomSettingsChanged);
+  }
 }
+
+// Load Showpieces furniture types with their codes
+async function loadShowpiecesTypes(container) {
+  const typesContainer = document.getElementById('showpieces-types-container');
+  if (!typesContainer) return;
+
+  try {
+    const response = await fetch(`/${ADMIN_ROUTE}/api/room-types/Showpieces`);
+    const types = await response.json();
+
+    if (types.length === 0) {
+      typesContainer.innerHTML = '<span class="hint-text">No furniture types found. Add items to create types.</span>';
+      return;
+    }
+
+    typesContainer.innerHTML = types.map(t => `
+      <div class="type-code-row" data-type="${t.type}">
+        <label class="type-label">${t.type}</label>
+        <div class="type-code-input-row">
+          <input type="text" class="type-code-input" value="${t.code || ''}" placeholder="e.g., SR-001">
+          <button type="button" class="btn-validate-type-code" title="Validate">✓</button>
+        </div>
+        <div class="type-code-preview"></div>
+      </div>
+    `).join('');
+
+    // Add validation listeners for each type code
+    typesContainer.querySelectorAll('.type-code-row').forEach(row => {
+      const typeName = row.dataset.type;
+      const input = row.querySelector('.type-code-input');
+      const validateBtn = row.querySelector('.btn-validate-type-code');
+      const previewEl = row.querySelector('.type-code-preview');
+
+      validateBtn.addEventListener('click', async () => {
+        const code = input.value.trim();
+        await validateCodeForShowpieces(code, previewEl);
+      });
+
+      input.addEventListener('blur', async () => {
+        const code = input.value.trim();
+        if (code) {
+          await validateCodeForShowpieces(code, previewEl);
+        }
+        if (code) {
+          await validateCodeForShowpieces(code, previewEl);
+        }
+      });
+
+      // Change detection
+      input.addEventListener('input', onRoomSettingsChanged);
+
+      // Load initial preview
+      if (input.value.trim()) {
+        validateCodeForShowpieces(input.value.trim(), previewEl);
+      }
+    });
+
+  } catch (error) {
+    typesContainer.innerHTML = '<span class="preview-error">Error loading types</span>';
+    console.error(error);
+  }
+}
+
+// Validate code specifically for Showpieces items
+async function validateCodeForShowpieces(code, previewEl) {
+  if (!code) {
+    previewEl.innerHTML = '';
+    return null;
+  }
+
+  previewEl.innerHTML = '<span class="loading-hint">...</span>';
+
+  try {
+    const response = await fetch(`/${ADMIN_ROUTE}/api/validate-code?code=${encodeURIComponent(code)}&room=Showpieces`);
+    const result = await response.json();
+
+    if (result.valid) {
+      previewEl.innerHTML = result.image
+        ? `<img src="${result.image}" alt="${result.name}" class="type-preview-img" title="${result.name}">`
+        : `<span class="preview-success-text">✓</span>`;
+      return result;
+    } else {
+      previewEl.innerHTML = '<span class="preview-error">✗</span>';
+      return null;
+    }
+  } catch (error) {
+    previewEl.innerHTML = '<span class="preview-error">!</span>';
+    return null;
+  }
+}
+
 
 // ==========================================
 // API Actions
@@ -638,32 +818,89 @@ document.getElementById('add-set-btn').addEventListener('click', async () => {
   openModal('set-modal');
 });
 
-// Validate image file for size, format, and aspect ratio
-function validateImage(file, expectedRatio, ratioLabel) {
+// ==========================================
+// IMAGE VALIDATION WITH SERVER CONFIG
+// ==========================================
+
+// Upload configuration (loaded from server)
+let uploadConfig = null;
+
+// Load upload configuration from server
+async function loadUploadConfig() {
+  try {
+    const response = await fetch(`/${ADMIN_ROUTE}/api/upload-config`);
+    if (response.ok) {
+      uploadConfig = await response.json();
+      console.log('Upload config loaded:', uploadConfig);
+    }
+  } catch (error) {
+    console.warn('Could not load upload config, using defaults');
+    // Fallback defaults
+    uploadConfig = {
+      fileSizeLimits: { default: 1, sets: 3, items: 3, heroImage: 5, aboutStory: 3 },
+      aspectRatios: { sets: '1:1', items: '1:1', heroImage: '16:9' },
+      allowedTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    };
+  }
+}
+
+// Parse aspect ratio string to number (e.g., '16:9' -> 16/9)
+function parseAspectRatio(ratioStr) {
+  if (!ratioStr) return null;
+  const parts = ratioStr.split(':');
+  if (parts.length !== 2) return null;
+  return parseFloat(parts[0]) / parseFloat(parts[1]);
+}
+
+// Validate image file for size and aspect ratio based on section config
+function validateImage(file, section = 'default') {
   return new Promise((resolve, reject) => {
-    // Check file size (max 1MB)
-    if (file.size > 1 * 1024 * 1024) {
-      reject(`File size must be less than 1MB (current: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
+    if (!uploadConfig) {
+      console.warn('Upload config not loaded, skipping validation');
+      resolve(true);
       return;
     }
 
-    // Check file format (webp only)
-    if (!file.name.toLowerCase().endsWith('.webp')) {
-      reject('Only .webp format is allowed');
+    // Get section-specific limits
+    const sizeLimitMB = uploadConfig.fileSizeLimits[section] || uploadConfig.fileSizeLimits.default || 1;
+    const sizeLimitBytes = sizeLimitMB * 1024 * 1024;
+    const aspectRatioStr = uploadConfig.aspectRatios[section]; // May be undefined (no enforcement)
+
+    // Check file size
+    if (file.size > sizeLimitBytes) {
+      reject(`File size must be less than ${sizeLimitMB}MB (current: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
+      return;
+    }
+
+    // Check it's an image file
+    if (!file.type.startsWith('image/')) {
+      reject('File must be an image');
+      return;
+    }
+
+    // If no aspect ratio defined for this section, skip ratio validation
+    if (!aspectRatioStr) {
+      resolve(true);
       return;
     }
 
     // Check aspect ratio
+    const expectedRatio = parseAspectRatio(aspectRatioStr);
+    if (!expectedRatio) {
+      resolve(true);
+      return;
+    }
+
     const img = new Image();
     const url = URL.createObjectURL(file);
 
     img.onload = () => {
       URL.revokeObjectURL(url);
       const actualRatio = img.width / img.height;
-      const tolerance = 0.05; // 5% tolerance
+      const tolerance = 0.15; // 15% tolerance
 
       if (Math.abs(actualRatio - expectedRatio) > tolerance) {
-        reject(`Image must be ${ratioLabel} aspect ratio (current: ${img.width}x${img.height})`);
+        reject(`Image must be ${aspectRatioStr} aspect ratio (current: ${img.width}x${img.height})`);
         return;
       }
 
@@ -679,14 +916,17 @@ function validateImage(file, expectedRatio, ratioLabel) {
   });
 }
 
-// Set image preview with validation (4:3 aspect ratio)
+// Load config on page load
+loadUploadConfig();
+
+// Set image preview with config-based validation
 document.getElementById('set-image').addEventListener('change', async (e) => {
   const file = e.target.files[0];
   const previewEl = document.getElementById('set-image-preview');
 
   if (file) {
     try {
-      await validateImage(file, 4/3, '4:3');
+      await validateImage(file, 'sets');
       const reader = new FileReader();
       reader.onload = (e) => {
         previewEl.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
@@ -773,14 +1013,14 @@ document.getElementById('item-type-new').addEventListener('input', (e) => {
   document.getElementById('item-type').value = e.target.value;
 });
 
-// Item image preview with validation (1:1 aspect ratio)
+// Item image preview with config-based validation
 document.getElementById('item-image').addEventListener('change', async (e) => {
   const file = e.target.files[0];
   const previewEl = document.getElementById('item-image-preview');
 
   if (file) {
     try {
-      await validateImage(file, 1, '1:1');
+      await validateImage(file, 'items');
       const reader = new FileReader();
       reader.onload = (e) => {
         previewEl.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
@@ -946,6 +1186,12 @@ document.getElementById('image-form').addEventListener('submit', async (e) => {
   const formData = new FormData(e.target);
   const submitBtn = e.target.querySelector('button[type="submit"]');
   const collection = document.getElementById('image-collection').value;
+
+  // SiteSettings uploads are handled by a separate handler below
+  if (collection === 'SiteSettings') {
+    return;
+  }
+
   setButtonLoading(submitBtn, true);
 
   try {
@@ -1036,7 +1282,12 @@ async function loadSettings() {
     populateHomeSettings();
     populateContactSettings();
     populateAboutSettings();
+
     populateServicesSettings();
+    populateCatalogueSettings();
+
+    // Store original data state for change detection
+    storeOriginalSettingsData();
   } catch (error) {
     console.error('Error loading settings:', error);
   }
@@ -1087,6 +1338,58 @@ function populateHomeSettings() {
   document.getElementById('signature-codes').value = (home.featuredCodes.signatureItems || []).join(', ');
   document.getElementById('featured-items-codes').value = (home.featuredCodes.featuredItems || []).join(', ');
   document.getElementById('featured-sets-codes').value = (home.featuredCodes.featuredSets || []).join(', ');
+
+  // Populate delivery section
+  const delivery = home.delivery || {};
+  document.getElementById('delivery-title').value = delivery.title || 'Crafted In India, Delivered Worldwide';
+
+  // Map image preview
+  const mapPreview = document.getElementById('delivery-map-preview');
+  if (delivery.mapImage?.url) {
+    mapPreview.innerHTML = `<img src="${delivery.mapImage.url}" alt="Map">`;
+  } else {
+    mapPreview.innerHTML = '';
+  }
+
+  // Delivery paragraphs
+  const paragraphsContainer = document.getElementById('delivery-paragraphs-container');
+  paragraphsContainer.innerHTML = '';
+  (delivery.paragraphs || []).forEach((text, index) => {
+    addDeliveryParagraphRow(text, index);
+  });
+
+  // India locations
+  const indiaContainer = document.getElementById('india-locations-container');
+  indiaContainer.innerHTML = '';
+  (delivery.indiaLocations || []).forEach((loc, index) => {
+    addIndiaLocationRow(loc, index);
+  });
+
+  // International locations
+  const intlContainer = document.getElementById('international-locations-container');
+  intlContainer.innerHTML = '';
+  (delivery.internationalLocations || []).forEach((loc, index) => {
+    addInternationalLocationRow(loc.name, loc.flagImage?.url, index);
+  });
+
+  // Footer Configuration
+  const footer = home.footer || {};
+  document.getElementById('footer-tagline1').value = footer.tagline1 || '';
+  document.getElementById('footer-tagline2').value = footer.tagline2 || '';
+  document.getElementById('footer-copyright').value = footer.copyright || '';
+
+  // Section Text Configuration
+  const sections = home.sections || {};
+  document.getElementById('signature-title').value = sections.signaturePieces?.title || '';
+  document.getElementById('signature-subtitle').value = sections.signaturePieces?.subtitle || '';
+  document.getElementById('featured-items-title').value = sections.featuredItems?.title || '';
+  document.getElementById('featured-items-subtitle').value = sections.featuredItems?.subtitle || '';
+  document.getElementById('featured-sets-title').value = sections.featuredSets?.title || '';
+  document.getElementById('featured-sets-subtitle').value = sections.featuredSets?.subtitle || '';
+  document.getElementById('browse-rooms-title').value = sections.browseRooms?.title || '';
+  document.getElementById('browse-rooms-subtitle').value = sections.browseRooms?.subtitle || '';
+  document.getElementById('custom-order-title').value = sections.customOrder?.title || '';
+  document.getElementById('custom-order-description').value = sections.customOrder?.description || '';
 }
 
 // Hero image upload handlers
@@ -1195,6 +1498,51 @@ function populateContactSettings() {
   document.getElementById('address-country').value = contact.address?.country || '';
   document.getElementById('hours-weekday').value = contact.businessHours?.weekday || '';
   document.getElementById('hours-weekend').value = contact.businessHours?.weekend || '';
+
+  // Page Meta
+  document.getElementById('contact-page-title').value = contact.pageTitle || 'Contact Us';
+  document.getElementById('contact-page-description').value = contact.pageDescription || '';
+
+  // Social Media
+  document.getElementById('contact-instagram').value = contact.socialMedia?.instagram || '';
+  document.getElementById('contact-facebook').value = contact.socialMedia?.facebook || '';
+
+  // Form Section
+  document.getElementById('contact-form-title').value = contact.formSection?.title || '';
+  document.getElementById('contact-form-description').value = contact.formSection?.description || '';
+
+  // FAQ
+  const faqContainer = document.getElementById('contact-faq-container');
+  faqContainer.innerHTML = '';
+  (contact.faq || []).forEach((item, index) => {
+    addFaqRow(item.question, item.answer, index);
+  });
+}
+
+function addFaqRow(question = '', answer = '', index = null) {
+  const container = document.getElementById('contact-faq-container');
+  const row = document.createElement('div');
+  row.className = 'dynamic-row faq-row';
+  row.innerHTML = `
+    <div class="row-header">
+       <span class="row-number">${container.children.length + 1}</span>
+       <button type="button" class="btn-remove-row">&times;</button>
+    </div>
+    <div class="form-group">
+      <label>Question</label>
+      <input type="text" class="faq-question" name="faqQuestion[]" value="${question}" placeholder="Question?">
+    </div>
+    <div class="form-group">
+      <label>Answer</label>
+      <textarea class="faq-answer" name="faqAnswer[]" rows="2" placeholder="Answer...">${answer}</textarea>
+    </div>
+  `;
+  row.querySelector('.btn-remove-row').addEventListener('click', () => {
+    row.remove();
+    document.getElementById('contact-settings-form')?.dispatchEvent(new Event('input'));
+  });
+  container.appendChild(row);
+  document.getElementById('contact-settings-form')?.dispatchEvent(new Event('input'));
 }
 
 function addStatRow(number = '', label = '', index = null) {
@@ -1202,13 +1550,104 @@ function addStatRow(number = '', label = '', index = null) {
   const row = document.createElement('div');
   row.className = 'stat-row';
   row.innerHTML = `
-    <input type="text" placeholder="45+" value="${number}" class="stat-number">
-    <input type="text" placeholder="Years Crafting" value="${label}" class="stat-label">
+    <input type="text" placeholder="45+" value="${number}" class="stat-number" name="statNumbers[]">
+    <input type="text" placeholder="Years Crafting" value="${label}" class="stat-label" name="statLabels[]">
     <button type="button" class="btn-remove-stat">&times;</button>
   `;
-  row.querySelector('.btn-remove-stat').addEventListener('click', () => row.remove());
+  row.querySelector('.btn-remove-stat').addEventListener('click', () => {
+    row.remove();
+    document.getElementById('home-settings-form')?.dispatchEvent(new Event('input'));
+  });
   statsContainer.appendChild(row);
+  document.getElementById('home-settings-form')?.dispatchEvent(new Event('input'));
 }
+
+// ==========================================
+// DELIVERY SECTION HELPERS
+// ==========================================
+
+function addDeliveryParagraphRow(text = '', index = null) {
+  const container = document.getElementById('delivery-paragraphs-container');
+  const row = document.createElement('div');
+  row.className = 'delivery-paragraph-row';
+  row.innerHTML = `
+    <textarea class="delivery-paragraph" name="deliveryParagraphs[]" rows="2" placeholder="Enter paragraph text...">${text}</textarea>
+    <button type="button" class="btn-remove-row">&times;</button>
+  `;
+  row.querySelector('.btn-remove-row').addEventListener('click', () => {
+    if (confirm('Remove this paragraph?')) {
+      row.remove();
+      document.getElementById('home-settings-form')?.dispatchEvent(new Event('input'));
+    }
+  });
+  container.appendChild(row);
+  // Trigger change detection for new row
+  document.getElementById('home-settings-form')?.dispatchEvent(new Event('input'));
+}
+
+function addIndiaLocationRow(location = '', index = null) {
+  const container = document.getElementById('india-locations-container');
+  const row = document.createElement('div');
+  row.className = 'location-row';
+  row.innerHTML = `
+    <input type="text" class="india-location" name="indiaLocations[]" value="${location}" placeholder="City/State name">
+    <button type="button" class="btn-remove-row">&times;</button>
+  `;
+  row.querySelector('.btn-remove-row').addEventListener('click', () => {
+    if (confirm('Remove this location?')) {
+      row.remove();
+      document.getElementById('home-settings-form')?.dispatchEvent(new Event('input'));
+    }
+  });
+  container.appendChild(row);
+  // Trigger change detection for new row
+  document.getElementById('home-settings-form')?.dispatchEvent(new Event('input'));
+}
+
+function addInternationalLocationRow(name = '', flagUrl = '', index = null) {
+  const container = document.getElementById('international-locations-container');
+  const row = document.createElement('div');
+  row.className = 'intl-location-row';
+  row.dataset.index = index !== null ? index : Date.now(); // Use timestamp fallback for uniqueness
+  row.innerHTML = `
+    <input type="text" class="intl-name" name="intlLocationsName[]" value="${name}" placeholder="Location name (e.g. UAE - Dubai)">
+    <input type="hidden" class="intl-flag-url" value="${flagUrl}">
+    <div class="intl-flag-preview">${flagUrl ? `<img src="${flagUrl}" alt="Flag">` : ''}</div>
+    <button type="button" class="btn-upload-flag">Upload Flag</button>
+    <button type="button" class="btn-remove-row">&times;</button>
+  `;
+  row.querySelector('.btn-remove-row').addEventListener('click', () => {
+    if (confirm('Remove this location?')) {
+      row.remove();
+      // Trigger change detection
+      document.getElementById('home-settings-form')?.dispatchEvent(new Event('input'));
+    }
+  });
+  row.querySelector('.btn-upload-flag').addEventListener('click', () => {
+    openInternationalFlagUpload(row.dataset.index);
+  });
+  container.appendChild(row);
+  // Trigger change detection for new row
+  document.getElementById('home-settings-form')?.dispatchEvent(new Event('input'));
+}
+
+// Add button handlers
+document.getElementById('add-delivery-paragraph-btn')?.addEventListener('click', () => {
+  addDeliveryParagraphRow();
+});
+
+document.getElementById('add-india-location-btn')?.addEventListener('click', () => {
+  addIndiaLocationRow();
+});
+
+document.getElementById('add-international-location-btn')?.addEventListener('click', () => {
+  addInternationalLocationRow();
+});
+
+// Add FAQ button
+document.getElementById('add-faq-btn')?.addEventListener('click', () => {
+  addFaqRow();
+});
 
 // Add stat button
 document.getElementById('add-stat-btn')?.addEventListener('click', () => {
@@ -1216,9 +1655,11 @@ document.getElementById('add-stat-btn')?.addEventListener('click', () => {
 });
 
 // Home settings form submit
-document.getElementById('home-settings-form')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const btn = e.target.querySelector('button[type="submit"]');
+// Sticky Save Button Listener
+document.getElementById('home-save-btn')?.addEventListener('click', saveHomeSettings);
+
+async function saveHomeSettings() {
+  const btn = document.getElementById('home-save-btn');
   setButtonLoading(btn, true);
 
   // Collect stats
@@ -1234,13 +1675,74 @@ document.getElementById('home-settings-form')?.addEventListener('submit', async 
   // Parse comma-separated codes
   const parseCSV = (str) => str.split(',').map(s => s.trim()).filter(Boolean);
 
+  // Collect delivery paragraphs
+  const deliveryParagraphs = [];
+  document.querySelectorAll('#delivery-paragraphs-container .delivery-paragraph').forEach(textarea => {
+    const text = textarea.value.trim();
+    if (text) deliveryParagraphs.push(text);
+  });
+
+  // Collect India locations
+  const indiaLocations = [];
+  document.querySelectorAll('#india-locations-container .india-location').forEach(input => {
+    const loc = input.value.trim();
+    if (loc) indiaLocations.push(loc);
+  });
+
+  // Collect international locations
+  const internationalLocations = [];
+  document.querySelectorAll('#international-locations-container .intl-location-row').forEach(row => {
+    const name = row.querySelector('.intl-name').value.trim();
+    const flagUrl = row.querySelector('.intl-flag-url').value;
+    if (name) {
+      internationalLocations.push({
+        name,
+        flagImage: { url: flagUrl }
+      });
+    }
+  });
+
   const data = {
     tagline: document.getElementById('hero-tagline').value.trim(),
     badges: parseCSV(document.getElementById('hero-badges').value),
     stats,
     signatureItems: parseCSV(document.getElementById('signature-codes').value),
     featuredItems: parseCSV(document.getElementById('featured-items-codes').value),
-    featuredSets: parseCSV(document.getElementById('featured-sets-codes').value)
+    featuredSets: parseCSV(document.getElementById('featured-sets-codes').value),
+    // Delivery section
+    deliveryTitle: document.getElementById('delivery-title').value.trim(),
+    deliveryParagraphs,
+    indiaLocations,
+    internationalLocations,
+    // Footer section
+    footer: {
+      tagline1: document.getElementById('footer-tagline1').value.trim(),
+      tagline2: document.getElementById('footer-tagline2').value.trim(),
+      copyright: document.getElementById('footer-copyright').value.trim()
+    },
+    // Section Text Configuration
+    sections: {
+      signaturePieces: {
+        title: document.getElementById('signature-title').value.trim(),
+        subtitle: document.getElementById('signature-subtitle').value.trim()
+      },
+      featuredItems: {
+        title: document.getElementById('featured-items-title').value.trim(),
+        subtitle: document.getElementById('featured-items-subtitle').value.trim()
+      },
+      featuredSets: {
+        title: document.getElementById('featured-sets-title').value.trim(),
+        subtitle: document.getElementById('featured-sets-subtitle').value.trim()
+      },
+      browseRooms: {
+        title: document.getElementById('browse-rooms-title').value.trim(),
+        subtitle: document.getElementById('browse-rooms-subtitle').value.trim()
+      },
+      customOrder: {
+        title: document.getElementById('custom-order-title').value.trim(),
+        description: document.getElementById('custom-order-description').value.trim()
+      }
+    }
   };
 
   try {
@@ -1263,7 +1765,7 @@ document.getElementById('home-settings-form')?.addEventListener('submit', async 
   } finally {
     setButtonLoading(btn, false);
   }
-});
+}
 
 // Contact settings form submit
 document.getElementById('contact-settings-form')?.addEventListener('submit', async (e) => {
@@ -1271,7 +1773,19 @@ document.getElementById('contact-settings-form')?.addEventListener('submit', asy
   const btn = e.target.querySelector('button[type="submit"]');
   setButtonLoading(btn, true);
 
+  // Collect FAQ
+  const faq = [];
+  document.querySelectorAll('.faq-row').forEach(row => {
+    const question = row.querySelector('.faq-question').value.trim();
+    const answer = row.querySelector('.faq-answer').value.trim();
+    if (question && answer) {
+      faq.push({ question, answer });
+    }
+  });
+
   const data = {
+    pageTitle: document.getElementById('contact-page-title').value.trim(),
+    pageDescription: document.getElementById('contact-page-description').value.trim(),
     phone1: document.getElementById('contact-phone1').value.trim(),
     phone2: document.getElementById('contact-phone2').value.trim(),
     whatsappEnquiry: document.getElementById('contact-whatsapp-enquiry').value.trim(),
@@ -1282,7 +1796,16 @@ document.getElementById('contact-settings-form')?.addEventListener('submit', asy
     addressLine3: document.getElementById('address-line3').value.trim(),
     addressCountry: document.getElementById('address-country').value.trim(),
     hoursWeekday: document.getElementById('hours-weekday').value.trim(),
-    hoursWeekend: document.getElementById('hours-weekend').value.trim()
+    hoursWeekend: document.getElementById('hours-weekend').value.trim(),
+    socialMedia: {
+      instagram: document.getElementById('contact-instagram').value.trim(),
+      facebook: document.getElementById('contact-facebook').value.trim()
+    },
+    formSection: {
+      title: document.getElementById('contact-form-title').value.trim(),
+      description: document.getElementById('contact-form-description').value.trim()
+    },
+    faq
   };
 
   try {
@@ -1317,6 +1840,8 @@ function populateAboutSettings() {
   const about = siteSettings.about;
 
   // Story section
+  document.getElementById('about-page-title').value = about.pageTitle || 'About Us';
+  document.getElementById('about-page-description').value = about.pageDescription || '';
   document.getElementById('about-story-title').value = about.story?.title || '';
   document.getElementById('about-story-subtitle').value = about.story?.subtitle || '';
   document.getElementById('about-story-content').value = about.story?.content || '';
@@ -1347,6 +1872,10 @@ function populateAboutSettings() {
   // Heritage
   document.getElementById('about-heritage-title').value = about.heritage?.title || '';
   document.getElementById('about-heritage-description').value = about.heritage?.description || '';
+
+  // CTA
+  document.getElementById('about-cta-title').value = about.cta?.title || '';
+  document.getElementById('about-cta-description').value = about.cta?.description || '';
 }
 
 function addValueRow(icon = '', title = '', description = '', index = null) {
@@ -1491,6 +2020,8 @@ document.getElementById('about-settings-form')?.addEventListener('submit', async
   });
 
   const data = {
+    pageTitle: document.getElementById('about-page-title').value.trim(),
+    pageDescription: document.getElementById('about-page-description').value.trim(),
     story: {
       title: document.getElementById('about-story-title').value.trim(),
       subtitle: document.getElementById('about-story-subtitle').value.trim(),
@@ -1504,6 +2035,10 @@ document.getElementById('about-settings-form')?.addEventListener('submit', async
     heritage: {
       title: document.getElementById('about-heritage-title').value.trim(),
       description: document.getElementById('about-heritage-description').value.trim()
+    },
+    cta: {
+      title: document.getElementById('about-cta-title').value.trim(),
+      description: document.getElementById('about-cta-description').value.trim()
     }
   };
 
@@ -1539,6 +2074,8 @@ function populateServicesSettings() {
   const services = siteSettings.services;
 
   // Intro
+  document.getElementById('services-page-title').value = services.pageTitle || 'Our Services';
+  document.getElementById('services-page-description').value = services.pageDescription || '';
   document.getElementById('services-intro-title').value = services.intro?.title || '';
   document.getElementById('services-intro-description').value = services.intro?.description || '';
 
@@ -1548,6 +2085,10 @@ function populateServicesSettings() {
   (services.items || []).forEach((item, index) => {
     addServiceRow(item.title, item.description, item.features, item.image, index);
   });
+
+  // CTA
+  document.getElementById('services-cta-title').value = services.cta?.title || '';
+  document.getElementById('services-cta-description').value = services.cta?.description || '';
 }
 
 function addServiceRow(title = '', description = '', features = [], image = null, index = null) {
@@ -1630,11 +2171,17 @@ document.getElementById('services-settings-form')?.addEventListener('submit', as
   });
 
   const data = {
+    pageTitle: document.getElementById('services-page-title').value.trim(),
+    pageDescription: document.getElementById('services-page-description').value.trim(),
     intro: {
       title: document.getElementById('services-intro-title').value.trim(),
       description: document.getElementById('services-intro-description').value.trim()
     },
-    items
+    items,
+    cta: {
+      title: document.getElementById('services-cta-title').value.trim(),
+      description: document.getElementById('services-cta-description').value.trim()
+    }
   };
 
   try {
@@ -1659,9 +2206,203 @@ document.getElementById('services-settings-form')?.addEventListener('submit', as
   }
 });
 
+// Populate Catalogue Settings
+function populateCatalogueSettings() {
+  if (!siteSettings || !siteSettings.catalogue) return;
+  const catalogue = siteSettings.catalogue;
+  document.getElementById('catalogue-page-title').value = catalogue.pageTitle || 'Our Collection';
+  document.getElementById('catalogue-page-description').value = catalogue.pageDescription || '';
+}
+
+// Populate Catalogue Settings
+function populateCatalogueSettings() {
+  if (!siteSettings || !siteSettings.catalogue) return;
+  const catalogue = siteSettings.catalogue;
+  document.getElementById('catalogue-page-title').value = catalogue.pageTitle || 'Our Collection';
+  document.getElementById('catalogue-page-description').value = catalogue.pageDescription || '';
+
+  storeOriginalCatalogueData();
+}
+
+let originalCatalogueData = null;
+let originalRoomData = null;
+let currentRoomDataObj = null; // Store full room object for saving
+
+function storeOriginalCatalogueData() {
+  originalCatalogueData = {
+    pageTitle: document.getElementById('catalogue-page-title').value,
+    pageDescription: document.getElementById('catalogue-page-description').value
+  };
+  updateRoomsSaveButton(false);
+}
+
+function storeOriginalRoomData(room) {
+  currentRoomDataObj = room;
+  originalRoomData = {
+    description: room.description || '',
+    featuredCode: room.featuredCode || '',
+    typeCodes: JSON.stringify(room.showpiecesTypeCodes || {}) // Simplification for comparison
+    // Note: detailed deep compare for type codes might be needed if they were complex objects
+  };
+   // If Showpieces, we might need to wait for type inputs to load to grab their values?
+   // Actually, room object has the source of truth.
+   // But inputs might be empty if not loaded.
+   // Wait, inputs are generated from `loadShowpiecesTypes` which fetches API?
+   // No, `loadShowpiecesTypes` fetches TYPES, but `createRoomCard` doesn't populate the values?
+   // `createRoomCard` logic (lines 407-440) for Showpieces is missing in my snippet read?
+   // Snippet 1066 showed:
+   // 407: <div class="room-field showpieces-types-section">...</div>
+   // 410: <div id="showpieces-types-container">Loading...</div>
+   // Values are populated by `loadShowpiecesTypes` (lines 640+).
+   // `loadShowpiecesTypes` fetches `/api/room-types/Showpieces`.
+   // `t.code` comes from that API?
+   // Wait, `room` object has `showpiecesTypeCodes`.
+   // Does `/api/room-types` return codes?
+   // Let's assume on load, state is clean.
+   updateRoomsSaveButton(false);
+}
+
+function onRoomSettingsChanged() {
+   updateRoomsSaveButton(true);
+}
+
+// Global Rooms Save Handler
+document.getElementById('rooms-save-btn')?.addEventListener('click', async () => {
+  if (currentRoom === 'Catalogue') {
+    saveCatalogueSettings();
+  } else {
+    saveRoomSettings();
+  }
+});
+
+// Global Rooms Cancel Handler
+document.getElementById('rooms-cancel-btn')?.addEventListener('click', () => {
+    if (currentRoom === 'Catalogue') {
+        populateCatalogueSettings();
+    } else {
+        loadRoomDetails(); // Reloads fresh
+    }
+});
+
+function updateRoomsSaveButton(hasChanges) {
+    const btn = document.getElementById('rooms-save-btn');
+    const cancelBtn = document.getElementById('rooms-cancel-btn');
+    const indicator = document.getElementById('rooms-unsaved-indicator');
+
+    if (hasChanges) {
+        btn.classList.add('active');
+        cancelBtn.style.display = 'block';
+        indicator.textContent = 'Unsaved changes';
+        indicator.style.display = 'block';
+    } else {
+        btn.classList.remove('active');
+        cancelBtn.style.display = 'none';
+        indicator.textContent = '';
+        indicator.style.display = 'none';
+
+        // Reset button state just in case
+        setButtonLoading(btn, false);
+    }
+}
+
+// Catalogue settings submit (Refactored)
+async function saveCatalogueSettings() {
+  const btn = document.getElementById('rooms-save-btn');
+  setButtonLoading(btn, true);
+
+  const data = {
+    pageTitle: document.getElementById('catalogue-page-title').value.trim(),
+    pageDescription: document.getElementById('catalogue-page-description').value.trim()
+  };
+
+  try {
+    const response = await fetch(`/${ADMIN_ROUTE}/api/settings/catalogue`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+      showToast('Catalogue meta saved!', 'success');
+      if (siteSettings) {
+        siteSettings.catalogue = { ...siteSettings.catalogue, ...data };
+      }
+      storeOriginalCatalogueData();
+    } else {
+      const err = await response.json();
+      showToast(err.error || 'Error saving meta', 'error');
+    }
+  } catch (error) {
+    showToast('Error saving meta', 'error');
+    console.error(error);
+  } finally {
+    setButtonLoading(btn, false);
+  }
+}
+
+// Room Settings Save (Migrated)
+async function saveRoomSettings() {
+    const container = document.getElementById('room-details');
+    const saveBtn = document.getElementById('rooms-save-btn');
+    setButtonLoading(saveBtn, true);
+
+    const description = document.getElementById('room-description').value;
+    const featuredCode = document.getElementById('room-featured-code').value.trim();
+    const isShowpieces = currentRoom === 'Showpieces';
+
+    const payload = { description, featuredCode };
+
+    if (isShowpieces) {
+      const typeCodes = {};
+      container.querySelectorAll('.type-code-row').forEach(row => {
+        const typeName = row.dataset.type;
+        const code = row.querySelector('.type-code-input').value.trim();
+        if (code) {
+          typeCodes[typeName] = code;
+        }
+      });
+      payload.showpiecesTypeCodes = typeCodes;
+    }
+
+    try {
+      const response = await fetch(`/${ADMIN_ROUTE}/api/rooms/${currentRoomDataObj._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        showToast('Room updated successfully', 'success');
+        updateRoomsSaveButton(false);
+        // Refresh data?
+        const updatedRoom = await response.json(); // API usually returns updated doc?
+        // Actually the API returns { success: true } or similar.
+        // Let's just reload details to be safe or update local state.
+        loadRoomDetails();
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Error updating room', 'error');
+        setButtonLoading(saveBtn, false); // Keep active if error
+      }
+    } catch (error) {
+      showToast('Error updating room', 'error');
+      console.error(error);
+      setButtonLoading(saveBtn, false);
+    }
+}
+
+
+// Add listeners for Catalogue inputs
+document.getElementById('catalogue-page-title')?.addEventListener('input', onRoomSettingsChanged);
+document.getElementById('catalogue-page-description')?.addEventListener('input', onRoomSettingsChanged);
+
 // ==========================================
 // SETTINGS IMAGE UPLOAD HANDLER
 // ==========================================
+
+function openInternationalFlagUpload(index) {
+  openSettingsImageModal('home', 'flag', index);
+}
 
 function openSettingsImageModal(page, section, itemIndex) {
   // Use the existing image modal but configure it for settings
@@ -1756,6 +2497,8 @@ document.getElementById('image-form')?.addEventListener('submit', async function
   } else if (page === 'services') {
     formData.append('itemIndex', itemIndex);
     endpoint = `/${ADMIN_ROUTE}/api/settings/services/image`;
+  } else if (page === 'home' && section === 'flag') {
+    endpoint = `/${ADMIN_ROUTE}/api/settings/home/international-flag`;
   }
 
   try {
@@ -1768,6 +2511,19 @@ document.getElementById('image-form')?.addEventListener('submit', async function
       const result = await response.json();
       showToast('Image uploaded successfully!', 'success');
       closeModal('image-modal');
+
+      // Special handling for flags (update DOM without reload)
+      if (page === 'home' && section === 'flag') {
+        const row = document.querySelector(`.intl-location-row[data-index="${itemIndex}"]`);
+        if (row) {
+          row.querySelector('.intl-flag-preview').innerHTML = `<img src="${result.image.url}" alt="Flag">`;
+          const hiddenInput = row.querySelector('.intl-flag-url');
+          if (hiddenInput) hiddenInput.value = result.image.url;
+          document.getElementById('home-settings-form')?.dispatchEvent(new Event('input'));
+        }
+        setButtonLoading(btn, false);
+        return;
+      }
 
       // Refresh settings and update preview
       await loadSettings();
@@ -1802,8 +2558,134 @@ document.getElementById('image-form')?.addEventListener('submit', async function
 });
 
 // ==========================================
+// STICKY BUTTON CHANGE DETECTION
+// ==========================================
+
+// Track original form data for change detection
+const originalFormData = {
+  home: null,
+  contact: null,
+  about: null,
+  services: null
+};
+
+// Initialize change detection for a settings form
+function initSettingsChangeDetection(formId, section) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+
+  const saveBtn = document.getElementById(`${section}-save-btn`);
+  const cancelBtn = document.getElementById(`${section}-cancel-btn`);
+
+  if (!saveBtn || !cancelBtn) return;
+
+  // Store original form data when loaded
+  function storeOriginalData() {
+    originalFormData[section] = new FormData(form);
+  }
+
+  // Check if form has changes
+  function hasChanges() {
+    if (!originalFormData[section]) return false;
+
+    const currentData = new FormData(form);
+
+    // Get all unique keys from both datasets
+    const allKeys = new Set([...originalFormData[section].keys(), ...currentData.keys()]);
+
+    for (const key of allKeys) {
+      const originalValues = originalFormData[section].getAll(key);
+      const currentValues = currentData.getAll(key);
+
+      // Compare lengths
+      if (originalValues.length !== currentValues.length) return true;
+
+      // Compare values
+      for (let i = 0; i < originalValues.length; i++) {
+        if (String(originalValues[i]) !== String(currentValues[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  // Update button states based on changes
+  function updateButtonStates() {
+    const changed = hasChanges();
+
+    if (changed) {
+      saveBtn.classList.add('active');
+      cancelBtn.classList.add('visible');
+    } else {
+      saveBtn.classList.remove('active');
+      cancelBtn.classList.remove('visible');
+    }
+  }
+
+  // Reset buttons to inactive state
+  function resetButtonStates() {
+    saveBtn.classList.remove('active');
+    cancelBtn.classList.remove('visible');
+    storeOriginalData();
+  }
+
+  // Listen for input changes
+  form.addEventListener('input', updateButtonStates);
+  form.addEventListener('change', updateButtonStates);
+
+  // Save button click - submit the form
+  saveBtn.addEventListener('click', async () => {
+    if (!saveBtn.classList.contains('active')) return;
+
+    // Trigger the existing form submit handler
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    // Reset buttons after save
+    setTimeout(() => resetButtonStates(), 300);
+  });
+
+  // Cancel button click - reload original data
+  cancelBtn.addEventListener('click', async () => {
+    // Reset to original state by reloading settings
+    await loadSettings();
+    storeOriginalData();
+    updateButtonStates();
+    showToast('Changes discarded', 'info');
+  });
+
+  // Store original data after settings are loaded
+  // This is called from loadSettings functions
+  return { storeOriginalData, updateButtonStates, resetButtonStates };
+}
+
+// Change detection instances
+let changeDetectors = {};
+
+// Initialize all change detectors after DOM is ready
+function initAllChangeDetectors() {
+  changeDetectors.home = initSettingsChangeDetection('home-settings-form', 'home');
+  changeDetectors.contact = initSettingsChangeDetection('contact-settings-form', 'contact');
+  changeDetectors.about = initSettingsChangeDetection('about-settings-form', 'about');
+  changeDetectors.services = initSettingsChangeDetection('services-settings-form', 'services');
+}
+
+// Call after settings are loaded to store original state
+function storeOriginalSettingsData() {
+  Object.values(changeDetectors).forEach(detector => {
+    if (detector && detector.storeOriginalData) {
+      setTimeout(() => detector.storeOriginalData(), 100);
+    }
+  });
+}
+
+// Initialize change detectors
+initAllChangeDetectors();
+
+// ==========================================
 // Initial Load
 // ==========================================
 
 loadData();
 
+// Store original data after initial load
+// Store original data after initial load
+// Moved to loadSettings() to ensure data is loaded first

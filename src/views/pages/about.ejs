@@ -1,8 +1,8 @@
 <!-- About Page -->
 <section class="about-hero">
   <div class="about-hero-content">
-    <h1>About Pawana </h1>
-    <p>A story shaped by craftsmanship, experience, and care.</p>
+    <h1><%= aboutSettings.pageTitle || 'About Pawana ' %></h1>
+    <p><%= aboutSettings.pageDescription || 'A story shaped by craftsmanship, experience, and care.' %></p>
   </div>
 </section>
 
@@ -98,99 +98,78 @@ And even today, continued success depends on good clients like you—clients we 
 <section class="about-process">
   <div class="about-container">
     <h2>Our Process</h2>
-    <p class="process-intro">At Pawana Furniture, we believe true luxury is turning a personalized vision into a tangible reality. Our entire bespoke process—from the initial Design Brief to Full-Service Delivery—is purposefully structured to translate your unique aspirations for comfort and style into a meticulously crafted piece. We are not just fulfilling an order; we are Working on Your Dream, ensuring that the final result perfectly reflects your personal aesthetic and living philosophy.</p>
+    <p class="process-intro"><%= aboutSettings.process?.intro || 'At Pawana Furniture, we believe true luxury is turning a personalized vision into a tangible reality. Our entire bespoke process—from the initial Design Brief to Full-Service Delivery—is purposefully structured to translate your unique aspirations for comfort and style into a meticulously crafted piece. We are not just fulfilling an order; we are Working on Your Dream, ensuring that the final result perfectly reflects your personal aesthetic and living philosophy.' %></p>
 
     <div class="process-steps">
-      <div class="process-step">
-        <div class="step-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767228917/step1_ozp9qm.jpg" alt="Design Brief" loading="lazy">
-        </div>
-        <div class="step-content">
-          <div class="step-header">
-            <span class="step-number">01</span>
-            <h3>Design Brief</h3>
-          </div>
-          <p>This is the critical starting point for your custom furniture commission, where we hold a focused consultation to fully understand your functional needs and aesthetic preferences. The Design Brief formally outlines the scale, style, and essential parameters for the piece, ensuring our design team has a clear, shared vision before any work begins.</p>
-        </div>
-      </div>
+      <%
+        // Define default process steps with fallback content
+        const defaultSteps = [
+          {
+            title: 'Design Brief',
+            description: 'This is the critical starting point for your custom furniture commission, where we hold a focused consultation to fully understand your functional needs and aesthetic preferences. The Design Brief formally outlines the scale, style, and essential parameters for the piece, ensuring our design team has a clear, shared vision before any work begins.',
+            defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767228917/step1_ozp9qm.jpg'
+          },
+          {
+            title: 'Product Design',
+            description: 'Our experts transform the approved brief into precise, technical documents, creating detailed 2D drawings and advanced 3D models. This stage involves focusing on structural integrity, exact measurements, and ensuring all functional elements work perfectly, making Product Design the detailed blueprint for manufacturing your unique piece.',
+            defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767228910/step2_glwklo.jpg'
+          },
+          {
+            title: 'Detail Selection',
+            description: 'This is the personalization phase where your furniture truly comes to life; you will choose all the final elements that define the look and feel of the piece. This includes selecting your preferred wood finishes, fabric types, leather quality, and hardware options, as Detail Selection ensures the piece is perfectly tailored to your taste and space.',
+            defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767228903/step-3_bn3vk7.jpg'
+          },
+          {
+            title: 'Price Estimate',
+            description: 'Once the design and all materials have been formally approved, we issue this document, which is a transparent breakdown of all associated costs. The Price Estimate includes material sourcing, manufacturing labor, and our specialized delivery service fees, confirming the total investment required for your bespoke Pawana Furniture® commission.',
+            defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767228925/step-4_hgmlf0.jpg'
+          },
+          {
+            title: 'Project Oversight',
+            description: 'A dedicated manager is assigned to supervise the entire commission process, managing the production schedule, monitoring quality, and coordinating all logistics. Project Oversight guarantees that deadlines are met and that the project progresses smoothly, ensuring a seamless and worry-free experience for the client.',
+            defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767228902/step-5_jpvz4t.jpg'
+          },
+          {
+            title: 'Quality Assurance',
+            description: 'Our commitment to excellence is finalized at this critical stage, where every piece of furniture undergoes a rigorous, multi-point inspection. We check construction, stability, finish perfection, and adherence to the original specifications, as Quality Assurance certifies that your furniture meets the exacting standards of Pawana Furniture®.',
+            defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767228916/step-6_h6xjac.jpg'
+          },
+          {
+            title: 'Full-Service Delivery',
+            description: 'This is the final phase where your finished piece is safely brought to its new location by our specialized team, who handle all transportation and placement logistics. Full-Service Delivery includes professional unpacking, complete setup, and removal of all packaging materials, ensuring a perfect installation and a pristine finish in your space.',
+            defaultImage: 'https://res.cloudinary.com/duiix4ryu/image/upload/v1767228902/step-7_laqhpf.jpg'
+          }
+        ];
 
+        // Use database steps if available, otherwise use defaults
+        const processSteps = aboutSettings.process?.steps && aboutSettings.process.steps.length > 0
+          ? aboutSettings.process.steps
+          : defaultSteps;
+      %>
+      <% processSteps.forEach((step, index) => {
+        const defaultStep = defaultSteps[index] || {};
+        const imageUrl = step.image?.url || defaultStep.defaultImage || '';
+        const title = step.title || defaultStep.title || 'Step';
+        const description = step.description || defaultStep.description || '';
+        const stepNumber = String(index + 1).padStart(2, '0');
+      %>
       <div class="process-step">
         <div class="step-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767228910/step2_glwklo.jpg" alt="Product Design" loading="lazy">
+          <% if (imageUrl) { %>
+          <img src="<%= imageUrl %>" alt="<%= title %>" loading="lazy">
+          <% } else { %>
+          <div class="no-image-placeholder">No Image</div>
+          <% } %>
         </div>
         <div class="step-content">
           <div class="step-header">
-            <span class="step-number">02</span>
-            <h3>Product Design</h3>
+            <span class="step-number"><%= stepNumber %></span>
+            <h3><%= title %></h3>
           </div>
-          <p>Our experts transform the approved brief into precise, technical documents, creating detailed 2D drawings and advanced 3D models. This stage involves focusing on structural integrity, exact measurements, and ensuring all functional elements work perfectly, making Product Design the detailed blueprint for manufacturing your unique piece.</p>
+          <p><%= description %></p>
         </div>
       </div>
-
-      <div class="process-step">
-        <div class="step-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767228903/step-3_bn3vk7.jpg" alt="Detail Selection" loading="lazy">
-        </div>
-        <div class="step-content">
-          <div class="step-header">
-            <span class="step-number">03</span>
-            <h3>Detail Selection</h3>
-          </div>
-          <p>This is the personalization phase where your furniture truly comes to life; you will choose all the final elements that define the look and feel of the piece. This includes selecting your preferred wood finishes, fabric types, leather quality, and hardware options, as Detail Selection ensures the piece is perfectly tailored to your taste and space.</p>
-        </div>
-      </div>
-
-      <div class="process-step">
-        <div class="step-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767228925/step-4_hgmlf0.jpg" alt="Price Estimate" loading="lazy">
-        </div>
-        <div class="step-content">
-          <div class="step-header">
-            <span class="step-number">04</span>
-            <h3>Price Estimate</h3>
-          </div>
-          <p>Once the design and all materials have been formally approved, we issue this document, which is a transparent breakdown of all associated costs. The Price Estimate includes material sourcing, manufacturing labor, and our specialized delivery service fees, confirming the total investment required for your bespoke Pawana Furniture&reg; commission.</p>
-        </div>
-      </div>
-
-      <div class="process-step">
-        <div class="step-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767228902/step-5_jpvz4t.jpg" alt="Project Oversight" loading="lazy">
-        </div>
-        <div class="step-content">
-          <div class="step-header">
-            <span class="step-number">05</span>
-            <h3>Project Oversight</h3>
-          </div>
-          <p>A dedicated manager is assigned to supervise the entire commission process, managing the production schedule, monitoring quality, and coordinating all logistics. Project Oversight guarantees that deadlines are met and that the project progresses smoothly, ensuring a seamless and worry-free experience for the client.</p>
-        </div>
-      </div>
-
-      <div class="process-step">
-        <div class="step-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767228916/step-6_h6xjac.jpg" alt="Quality Assurance" loading="lazy">
-        </div>
-        <div class="step-content">
-          <div class="step-header">
-            <span class="step-number">06</span>
-            <h3>Quality Assurance</h3>
-          </div>
-          <p>Our commitment to excellence is finalized at this critical stage, where every piece of furniture undergoes a rigorous, multi-point inspection. We check construction, stability, finish perfection, and adherence to the original specifications, as Quality Assurance certifies that your furniture meets the exacting standards of Pawana Furniture&reg;.</p>
-        </div>
-      </div>
-
-      <div class="process-step">
-        <div class="step-image">
-          <img src="https://res.cloudinary.com/duiix4ryu/image/upload/v1767228902/step-7_laqhpf.jpg" alt="Full-Service Delivery" loading="lazy">
-        </div>
-        <div class="step-content">
-          <div class="step-header">
-            <span class="step-number">07</span>
-            <h3>Full-Service Delivery</h3>
-          </div>
-          <p>This is the final phase where your finished piece is safely brought to its new location by our specialized team, who handle all transportation and placement logistics. Full-Service Delivery includes professional unpacking, complete setup, and removal of all packaging materials, ensuring a perfect installation and a pristine finish in your space.</p>
-        </div>
-      </div>
+      <% }); %>
     </div>
   </div>
 </section>
@@ -210,8 +189,8 @@ And even today, continued success depends on good clients like you—clients we 
 <section class="about-cta">
   <div class="about-container">
     <div class="cta-content">
-      <h2>Start Your Custom Project</h2>
-      <p>Let our master craftsmen bring your furniture vision to life. From concept to creation, we're here to help you every step of the way.</p>
+      <h2><%= aboutSettings.cta?.title || 'Start Your Custom Project' %></h2>
+      <p><%= aboutSettings.cta?.description || 'Let our master craftsmen bring your furniture vision to life. From concept to creation, we\'re here to help you every step of the way.' %></p>
       <div class="cta-buttons">
         <a href="/contact" class="btn-primary">Get a Free Consultation</a>
         <a href="/catalogue" class="btn-secondary">Browse Our Collection</a>

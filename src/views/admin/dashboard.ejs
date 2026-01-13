@@ -170,9 +170,16 @@
 
       <!-- Rooms Tab -->
       <div class="tab-content" id="rooms-tab">
-        <div class="content-header">
-          <h2>Rooms</h2>
+        <div class="settings-sticky-header">
+          <h2 id="rooms-header-title">Room Settings</h2>
+          <div class="settings-sticky-actions">
+            <span class="unsaved-indicator" id="rooms-unsaved-indicator"></span>
+            <button type="button" class="btn-cancel-settings" id="rooms-cancel-btn">Cancel</button>
+            <button type="button" class="btn-save-settings" id="rooms-save-btn">Save Changes</button>
+          </div>
         </div>
+
+
 
         <!-- Room Tabs -->
         <div class="room-tabs" id="rooms-room-tabs">
@@ -181,18 +188,39 @@
               <%= room.name %>
             </button>
           <% }) %>
+          <button class="room-tab" data-room="Catalogue">Catalogue</button>
         </div>
 
         <!-- Room Details -->
         <div class="room-details" id="room-details">
           <div class="loading-text">Loading room details...</div>
         </div>
+
+        <div class="room-details" id="catalogue-details" style="display: none;">
+          <div class="settings-section">
+            <form id="catalogue-settings-form">
+              <div class="form-group">
+                <label for="catalogue-page-title">Page Title</label>
+                <input type="text" id="catalogue-page-title" name="pageTitle" placeholder="Our Collection">
+              </div>
+              <div class="form-group">
+                <label for="catalogue-page-description">Page Description</label>
+                <input type="text" id="catalogue-page-description" name="pageDescription" placeholder="Explore our exquisite range of handcrafted furniture">
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
 
       <!-- Home Settings Tab -->
-      <div class="tab-content" id="home-settings-tab">
-        <div class="content-header">
+      <div class="tab-content settings-tab-container" id="home-settings-tab">
+        <div class="settings-sticky-header">
           <h2>Home Page Settings</h2>
+          <div class="settings-sticky-actions">
+            <span class="unsaved-indicator" id="home-unsaved-indicator"></span>
+            <button type="button" class="btn-cancel-settings" id="home-cancel-btn">Cancel</button>
+            <button type="button" class="btn-save-settings" id="home-save-btn">Save Changes</button>
+          </div>
         </div>
 
         <div class="settings-form-container">
@@ -260,21 +288,151 @@
               </div>
             </div>
 
-            <div class="form-actions">
-              <button type="submit" class="btn-save">Save Home Settings</button>
+            <div class="settings-section">
+              <h3>Delivery Section</h3>
+
+              <div class="form-group">
+                <label for="delivery-title">Section Title</label>
+                <input type="text" id="delivery-title" name="deliveryTitle" placeholder="Crafted In India, Delivered Worldwide">
+              </div>
+
+              <div class="form-group">
+                <label>Map Image</label>
+                <div class="image-upload-row" id="delivery-map-row">
+                  <div class="image-preview-small" id="delivery-map-preview"></div>
+                  <button type="button" class="btn-upload" data-section="delivery-map">Upload Image</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Description Paragraphs</label>
+                <div id="delivery-paragraphs-container"></div>
+                <button type="button" class="btn-add-row" id="add-delivery-paragraph-btn">+ Add Paragraph</button>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>India Locations</label>
+                  <div id="india-locations-container"></div>
+                  <button type="button" class="btn-add-row" id="add-india-location-btn">+ Add Location</button>
+                </div>
+                <div class="form-group">
+                  <label>International Locations</label>
+                  <div id="international-locations-container"></div>
+                  <button type="button" class="btn-add-row" id="add-international-location-btn">+ Add Location</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Section Text Configuration</h3>
+              <p class="section-hint">Customize titles and descriptions for home page sections</p>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="signature-title">Signature Pieces - Title</label>
+                  <input type="text" id="signature-title" placeholder="Signature Pieces">
+                </div>
+                <div class="form-group">
+                  <label for="signature-subtitle">Signature Pieces - Subtitle</label>
+                  <input type="text" id="signature-subtitle" placeholder="Masterpieces that define your living space">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="featured-items-title">Featured Items - Title</label>
+                  <input type="text" id="featured-items-title" placeholder="Featured Items">
+                </div>
+                <div class="form-group">
+                  <label for="featured-items-subtitle">Featured Items - Subtitle</label>
+                  <input type="text" id="featured-items-subtitle" placeholder="Curated selection of our finest individual pieces">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="featured-sets-title">Featured Sets - Title</label>
+                  <input type="text" id="featured-sets-title" placeholder="Featured Sets">
+                </div>
+                <div class="form-group">
+                  <label for="featured-sets-subtitle">Featured Sets - Subtitle</label>
+                  <input type="text" id="featured-sets-subtitle" placeholder="Complete furniture collections for every room">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="browse-rooms-title">Browse by Rooms - Title</label>
+                  <input type="text" id="browse-rooms-title" placeholder="Browse by Rooms">
+                </div>
+                <div class="form-group">
+                  <label for="browse-rooms-subtitle">Browse by Rooms - Subtitle</label>
+                  <input type="text" id="browse-rooms-subtitle" placeholder="Explore our curated collections for every space in your home">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="custom-order-title">Custom Order - Title</label>
+                  <input type="text" id="custom-order-title" placeholder="Ready to Start Your Custom Order?">
+                </div>
+                <div class="form-group">
+                  <label for="custom-order-description">Custom Order - Description</label>
+                  <input type="text" id="custom-order-description" placeholder="Tell us what you have in mind...">
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Footer Configuration</h3>
+
+              <div class="form-group">
+                <label for="footer-tagline1">Tagline 1</label>
+                <input type="text" id="footer-tagline1" name="tagline1" placeholder="We Turn Your Imagination Into Reality">
+              </div>
+
+              <div class="form-group">
+                <label for="footer-tagline2">Tagline 2</label>
+                <textarea id="footer-tagline2" name="tagline2" rows="2" placeholder="Redefining luxury interiors..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <!-- Helper for copyright year -->
+                <label for="footer-copyright">Copyright Text</label>
+                <input type="text" id="footer-copyright" name="copyright" placeholder="&copy; 2026 Pawana Furniture. All rights reserved.">
+                <span class="hint-text">Use <code>&amp;copy;</code> for © symbol.</span>
+              </div>
             </div>
           </form>
         </div>
       </div>
 
       <!-- Contact Settings Tab -->
-      <div class="tab-content" id="contact-settings-tab">
-        <div class="content-header">
+      <div class="tab-content settings-tab-container" id="contact-settings-tab">
+        <div class="settings-sticky-header">
           <h2>Contact Page Settings</h2>
+          <div class="settings-sticky-actions">
+            <span class="unsaved-indicator" id="contact-unsaved-indicator"></span>
+            <button type="button" class="btn-cancel-settings" id="contact-cancel-btn">Cancel</button>
+            <button type="button" class="btn-save-settings" id="contact-save-btn">Save Changes</button>
+          </div>
         </div>
 
         <div class="settings-form-container">
           <form id="contact-settings-form" class="settings-form">
+            <div class="settings-section">
+              <h3>Page Meta</h3>
+              <div class="form-group">
+                <label for="contact-page-title">Page Title</label>
+                <input type="text" id="contact-page-title" name="pageTitle" placeholder="Contact Us">
+              </div>
+              <div class="form-group">
+                <label for="contact-page-description">Page Description</label>
+                <textarea id="contact-page-description" name="pageDescription" rows="2" placeholder="Page hero description..."></textarea>
+              </div>
+            </div>
+
             <div class="settings-section">
               <h3>Contact Information</h3>
 
@@ -342,6 +500,39 @@
               </div>
             </div>
 
+            <div class="settings-section">
+              <h3>Social Media Links</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contact-instagram">Instagram URL</label>
+                  <input type="url" id="contact-instagram" name="instagram" placeholder="https://instagram.com/pawanafurniture">
+                </div>
+                <div class="form-group">
+                  <label for="contact-facebook">Facebook URL</label>
+                  <input type="url" id="contact-facebook" name="facebook" placeholder="https://facebook.com/pawanafurniture">
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Contact Form Section</h3>
+              <div class="form-group">
+                <label for="contact-form-title">Form Title</label>
+                <input type="text" id="contact-form-title" name="formTitle" placeholder="Send Us a Message">
+              </div>
+              <div class="form-group">
+                <label for="contact-form-description">Form Description</label>
+                <textarea id="contact-form-description" name="formDescription" rows="2" placeholder="Fill out the form below..."></textarea>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>FAQ Section</h3>
+              <p class="section-hint">Add frequently asked questions and answers.</p>
+              <div id="contact-faq-container"></div>
+              <button type="button" class="btn-add-row" id="add-faq-btn">+ Add Question</button>
+            </div>
+
             <div class="form-actions">
               <button type="submit" class="btn-save">Save Contact Settings</button>
             </div>
@@ -350,13 +541,30 @@
       </div>
 
       <!-- About Settings Tab -->
-      <div class="tab-content" id="about-settings-tab">
-        <div class="content-header">
+      <div class="tab-content settings-tab-container" id="about-settings-tab">
+        <div class="settings-sticky-header">
           <h2>About Page Settings</h2>
+          <div class="settings-sticky-actions">
+            <span class="unsaved-indicator" id="about-unsaved-indicator"></span>
+            <button type="button" class="btn-cancel-settings" id="about-cancel-btn">Cancel</button>
+            <button type="button" class="btn-save-settings" id="about-save-btn">Save Changes</button>
+          </div>
         </div>
 
         <div class="settings-form-container">
           <form id="about-settings-form" class="settings-form">
+            <div class="settings-section">
+              <h3>Page Meta</h3>
+              <div class="form-group">
+                <label for="about-page-title">Page Title</label>
+                <input type="text" id="about-page-title" name="pageTitle" placeholder="About Us">
+              </div>
+              <div class="form-group">
+                <label for="about-page-description">Page Description</label>
+                <textarea id="about-page-description" name="pageDescription" rows="2" placeholder="Page hero description..."></textarea>
+              </div>
+            </div>
+
             <div class="settings-section">
               <h3>Our Story Section</h3>
 
@@ -419,6 +627,18 @@
               </div>
             </div>
 
+            <div class="settings-section">
+              <h3>CTA Section</h3>
+              <div class="form-group">
+                <label for="about-cta-title">CTA Title</label>
+                <input type="text" id="about-cta-title" name="ctaTitle" placeholder="Start Your Custom Project">
+              </div>
+              <div class="form-group">
+                <label for="about-cta-description">CTA Description</label>
+                <textarea id="about-cta-description" name="ctaDescription" rows="2" placeholder="Let our master craftsmen..."></textarea>
+              </div>
+            </div>
+
             <div class="form-actions">
               <button type="submit" class="btn-save">Save About Settings</button>
             </div>
@@ -427,13 +647,30 @@
       </div>
 
       <!-- Services Settings Tab -->
-      <div class="tab-content" id="services-settings-tab">
-        <div class="content-header">
+      <div class="tab-content settings-tab-container" id="services-settings-tab">
+        <div class="settings-sticky-header">
           <h2>Services Page Settings</h2>
+          <div class="settings-sticky-actions">
+            <span class="unsaved-indicator" id="services-unsaved-indicator"></span>
+            <button type="button" class="btn-cancel-settings" id="services-cancel-btn">Cancel</button>
+            <button type="button" class="btn-save-settings" id="services-save-btn">Save Changes</button>
+          </div>
         </div>
 
         <div class="settings-form-container">
           <form id="services-settings-form" class="settings-form">
+            <div class="settings-section">
+              <h3>Page Meta</h3>
+              <div class="form-group">
+                <label for="services-page-title">Page Title</label>
+                <input type="text" id="services-page-title" name="pageTitle" placeholder="Our Services">
+              </div>
+              <div class="form-group">
+                <label for="services-page-description">Page Description</label>
+                <textarea id="services-page-description" name="pageDescription" rows="2" placeholder="Page hero description..."></textarea>
+              </div>
+            </div>
+
             <div class="settings-section">
               <h3>Introduction Section</h3>
 
@@ -453,6 +690,18 @@
               <p class="section-hint">Define each service offered (with images and feature lists).</p>
               <div id="services-items-container"></div>
               <button type="button" class="btn-add-row" id="add-service-btn">+ Add Service</button>
+            </div>
+
+            <div class="settings-section">
+              <h3>CTA Section</h3>
+              <div class="form-group">
+                <label for="services-cta-title">CTA Title</label>
+                <input type="text" id="services-cta-title" name="ctaTitle" placeholder="Need a Custom Solution?">
+              </div>
+              <div class="form-group">
+                <label for="services-cta-description">CTA Description</label>
+                <textarea id="services-cta-description" name="ctaDescription" rows="2" placeholder="Let's discuss how we can help..."></textarea>
+              </div>
             </div>
 
             <div class="form-actions">
@@ -487,8 +736,8 @@
         </div>
 
         <div class="form-group">
-          <label for="set-image">Image (.webp, 4:3 ratio, max 1MB)</label>
-          <input type="file" id="set-image" name="image" accept=".webp">
+          <label for="set-image">Image (4:3 ratio, max 1MB)</label>
+          <input type="file" id="set-image" name="image" accept="image/*">
           <div class="image-preview" id="set-image-preview"></div>
         </div>
 
@@ -556,8 +805,8 @@
         </div>
 
         <div class="form-group">
-          <label for="item-image">Image (.webp, 1:1 ratio, max 1MB)</label>
-          <input type="file" id="item-image" name="image" accept=".webp">
+          <label for="item-image">Image (1:1 ratio, max 1MB)</label>
+          <input type="file" id="item-image" name="image" accept="image/*">
           <div class="image-preview" id="item-image-preview"></div>
         </div>
 

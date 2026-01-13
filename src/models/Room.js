@@ -21,6 +21,11 @@ const roomSchema = new mongoose.Schema({
     ],
     default: [],
   },
+  // Featured image code - references a set or item code
+  featuredCode: {
+    type: String,
+    default: ''
+  },
   description: String,
   hasIndividualItems: {
     type: Boolean,
