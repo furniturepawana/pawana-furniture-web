@@ -155,8 +155,25 @@ async function uploadToCloudinary(fileBuffer, options = {}) {
     const stream = cloudinary.uploader.upload_stream(
       uploadOptions,
       (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
+        if (error) {
+          // Log specific Cloudinary errors for debugging
+          if (error.http_code === 401) {
+            console.error('❌ Cloudinary: Authentication failed - check CLOUDINARY_URL');
+          } else if (error.http_code === 420) {
+            console.error('❌ Cloudinary: Rate limited - too many requests');
+          } else if (error.http_code === 400) {
+            console.error('❌ Cloudinary: Bad request -', error.message);
+          } else if (error.http_code === 500) {
+            console.error('❌ Cloudinary: Server error - service may be down');
+          } else if (error.message?.includes('ENOTFOUND') || error.message?.includes('ETIMEDOUT')) {
+            console.error('❌ Cloudinary: Network error - cannot reach service');
+          } else {
+            console.error('❌ Cloudinary upload failed:', error.message || error);
+          }
+          reject(error);
+        } else {
+          resolve(result);
+        }
       }
     );
     stream.end(fileBuffer);
@@ -182,21 +199,20 @@ const STYLE_INITIALS = {
 // LOGIN ROUTES
 // ==========================================
 
-// DEBUG: Check if env vars are set (remove after debugging)
-router.get('/debug', (req, res) => {
-  res.json({
-    adminIdSet: !!process.env.ADMIN_ID,
-    adminIdValue: process.env.ADMIN_ID ? process.env.ADMIN_ID.substring(0, 2) + '...' : 'NOT SET',
-    passwordSet: !!process.env.ADMIN_PASSWORD,
-    passwordLength: process.env.ADMIN_PASSWORD?.length || 0,
-    adminRoute: process.env.ADMIN_ROUTE || 'NOT SET',
-    nodeEnv: process.env.NODE_ENV || 'NOT SET'
+// DEBUG: Check if env vars are set (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  router.get('/debug', (req, res) => {
+    res.json({
+      adminIdSet: !!process.env.ADMIN_ID,
+      passwordSet: !!process.env.ADMIN_PASSWORD,
+      adminRoute: process.env.ADMIN_ROUTE || 'NOT SET',
+      nodeEnv: process.env.NODE_ENV || 'NOT SET'
+    });
   });
-});
+}
 
 // GET /admin-route - Login page or redirect to dashboard
 router.get('/', (req, res) => {
-  console.log('GET / - Admin login page requested');
   if (isAdminLoggedIn(req)) {
     return res.redirect(`/${process.env.ADMIN_ROUTE}/dashboard`);
   }
@@ -209,27 +225,14 @@ router.get('/', (req, res) => {
 
 // POST /admin-route/login - Handle login
 router.post('/login', (req, res) => {
-  console.log('POST /login - Request received');
-  console.log('Request body:', req.body);
-
   const { adminId, password } = req.body;
-
-  // Debug logging for production troubleshooting
-  console.log('Login attempt:', {
-    adminId,
-    passwordLength: password?.length,
-    envAdminId: process.env.ADMIN_ID,
-    envPasswordLength: process.env.ADMIN_PASSWORD?.length,
-    match: adminId === process.env.ADMIN_ID && password === process.env.ADMIN_PASSWORD
-  });
 
   const token = validateAdminLogin(adminId, password);
   if (token) {
-    console.log('Login successful, setting cookie');
     setAdminCookie(res, token);
     res.redirect(`/${process.env.ADMIN_ROUTE}/dashboard`);
   } else {
-    console.log('Login failed');
+    console.log('Admin login failed for ID:', adminId ? adminId.substring(0, 2) + '***' : 'empty');
     res.render('admin/login', {
       layout: false,
       error: 'Invalid credentials. Please try again.',
@@ -237,6 +240,7 @@ router.post('/login', (req, res) => {
     });
   }
 });
+
 
 // GET /admin-route/dashboard - Main dashboard
 router.get('/dashboard', requireAdminAuth, async (req, res) => {

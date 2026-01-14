@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Page Not Found | Pawana® Furniture' %></title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Lato', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .error-container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 500px;
+    }
+    .error-code {
+      font-family: 'Playfair Display', serif;
+      font-size: 8rem;
+      font-weight: 600;
+      color: #8B4513;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .error-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+    .error-message {
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.875rem 2rem;
+      background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(139,69,19,0.4);
+    }
+    .logo {
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+    .logo img { height: 60px; }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="logo">
+      <img src="https://res.cloudinary.com/dwa2d4onb/image/upload/v1763917320/pf_icon_rxglcl.png" alt="Pawana Furniture">
+    </div>
+    <div class="error-code">404</div>
+    <h1 class="error-title">Page Not Found</h1>
+    <p class="error-message">
+      The page you're looking for doesn't exist or has been moved.
+      Let's get you back to exploring our furniture collection.
+    </p>
+    <a href="/" class="btn">Back to Home</a>
+  </div>
+</body>
+</html>

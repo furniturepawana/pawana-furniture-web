@@ -1,0 +1,19 @@
+# humanstxt.org
+# This file contains information about the people behind this website.
+
+/* TEAM */
+Developer: Abhimanyu Tripathi
+Site: https://github.com/abhithecoderr
+Timeline: 5th Nov, 2025 to 7th Jan, 2026
+Location: India
+
+/* THANKS */
+Name: Pawana Furniture
+Site: https://pawanafurniture.com
+
+/* SITE */
+Last update: 2026/01/07
+Language: English
+Standards: HTML5, CSS3, JavaScript
+Components: Node.js, Express, EJS, MongoDB
+Software: VS Code

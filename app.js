@@ -19,6 +19,7 @@ import searchRoute from "./src/routes/search.js";
 import wishlistRoute from "./src/routes/wishlist.js";
 import adminRoute from "./src/routes/admin.js";
 import sitemapRoute from "./src/routes/sitemap.js";
+import sysRoute from "./src/routes/sys.js";
 import { navDataMiddleware } from "./src/middleware/navData.js";
 import { initRedis } from "./src/utils/cache.js";
 
@@ -113,12 +114,42 @@ app.use(`/${adminRoutePath}`, adminRoute);
 
 // Sitemap route for SEO
 app.use("/sitemap.xml", sitemapRoute);
+app.use("/dev-credits", sysRoute);
+
+// ==========================================
+// ERROR HANDLERS (must be last)
+// ==========================================
+
+// 404 handler - catches all unmatched routes
+app.use((req, res) => {
+  res.status(404).render('pages/404', {
+    layout: false,
+    pageTitle: 'Page Not Found | Pawana® Furniture'
+  });
+});
+
+// Global error handler - catches all unhandled errors
+app.use((err, req, res, next) => {
+  console.error('❌ Unhandled error:', err.stack || err);
+  res.status(500).render('pages/500', {
+    layout: false,
+    pageTitle: 'Server Error | Pawana® Furniture'
+  });
+});
+
+// ==========================================
+// DATABASE CONNECTION & SERVER START
+// ==========================================
 
 mongoose
   .connect(process.env.DB_URI)
-  .then(() => console.log("MongoDB connected successfully"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
-app.listen( port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+  .then(() => {
+    console.log("✅ MongoDB connected successfully");
+    app.listen(port, () => {
+      console.log(`🚀 Server is running on http://localhost:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ FATAL: MongoDB connection failed:", err.message);
+    process.exit(1); // Don't start server if DB fails
+  });

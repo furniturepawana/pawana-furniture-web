@@ -9,6 +9,34 @@ let currentStyle = 'Royal';
 let currentType = '';
 let deleteTarget = null;
 
+// ==========================================
+// Diagnostic Console Logging (for handoff troubleshooting)
+// These logs appear in browser DevTools to help identify config issues
+// ==========================================
+function logDiagnostic(service, message) {
+  console.log(`%c⚠️ ${service}: ${message}`, 'color: #d97706; font-weight: bold;');
+}
+
+// Analyze error response and log appropriate diagnostic
+function diagnoseError(response, context = 'API call') {
+  if (!response) {
+    logDiagnostic('Network', 'Request failed - check internet connection or server status');
+    return;
+  }
+
+  if (response.status === 500) {
+    if (context.includes('image') || context.includes('upload')) {
+      logDiagnostic('Cloudinary', 'Image upload failed - check CLOUDINARY_URL in .env');
+    } else {
+      logDiagnostic('MongoDB', `${context} failed - check DB_URI connection string in .env`);
+    }
+  } else if (response.status === 401 || response.status === 403) {
+    logDiagnostic('Admin Auth', 'Authentication error - check ADMIN_ID/ADMIN_PASSWORD in .env');
+  } else if (response.status === 0 || !response.ok) {
+    logDiagnostic('Server', 'Server unreachable - check if Render deployment is running');
+  }
+}
+
 // DOM Elements
 const tabButtons = document.querySelectorAll('.nav-item');
 const tabContents = document.querySelectorAll('.tab-content');
@@ -172,6 +200,7 @@ async function loadSets() {
     attachCardListeners(grid, 'FurnitureSet');
   } catch (error) {
     grid.innerHTML = '<div class="empty-text">Error loading sets.</div>';
+    logDiagnostic('MongoDB', 'Failed to load sets - check DB_URI in .env');
     console.error(error);
   }
 }
@@ -198,6 +227,7 @@ async function loadItems() {
     attachCardListeners(grid, 'FurnitureItem');
   } catch (error) {
     grid.innerHTML = '<div class="empty-text">Error loading items.</div>';
+    logDiagnostic('MongoDB', 'Failed to load items - check DB_URI in .env');
     console.error(error);
   }
 }
@@ -1117,6 +1147,7 @@ document.getElementById('set-form').addEventListener('submit', async (e) => {
     }
   } catch (error) {
     showToast('Error creating set', 'error');
+    logDiagnostic('Server', 'Set creation failed - check Render logs for details');
     console.error(error);
   } finally {
     setButtonLoading(submitBtn, false);
@@ -1176,6 +1207,7 @@ document.getElementById('item-form').addEventListener('submit', async (e) => {
     }
   } catch (error) {
     showToast('Error creating item', 'error');
+    logDiagnostic('Server', 'Item creation failed - check Render logs for details');
     console.error(error);
   } finally {
     setButtonLoading(submitBtn, false);
@@ -1294,6 +1326,7 @@ document.getElementById('image-form').addEventListener('submit', async (e) => {
     }
   } catch (error) {
     showToast('Error uploading image', 'error');
+    logDiagnostic('Cloudinary', 'Image upload failed - check CLOUDINARY_URL in .env');
     console.error(error);
   } finally {
     setButtonLoading(submitBtn, false);

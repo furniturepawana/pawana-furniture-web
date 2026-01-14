@@ -5,6 +5,7 @@ Allow: /
 # Block technical/private routes
 Disallow: /api/
 Disallow: /admin/
+Disallow: /dev-credits
 
 # Prevent indexing of internal search results (avoids "thin content" penalties)
 Disallow: /api/search
