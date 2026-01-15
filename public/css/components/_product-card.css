@@ -41,8 +41,22 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-4);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
   width: 100%;
+}
+
+/* Desktop: Ensure larger title and spacing for cards */
+@media (min-width: 1024px) {
+  .card-name-row {
+    margin-bottom: 0.6rem;
+  }
+
+  .item-card h3,
+  .product-card h3,
+  .set-card h3,
+  .card-name-row h3 {
+    font-size: 1.35rem;
+  }
 }
 
 /* Item Title */
@@ -50,7 +64,7 @@
 .product-card h3,
 .card-name-row h3 {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   font-weight: var(--font-medium);
   color: var(--color-text-primary);
   margin: 0;

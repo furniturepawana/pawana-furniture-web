@@ -305,9 +305,9 @@
 }
 
 .info-content p {
-  font-size: 0.95rem; /* Restored size for readability */
+  font-size: 1rem; /* Restored size for readability */
   line-height: 1.5; /* Balanced line height */
-  color: var(--color-text-secondary); /* Better contrast with secondary if primary is too heavy */
+  color: #1a1a1a; /* Better contrast with secondary if primary is too heavy */
   margin-top: 1rem;
   font-weight: 450;
 }

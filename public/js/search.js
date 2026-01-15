@@ -72,6 +72,27 @@ async function performSearch(query) {
   }
 }
 
+// Build catalogue URL with filters
+function buildCatalogueUrl(filters, viewType) {
+  const params = new URLSearchParams();
+
+  // Set view type (sets or items)
+  params.set('view', viewType);
+
+  // Add detected filters
+  if (filters.detectedStyle) {
+    params.set('style', filters.detectedStyle);
+  }
+  if (filters.detectedRoom) {
+    params.set('room', filters.detectedRoom);
+  }
+  if (viewType === 'items' && filters.detectedType) {
+    params.set('type', filters.detectedType);
+  }
+
+  return `/catalogue?${params.toString()}`;
+}
+
 // Display search results
 function displaySearchResults(data) {
   const isMobile = window.innerWidth <= 767;
@@ -81,7 +102,7 @@ function displaySearchResults(data) {
 
   if (!resultsContainer) return;
 
-  const { items, sets } = data;
+  const { items, sets, filters = {} } = data;
 
   if (items.length === 0 && sets.length === 0) {
     resultsContainer.innerHTML = '<p class="search-no-results">No results found</p>';
@@ -89,7 +110,11 @@ function displaySearchResults(data) {
   }
 
   // Store data for filtering
-  window.searchResultsData = { items, sets };
+  window.searchResultsData = { items, sets, filters };
+
+  // Build catalogue URLs for View All
+  const setsUrl = buildCatalogueUrl(filters, 'sets');
+  const itemsUrl = buildCatalogueUrl(filters, 'items');
 
   // Build results with filter dropdown
   let html = `
@@ -108,7 +133,11 @@ function displaySearchResults(data) {
 
   // Show sets first
   if (sets.length > 0) {
-    html += '<div class="search-category" data-type="sets"><h4>Sets</h4>';
+    html += `<div class="search-category" data-type="sets">
+      <div class="search-category-header">
+        <h4>Sets</h4>
+        <a href="${setsUrl}" class="search-view-all">View All →</a>
+      </div>`;
     html += sets.map(set => `
       <a href="/set/${set.slug}" class="search-result-item">
         <img src="${set.images?.[0]?.url || '/images/placeholder.jpg'}" alt="${set.name}">
@@ -125,7 +154,11 @@ function displaySearchResults(data) {
   }
 
   if (items.length > 0) {
-    html += '<div class="search-category" data-type="items"><h4>Items</h4>';
+    html += `<div class="search-category" data-type="items">
+      <div class="search-category-header">
+        <h4>Items</h4>
+        <a href="${itemsUrl}" class="search-view-all">View All →</a>
+      </div>`;
     html += items.slice(0, 15).map(item => `
       <a href="/item/${item.slug}" class="search-result-item">
         <img src="${item.images?.[0]?.url || '/images/placeholder.jpg'}" alt="${item.name}">

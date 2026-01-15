@@ -779,6 +779,36 @@
   border-radius: 1px;
 }
 
+/* Category header with View All */
+.search-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.search-category-header h4 {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.search-category-header h4::after {
+  display: none;
+}
+
+.search-view-all {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.search-view-all:hover {
+  color: var(--color-primary);
+}
+
 .search-result-item {
   display: flex;
   align-items: flex-start;

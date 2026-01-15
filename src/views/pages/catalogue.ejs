@@ -262,6 +262,57 @@ document.addEventListener('DOMContentLoaded', function() {
       filterToggleBtn.classList.toggle('active');
     });
   }
+
+  // Initialize filters from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+
+  // Room filter (tabs)
+  const roomParam = urlParams.get('room');
+  if (roomParam) {
+    currentRoomFilter = roomParam;
+    const tabs = document.querySelectorAll('#room-tabs .style-tab');
+    tabs.forEach(tab => {
+      if (tab.getAttribute('data-room') === roomParam) {
+        tab.classList.add('active');
+      } else {
+        tab.classList.remove('active');
+      }
+    });
+  }
+
+  // View filter
+  const viewParam = urlParams.get('view');
+  if (viewParam) {
+    document.getElementById('view-filter').value = viewParam;
+    const viewText = viewParam === 'sets' ? 'Sets' : viewParam === 'items' ? 'Items' : 'All';
+    document.getElementById('view-trigger-text').textContent = viewText;
+    document.querySelectorAll('#view-options .custom-option').forEach(opt => {
+      if (opt.textContent.trim().toLowerCase().includes(viewParam)) opt.classList.add('active');
+      else opt.classList.remove('active');
+    });
+  }
+
+  // Style filter
+  const styleParam = urlParams.get('style');
+  if (styleParam) {
+    document.getElementById('style-filter').value = styleParam;
+    document.getElementById('style-trigger-text').textContent = styleParam;
+    document.querySelectorAll('#style-options .custom-option').forEach(opt => {
+      if (opt.textContent.trim() === styleParam) opt.classList.add('active');
+      else opt.classList.remove('active');
+    });
+  }
+
+  // Type filter
+  const typeParam = urlParams.get('type');
+  if (typeParam) {
+    document.getElementById('type-filter').value = typeParam;
+    document.getElementById('type-trigger-text').textContent = typeParam;
+    document.querySelectorAll('#type-options .custom-option').forEach(opt => {
+      if (opt.textContent.trim() === typeParam) opt.classList.add('active');
+      else opt.classList.remove('active');
+    });
+  }
 });
 
 function updateFilter(filterName, value) {
@@ -285,6 +336,23 @@ function updateRoomFilter(value) {
       tab.classList.remove('active');
     }
   });
+
+  // Reset other filters to default when room changes
+  // Reset View
+  document.getElementById('view-filter').value = 'all';
+  document.getElementById('view-trigger-text').textContent = 'All';
+  document.querySelectorAll('#view-options .custom-option').forEach(opt => {
+    if (opt.textContent.trim() === 'All View') opt.classList.add('active');
+    else opt.classList.remove('active');
+  });
+
+  // Reset Type
+  document.getElementById('type-filter').value = '';
+  document.getElementById('type-trigger-text').textContent = 'All Types';
+
+  // Reset Style
+  document.getElementById('style-filter').value = '';
+  document.getElementById('style-trigger-text').textContent = 'All Styles';
 
   applyFilters();
 }

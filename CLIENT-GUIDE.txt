@@ -1,0 +1,158 @@
+========================================
+PAWANA FURNITURE WEBSITE - CLIENT GUIDE
+========================================
+
+Hello! This guide explains your website in simple terms.
+
+
+WHAT IS YOUR WEBSITE MADE OF?
+-----------------------------
+
+Think of your website like a restaurant:
+
+• The WEBSITE CODE is like the recipe book
+  → Stored on: GitHub (a safe vault for code)
+
+  Code repo: https://github.com/furniturepawana/pawana-furniture-web.git
+
+• The DATABASE is like your inventory list
+  → Stored on: MongoDB Atlas (cloud database)
+
+• The IMAGES are stored separately for fast loading
+  → Stored on: Cloudinary (image hosting)
+
+• The WEBSITE ITSELF runs on a server
+  → Hosted on: Render (web hosting)
+
+• SPEED BOOST - Frequently accessed data is cached
+  → Service: Aiven (Redis caching)
+
+• CONTACT FORMS send emails to you
+  → Service: FormSubmit (free email service)
+
+• KEEP-ALIVE - Prevents website from sleeping
+  → Service: Cloudflare (pings your site every 14 min)
+
+
+YOUR ACCOUNT LOGINS
+-------------------
+
+You have accounts on these services (save these logins safely):
+
+1. GitHub        - github.com          - Your code storage
+2. MongoDB Atlas - cloud.mongodb.com   - Your database
+3. Cloudinary    - cloudinary.com      - Your images
+4. Render        - render.com          - Your hosting
+5. Aiven         - console.aiven.io    - Speed caching
+6. Cloudflare    - dash.cloudflare.com - Keep-alive service
+
+
+WHAT CAN YOU DO YOURSELF?
+-------------------------
+
+✓ Add/Edit/Delete products     → Use Admin Panel
+✓ Change contact information   → Use Admin Panel
+✓ Update homepage content      → Use Admin Panel
+             
+
+Your Admin Panel: https://pawanafurniture.com/<your-secret-path>
+(Your developer gave you this secret path and login)
+
+
+WHAT NEEDS A DEVELOPER?
+-----------------------
+
+✗ Change website design/layout
+✗ Add new features (like payments, accounts)
+✗ Fix bugs or errors
+✗ Change how things work
+
+
+HIRING A FUTURE DEVELOPER
+-------------------------
+
+When you need a new developer, give them:
+
+1. ACCESS TO CODE
+   → Add them to your GitHub repository by making them a collaborator
+   → They need this to make any changes
+
+2. THE SECRET FILE (.env)
+   → Contains all passwords and connections
+   → Your current developer will give you this
+   → Share it securely (not via regular email)
+
+3. SERVICE ACCESS
+   → Add them to MongoDB, Cloudinary, Render
+   → Each service has "Invite User" option
+   → Or share login credentials (change password after they're done)
+
+4. TELL THEM TO READ
+   → Project-Doc.md in the code
+   → It explains everything technical
+
+
+SECURITY TIPS
+-------------
+
+• Change admin password after any developer finishes work
+• Keep the .env file secure - never share publicly
+• Your GitHub repository should be PRIVATE
+• Backup your database periodically (MongoDB does this automatically)
+
+
+COMMON QUESTIONS
+----------------
+
+Q: Website is slow to load sometimes?
+A: The free hosting "sleeps" if no one visits for 15 min.
+   First visitor wakes it up (takes 10-30 seconds).
+   Cloudflare keeps it awake, but may occasionally miss.
+
+Q: Images not showing?
+A: Check if the image exists in Cloudinary.
+   Make sure the code is copied correctly to Admin Panel.
+
+Q: Can't login to Admin?
+A: Clear browser cookies/cache and try again.
+   If still failing, check with developer.
+
+Q: Website showing errors?
+A: Contact a developer. Don't try to fix code yourself.
+
+
+COSTS
+-----
+
+Current services (all free tiers):
+• GitHub         - Free
+• MongoDB Atlas  - Free (up to 512MB)
+• Cloudinary     - Free (up to 25GB)
+• Render         - Free (with sleep after 15min)
+• Aiven          - Free trial / Paid after
+• Cloudflare     - Free
+• FormSubmit     - Free
+
+If your business grows, you may need paid tiers for:
+• Render ($7/month) - No more sleeping, faster
+• MongoDB ($9/month) - More database space
+• Cloudinary ($99/month) - More image storage
+
+
+NEED HELP?
+----------
+
+For changes or issues, hire a Node.js developer.
+They should have:
+• 1-2+ years experience with Node.js
+• Experience with MongoDB
+• Basic understanding of web development
+
+Your project is built with standard, common technologies.
+Any competent web developer can work on it.
+
+
+========================================
+Keep this guide safe with your logins.
+Last Updated: January 2026
+========================================
